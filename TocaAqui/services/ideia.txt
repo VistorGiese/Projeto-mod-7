@@ -1,0 +1,3 @@
+services/
+Esta pasta é ideal para arquivos que lidam com chamadas de API, integrações externas e gerenciamento de efeitos colaterais. Organizar chamadas de rede e 
+lógica relacionada a serviços em um só lugar facilita o manuseio de atualizações ou depuração.
