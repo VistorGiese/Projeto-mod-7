@@ -1,0 +1,3 @@
+utils/
+Propósito: Contém funções puras e constantes. Essas funções são sem estado e transformam apenas entradas em saídas.
+Exemplo: Uma função matemática simples que soma dois números ou um formatador de data.

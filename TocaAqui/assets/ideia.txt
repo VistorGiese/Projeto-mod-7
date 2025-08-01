@@ -1,0 +1,10 @@
+assets/
+Armazene imagens, fontes e outros arquivos estáticos. Esta pasta mantém sua mídia organizada e facilmente acessível em todo o seu projeto.
+
+assents/fonts 
+Armazene Link de fontes externas utilizadas no projeto, fontes que no caso a linguagem não fornece.
+
+assents/imagens/"página"
+Armazene imagens dentro da pasta referente a página que a mesma será utilizada, emitando confusão com nomes.
+
+
