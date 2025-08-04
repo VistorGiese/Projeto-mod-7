@@ -4,7 +4,6 @@
     "slug": "TocaAqui",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
     "scheme": "tocaaqui",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -33,7 +32,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
