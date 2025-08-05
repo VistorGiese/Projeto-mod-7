@@ -1,8 +1,8 @@
 import { View, StyleSheet, Image, Dimensions } from "react-native";
 import React from "react";
-import Logo from "../components/LoginPage/Logo";
-import People from "../components/LoginPage/People";
-import Button from "../components/LoginPage/Button";
+import Logo from "../components/InitialPage/Logo";
+import People from "../components/InitialPage/People";
+import Button from "../components/InitialPage/Button";
 
 const { width } = Dimensions.get("window");
 
