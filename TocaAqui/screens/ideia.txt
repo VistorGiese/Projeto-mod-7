@@ -1,0 +1,4 @@
+screens/
+As telas representam as diferentes visualizações em seu aplicativo (por exemplo, Home, Profile ou Settings). Elas geralmente compõem vários componentes e servem como os principais blocos 
+de construção para a interface do usuário do seu aplicativo.
+

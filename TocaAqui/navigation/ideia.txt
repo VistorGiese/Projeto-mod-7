@@ -1,0 +1,3 @@
+navigation/
+Gerencie todos os arquivos relacionados à navegação, incluindo stack, tab ou drawer navigators. Manter essas configurações separadas facilita o gerenciamento e a atualização 
+da sua lógica de roteamento.
