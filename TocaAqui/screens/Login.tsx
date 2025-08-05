@@ -1,23 +1,14 @@
 import React from "react";
-import { Text, StyleSheet, TouchableOpacity, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../navigation/Navigate";
+import { Text, StyleSheet, View } from "react-native";
+import ToBack from "../components/LoginPage/ToBack";
 
 export default function Login() {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
   return (
     <View style={styles.container}>
+      <ToBack />
       <Text style={styles.text}>Tela de Login</Text>
-
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => navigation.navigate("Inicial")}
-      >
-        <Text style={styles.buttonText}>Voltar para Inicial</Text>
-      </TouchableOpacity>
+      <Text style={styles.NewAccount}>Criar conta</Text>
+      <Text style={styles.MyAccount}>Já possui uma conta?</Text>
     </View>
   );
 }
@@ -25,23 +16,23 @@ export default function Login() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF",
+    backgroundColor: "black",
     alignItems: "center",
     justifyContent: "center",
   },
   text: {
     fontSize: 24,
     marginBottom: 20,
+    color: "white",
   },
-  button: {
-    backgroundColor: "#7381A8",
-    paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 10,
+  NewAccount: {
+    fontSize: 24,
+    marginBottom: 20,
+    color: "white",
   },
-  buttonText: {
-    color: "#190230",
-    fontSize: 18,
-    fontWeight: "bold",
+  MyAccount: {
+    fontSize: 24,
+    marginBottom: 20,
+    color: "white",
   },
 });
