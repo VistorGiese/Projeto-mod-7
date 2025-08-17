@@ -3,7 +3,6 @@ import { StyleSheet, View } from "react-native";
 import ToBack from "../components/LoginPage/ToBack";
 import Form from "../components/LoginPage/Form";
 import Fund from "../components/LoginPage/Fund";
-import Button from "../components/LoginPage/Button";
 
 export default function Login() {
   return (
@@ -11,7 +10,6 @@ export default function Login() {
       <ToBack />
       <Fund />
       <Form />
-      <Button />
     </View>
   );
 }
