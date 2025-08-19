@@ -1,117 +1,90 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text, TextInput, Alert } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+} from "react-native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { RootStackParamList } from "../../navigation/Navigate";
 
-export default function FormularioCadastro() {
-  const [dadosFormulario, setDadosFormulario] = useState({
-    nome: "",
-    email: "",
-    dataNascimento: "",
-    telefone: "",
-    senha: "",
-  });
+export default function Form() {
+  const [name, setName] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
 
-  const atualizarCampo = (campo: string, valor: string) => {
-    setDadosFormulario({ ...dadosFormulario, [campo]: valor });
-  };
-
-  const validarCampos = () => {
-    return Object.values(dadosFormulario).every((campo) => campo.trim() !== "");
-  };
-
-  {
-    const enviarFormulario = () => {
-      if (!validarCampos()) {
-        Alert.alert("Erro", "Por favor, preencha todos os campos.");
-        return;
-      }
-    };
-
-    Alert.alert("Cadastro", "Formulário enviado com sucesso!");
-    console.log(dadosFormulario);
-  }
-
-  const Input = ({
-    label,
-    placeholder,
-    valor,
-    onChange,
-    tipoTeclado = "default",
-    senha = false,
-    icone,
-  }: {
-    label: string;
-    placeholder: string;
-    valor: string;
-    onChange: (texto: string) => void;
-    tipoTeclado?: "default" | "email-address" | "phone-pad";
-    senha?: boolean;
-    icone: keyof typeof Ionicons.glyphMap;
-  }) => (
-    <>
-      <Text style={styles.rotulo}>{label}</Text>
-      <View style={styles.grupoInput}>
-        <Ionicons name={icone} size={20} color="blue" style={styles.icone} />
-        <TextInput
-          style={styles.input}
-          placeholder={placeholder}
-          value={valor}
-          onChangeText={onChange}
-          keyboardType={tipoTeclado}
-          secureTextEntry={senha}
-        />
-      </View>
-    </>
-  );
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   return (
     <View style={styles.container}>
-      <Input
-        label=""
-        placeholder="Digite seu nome"
-        valor={dadosFormulario.nome}
-        onChange={(texto) => atualizarCampo("nome", texto)}
-        icone="person-outline"
+      <Image
+        source={require("../../assets/images/TelaLogin/AccessYourAccount.png")}
+        style={styles.imageAccessYourAccount}
       />
 
-      <Input
-        label=""
-        placeholder="Digite seu e-mail"
-        valor={dadosFormulario.email}
-        onChange={(texto) => atualizarCampo("email", texto)}
-        tipoTeclado="email-address"
-        icone="mail-outline"
-      />
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={styles.headerRow}>
+          <Text style={styles.headerText}>Não tem uma conta? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+            <Text style={styles.registerLink}>Cadastrar</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
 
-      <Input
-        label=""
-        placeholder="DD/MM/AAAA"
-        valor={dadosFormulario.dataNascimento}
-        onChange={(texto) => atualizarCampo("dataNascimento", texto)}
-        icone="calendar-outline"
-      />
+      {/* Formulário */}
+      <View style={styles.form}>
+        <Text style={styles.label}>Nome do Responsável</Text>
+        <View style={styles.inputContainer}>
+          <MaterialCommunityIcons
+            name="account"
+            size={20}
+            color="#888"
+            style={styles.icon}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Digite seu nome"
+            placeholderTextColor="#888"
+            value={name}
+            onChangeText={setName}
+            autoCapitalize="words"
+          />
+        </View>
 
-      <Input
-        label=""
-        placeholder="(XX) XXXXX-XXXX"
-        valor={dadosFormulario.telefone}
-        onChange={(texto) => atualizarCampo("telefone", texto)}
-        tipoTeclado="phone-pad"
-        icone="call-outline"
-      />
+        <Text style={styles.label}>Senha</Text>
+        <View style={styles.inputContainer}>
+          <MaterialCommunityIcons
+            name="lock"
+            size={20}
+            color="#888"
+            style={styles.icon}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Digite sua senha"
+            placeholderTextColor="#888"
+            secureTextEntry={true}
+            value={password}
+            onChangeText={setPassword}
+          />
+        </View>
 
-      <Input
-        label=""
-        placeholder="Digite sua senha"
-        valor={dadosFormulario.senha}
-        onChange={(texto) => atualizarCampo("senha", texto)}
-        senha
-        icone="lock-closed-outline"
-      />
+        {/* Esqueci minha senha */}
+        <TouchableOpacity onPress={() => navigation.navigate("Inicial")}>
+          <Text style={styles.forgotPasswordLink}>Esqueci minha senha</Text>
+        </TouchableOpacity>
 
-      {/*<TouchableOpacity style={styles.botao} onPress={enviarFormulario}>
-        <Text style={styles.textoBotao}>Cadastrar</Text>
-      </TouchableOpacity>*/}
+        {/* Botão Entrar */}
+        <TouchableOpacity
+          style={styles.loginButton}
+          onPress={() => navigation.navigate("Inicial")}
+        >
+          <Text style={styles.loginButtonText}>Entrar</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -119,34 +92,82 @@ export default function FormularioCadastro() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
-    backgroundColor: "white",
-    borderRadius: 35,
-    position: "absolute",
-    height: "40%",
+    paddingHorizontal: 20,
+    paddingTop: 100,
     width: "80%",
-    top: "35%",
     justifyContent: "center",
+    backgroundColor: "#1c0a37",
   },
-  rotulo: {
-    color: "#fff",
-    marginTop: -5,
-
-    fontWeight: "bold",
+  header: {
+    alignItems: "center",
+    marginBottom: 40,
   },
-  grupoInput: {
+  headerRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 8,
+  },
+  headerText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  registerLink: {
+    color: "#00ff33ff",
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+  },
+  form: {
+    width: "100%",
+  },
+  label: {
+    color: "#fff",
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#4B0082",
+    borderRadius: 10,
+    marginBottom: 20,
     paddingHorizontal: 15,
   },
-  icone: {
-    marginRight: 15,
-    color: "blue",
+  icon: {
+    marginRight: 10,
   },
   input: {
     flex: 1,
-    paddingVertical: 30,
+    height: 50,
+    color: "#fff",
+    fontSize: 16,
+  },
+  forgotPasswordLink: {
+    color: "#9370DB",
+    textAlign: "center",
+    marginTop: 280,
+    marginBottom: 30,
+    textDecorationLine: "underline",
+  },
+  loginButton: {
+    backgroundColor: "#7381A8",
+    paddingVertical: 15,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  loginButtonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
+  },
+  imageAccessYourAccount: {
+    marginBottom: 50,
+    height: 200,
+    alignSelf: "center",
+    resizeMode: "contain",
   },
 });

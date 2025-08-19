@@ -1,15 +1,11 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import ToBack from "../components/LoginPage/ToBack";
-import Form from "../components/LoginPage/Form";
-import Fund from "../components/LoginPage/Fund";
+import FormRegisterInitial from "../components/RegisterPage/RegisterPageInitial";
 
-export default function Login() {
+export default function Register() {
   return (
     <View style={styles.container}>
-      <ToBack />
-      <Fund />
-      <Form />
+      <FormRegisterInitial />
     </View>
   );
 }
