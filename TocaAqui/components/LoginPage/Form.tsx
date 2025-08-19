@@ -17,10 +17,6 @@ export default function Form() {
 
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
-  const handleNavigation = (screenName: keyof RootStackParamList) => {
-    navigation.navigate(screenName);
-  };
-
   return (
     <View style={styles.container}>
       <Image
@@ -28,15 +24,17 @@ export default function Form() {
         style={styles.imageAccessYourAccount}
       />
 
+      {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>
-          Não tem uma conta?{" "}
-          <TouchableOpacity onPress={() => handleNavigation("Inicial")}>
+        <View style={styles.headerRow}>
+          <Text style={styles.headerText}>Não tem uma conta? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
             <Text style={styles.registerLink}>Cadastrar</Text>
           </TouchableOpacity>
-        </Text>
+        </View>
       </View>
 
+      {/* Formulário */}
       <View style={styles.form}>
         <Text style={styles.label}>Nome do Responsável</Text>
         <View style={styles.inputContainer}>
@@ -74,14 +72,15 @@ export default function Form() {
           />
         </View>
 
-        <TouchableOpacity onPress={() => handleNavigation("Inicial")}>
+        {/* Esqueci minha senha */}
+        <TouchableOpacity onPress={() => navigation.navigate("Inicial")}>
           <Text style={styles.forgotPasswordLink}>Esqueci minha senha</Text>
         </TouchableOpacity>
 
         {/* Botão Entrar */}
         <TouchableOpacity
           style={styles.loginButton}
-          onPress={() => handleNavigation("Inicial")}
+          onPress={() => navigation.navigate("Inicial")}
         >
           <Text style={styles.loginButtonText}>Entrar</Text>
         </TouchableOpacity>
@@ -103,6 +102,10 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 40,
   },
+  headerRow: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
   headerText: {
     color: "#fff",
     fontSize: 16,
@@ -110,6 +113,7 @@ const styles = StyleSheet.create({
   registerLink: {
     color: "#00ff33ff",
     fontWeight: "bold",
+    textDecorationLine: "underline",
   },
   form: {
     width: "100%",
