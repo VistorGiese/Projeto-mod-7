@@ -32,7 +32,7 @@ export default function Inicial() {
 
       <Button
         style={styles.buttonPosition}
-        onPress={() => navigation.navigate("Login")}
+        onPress={() => navigation.navigate("Login")} //testei por aqui
       >
         <Text style={styles.textButton}>Começar</Text>
       </Button>

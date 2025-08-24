@@ -6,6 +6,7 @@ import {
   TextInput,
   ViewStyle,
   TextStyle,
+  TextInputProps,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
@@ -17,6 +18,7 @@ interface InputProps {
   onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
+  keyboardType?: TextInputProps["keyboardType"];
   style?: ViewStyle;
   textStyle?: TextStyle;
 }
@@ -29,11 +31,11 @@ export default function Input({
   onChangeText,
   secureTextEntry = false,
   autoCapitalize = "none",
-  style,
+  keyboardType = "default",
   textStyle,
 }: InputProps) {
   return (
-    <View style={[styles.container, style]}>
+    <View style={[styles.container]}>
       <Text style={[styles.label, textStyle]}>{label}</Text>
       <View style={styles.inputContainer}>
         <MaterialCommunityIcons
@@ -50,6 +52,7 @@ export default function Input({
           onChangeText={onChangeText}
           secureTextEntry={secureTextEntry}
           autoCapitalize={autoCapitalize}
+          keyboardType={keyboardType}
         />
       </View>
     </View>
