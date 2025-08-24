@@ -1,11 +1,11 @@
-import { View, StyleSheet, Image, Dimensions } from "react-native";
+import { View, StyleSheet, Image, Dimensions, Text } from "react-native";
 import React from "react";
 import Logo from "../components/InitialPage/Logo";
 import People from "../components/InitialPage/People";
 import Button from "../components/Allcomponents/Button";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../navigation/Navigate"; // ajuste o caminho se necessário
+import { RootStackParamList } from "../navigation/Navigate";
 
 const { width } = Dimensions.get("window");
 
@@ -31,11 +31,11 @@ export default function Inicial() {
       />
 
       <Button
-        title="Começar"
         style={styles.buttonPosition}
         onPress={() => navigation.navigate("Login")}
-        textStyle={{ fontSize: 32 }}
-      />
+      >
+        <Text style={styles.textButton}>Começar</Text>
+      </Button>
     </View>
   );
 }
@@ -71,7 +71,12 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 120,
     width: 320,
-    height: 120,
+    height: 110,
     zIndex: 10,
+  },
+  textButton: {
+    fontFamily: "Poppins-Bold",
+    fontSize: 32,
+    color: "#130025",
   },
 });

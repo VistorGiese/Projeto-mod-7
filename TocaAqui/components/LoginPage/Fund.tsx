@@ -18,15 +18,21 @@ export default function Fund() {
 const styles = StyleSheet.create({
   background: {
     position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: "#1D0238",
-    width: "100%",
-    height: "100%",
   },
   image: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
     position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: undefined,
+    height: undefined,
+    resizeMode: "cover",
     zIndex: 1,
   },
 });

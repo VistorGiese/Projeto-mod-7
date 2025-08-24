@@ -2,6 +2,7 @@ import React from "react";
 import {
   StyleSheet,
   TouchableOpacity,
+  View,
   Text,
   GestureResponderEvent,
   ViewStyle,
@@ -11,26 +12,32 @@ import { useFonts } from "expo-font";
 import { customFonts } from "../../assets/fonts/fonts";
 
 interface ButtonProps {
-  title: string; // texto do botão
   onPress: (event: GestureResponderEvent) => void;
   style?: ViewStyle;
   textStyle?: TextStyle;
+  children?: React.ReactNode; // adiciona children
 }
 
 export default function Button({
-  title,
   onPress,
   style,
   textStyle,
+  children,
 }: ButtonProps) {
   const [fontsLoaded] = useFonts(customFonts);
 
   if (!fontsLoaded) return null;
 
   return (
-    <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
-      <Text style={[styles.text, textStyle]}>{title}</Text>
-    </TouchableOpacity>
+    <View>
+      <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
+        {children ? (
+          children
+        ) : (
+          <Text style={[styles.text, textStyle]}>{""}</Text>
+        )}
+      </TouchableOpacity>
+    </View>
   );
 }
 
@@ -46,7 +53,7 @@ const styles = StyleSheet.create({
   },
   text: {
     color: "#130025",
-    fontSize: 24, // aumentei para deixar visível
+    fontSize: 24,
     fontFamily: "Poppins-ExtraBold",
   },
 });
