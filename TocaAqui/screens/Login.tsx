@@ -8,7 +8,7 @@ import {
   Dimensions,
 } from "react-native";
 import ToBack from "../components/LoginPage/ToBack";
-import Fund from "../components/LoginPage/Fund";
+import Fund from "../components/Allcomponents/Fund";
 import Input from "../components/Allcomponents/Input";
 import Button from "../components/Allcomponents/Button";
 import { useNavigation } from "@react-navigation/native";
@@ -37,7 +37,10 @@ export default function Login() {
 
       <View style={styles.registerContainer}>
         <Text style={styles.registerText}>Ainda não tem conta? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("RegisterLocationName")}
+          style={{ backgroundColor: "transparent" }}
+        >
           <Text style={styles.registerLink}>Cadastre-se</Text>
         </TouchableOpacity>
       </View>
@@ -66,7 +69,7 @@ export default function Login() {
 
       <Button
         style={styles.buttonPosition}
-        onPress={() => navigation.navigate("Register")}
+        onPress={() => navigation.navigate("Inicial")}
       >
         <Text style={styles.textButton}>Entrar</Text>
       </Button>
@@ -94,6 +97,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginBottom: 25,
     alignItems: "center",
+    zIndex: 10,
   },
   registerText: {
     color: "#fff",

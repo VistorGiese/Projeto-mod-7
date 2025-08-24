@@ -2,7 +2,6 @@ import React from "react";
 import {
   StyleSheet,
   TouchableOpacity,
-  View,
   Text,
   GestureResponderEvent,
   ViewStyle,
@@ -15,7 +14,7 @@ interface ButtonProps {
   onPress: (event: GestureResponderEvent) => void;
   style?: ViewStyle;
   textStyle?: TextStyle;
-  children?: React.ReactNode; // adiciona children
+  children?: React.ReactNode;
 }
 
 export default function Button({
@@ -29,15 +28,13 @@ export default function Button({
   if (!fontsLoaded) return null;
 
   return (
-    <View>
-      <TouchableOpacity style={[styles.button, style]} onPress={onPress}>
-        {children ? (
-          children
-        ) : (
-          <Text style={[styles.text, textStyle]}>{""}</Text>
-        )}
-      </TouchableOpacity>
-    </View>
+    <TouchableOpacity
+      style={[styles.button, style]}
+      onPress={onPress}
+      activeOpacity={0.7}
+    >
+      {children ? children : <Text style={[styles.text, textStyle]}>{""}</Text>}
+    </TouchableOpacity>
   );
 }
 
