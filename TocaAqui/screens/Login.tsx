@@ -1,15 +1,75 @@
-import React from "react";
-import { StyleSheet, View } from "react-native";
+import React, { useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+} from "react-native";
 import ToBack from "../components/LoginPage/ToBack";
-import Form from "../components/LoginPage/Form";
 import Fund from "../components/LoginPage/Fund";
+import Input from "../components/Allcomponents/Input";
+import Button from "../components/Allcomponents/Button";
+import { useNavigation } from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { RootStackParamList } from "../navigation/Navigate";
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+const { width, height } = Dimensions.get("window");
 
 export default function Login() {
+  const navigation = useNavigation<NavigationProp>();
+  const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
+
   return (
     <View style={styles.container}>
-      <ToBack />
       <Fund />
-      <Form />
+
+      <ToBack />
+
+      <Image
+        source={require("../assets/images/TelaLogin/AccessYourAccount.png")}
+        style={styles.centerImage}
+      />
+
+      <View style={styles.registerContainer}>
+        <Text style={styles.registerText}>Ainda não tem conta? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+          <Text style={styles.registerLink}>Cadastre-se</Text>
+        </TouchableOpacity>
+      </View>
+
+      <Input
+        label="Nome do Responsável"
+        iconName="account"
+        placeholder="Digite seu nome"
+        value={name}
+        onChangeText={setName}
+        autoCapitalize="words"
+      />
+
+      <Input
+        label="Senha"
+        iconName="lock"
+        placeholder="Digite sua senha"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+
+      <TouchableOpacity onPress={() => navigation.navigate("Inicial")}>
+        <Text style={styles.forgotPassword}>Esqueci minha senha</Text>
+      </TouchableOpacity>
+
+      <Button
+        style={styles.buttonPosition}
+        onPress={() => navigation.navigate("Register")}
+      >
+        <Text style={styles.textButton}>Entrar</Text>
+      </Button>
     </View>
   );
 }
@@ -19,20 +79,47 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: 20,
+    backgroundColor: "#1c0a37",
+    width: width,
+    height: height,
   },
-  text: {
-    fontSize: 24,
-    marginBottom: 20,
-    color: "blue",
+  centerImage: {
+    width: 350,
+    height: 350,
+    resizeMode: "contain",
+    alignSelf: "center",
   },
-  NewAccount: {
-    fontSize: 24,
-    marginBottom: 20,
-    color: "blue",
+  registerContainer: {
+    flexDirection: "row",
+    marginBottom: 25,
+    alignItems: "center",
   },
-  MyAccount: {
-    fontSize: 24,
-    marginBottom: 20,
-    color: "blue",
+  registerText: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  registerLink: {
+    color: "#00c96fff",
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+    fontSize: 16,
+  },
+  forgotPassword: {
+    color: "#9370DB",
+    textDecorationLine: "underline",
+
+    marginTop: 250,
+    textAlign: "center",
+  },
+  buttonPosition: {
+    width: 420,
+    height: 60,
+    marginTop: 20,
+  },
+  textButton: {
+    fontFamily: "Montserrat-Regular",
+    fontSize: 22,
+    color: "#28024E",
   },
 });

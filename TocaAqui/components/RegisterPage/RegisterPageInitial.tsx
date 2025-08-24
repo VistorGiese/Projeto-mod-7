@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   subtitleContainer: {
-    flexDirection: "row", // 🔹 garante que o "Já possui uma conta?" e o "Login" fiquem lado a lado
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 40,
