@@ -1,11 +1,19 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Image, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import Input from "../components/Allcomponents/Input";
 import Button from "../components/Allcomponents/Button";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/Navigate";
 import Fund from "../components/Allcomponents/Fund";
+import ToBack from "../components/LoginPage/ToBack";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -14,22 +22,37 @@ const { width, height } = Dimensions.get("window");
 export default function RegisterLocationName() {
   const navigation = useNavigation<NavigationProp>();
   const [name, setName] = useState("");
+  const [showMessage, setShowMessage] = useState(false);
+
+  const handleSaibaMais = () => {
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), 3000);
+  };
 
   return (
     <View style={styles.container}>
       <Fund />
 
+      <ToBack />
+
       <Image
-      //source={require("../assets/register-image.png")} // Substitua pelo caminho real da sua imagem
-      //style={styles.image}
+        source={require("../assets/images/TelaRegister/CreateAccount.png")}
+        style={styles.image}
       />
 
-      <Text style={styles.title}>Bem-vindo!</Text>
+      <Text style={styles.title}>Nome do Estabelecimento</Text>
 
-      <Text style={styles.subtitle}>Digite seu nome para continuar</Text>
+      <Text style={styles.subtitle}>
+        Insira o nome completo do seu estabelecimento...{" "}
+        <TouchableOpacity onPress={handleSaibaMais}>
+          <Text style={styles.saibaMais}>Saiba mais</Text>
+        </TouchableOpacity>
+      </Text>
+
+      {showMessage && <Text style={styles.tempMessage}>Texto de teste ao clicar em saiba mais</Text>}
 
       <Input
-        label="Nome"
+        label=""
         iconName="account"
         placeholder="Digite seu nome"
         value={name}
@@ -37,10 +60,7 @@ export default function RegisterLocationName() {
         autoCapitalize="words"
       />
 
-      <Button
-        style={styles.button}
-        onPress={() => navigation.navigate("Inicial")}
-      >
+      <Button style={styles.button} onPress={() => navigation.navigate("RegisterLocationAndress")}>
         <Text style={styles.buttonText}>Continuar</Text>
       </Button>
     </View>
@@ -65,21 +85,38 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     color: "#fff",
+    textAlign: "left",
     marginBottom: 10,
+    marginLeft: 15,
+    alignSelf: "flex-start",
+    width: "95%",
   },
   subtitle: {
     fontSize: 16,
     color: "#ccc",
+    marginBottom: 10,
+    textAlign: "left",
+    width: "95%",
+  },
+  saibaMais: {
+    fontSize: 16,
+    color: "#5000c9ff",
+    textDecorationLine: "underline",
+  },
+  tempMessage: {
+    color: "#fff",
+    fontSize: 14,
     marginBottom: 20,
-    textAlign: "center",
+    alignSelf: "flex-start",
+    marginLeft: 15,
   },
   button: {
-    width: "100%",
-    marginTop: 20,
+    width: "95%",
+    marginTop: 350,
     height: 60,
   },
   buttonText: {
-    color: "#fff",
+    color: "#28024E",
     fontSize: 22,
     fontWeight: "bold",
   },

@@ -1,4 +1,11 @@
-import { View, StyleSheet, Image, Dimensions, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  Dimensions,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import React from "react";
 import Logo from "../components/InitialPage/Logo";
 import People from "../components/InitialPage/People";
@@ -32,10 +39,20 @@ export default function Inicial() {
 
       <Button
         style={styles.buttonPosition}
-        onPress={() => navigation.navigate("Login")} //testei por aqui
+        onPress={() => navigation.navigate("Login")}
       >
-        <Text style={styles.textButton}>Começar</Text>
+        <Text style={styles.textButton}>Fazer Login</Text>
       </Button>
+
+      <View style={styles.registerContainer}>
+        <Text style={styles.registerText}>Ainda não tem conta? </Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate("RegisterLocationName")}
+          style={{ backgroundColor: "transparent" }}
+        >
+          <Text style={styles.registerLink}>Cadastre-se</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -73,6 +90,23 @@ const styles = StyleSheet.create({
     width: 320,
     height: 110,
     zIndex: 10,
+  },
+  registerContainer: {
+    flexDirection: "row",
+    marginBottom: 85,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
+  },
+  registerText: {
+    color: "#8c93a5ff",
+    fontSize: 16,
+  },
+  registerLink: {
+    color: "#5000c9ff",
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+    fontSize: 16,
   },
   textButton: {
     fontFamily: "Poppins-Bold",
