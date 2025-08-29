@@ -29,7 +29,6 @@ export default function FormRegisterInitial() {
       <View style={styles.content}>
         <Text style={styles.title}>CRIAR CONTA</Text>
 
-        {/* 🔹 Troquei o trecho do login */}
         <View style={styles.subtitleContainer}>
           <Text style={styles.subtitle}>Já possui uma conta? </Text>
           <TouchableOpacity onPress={handleLoginPress}>
