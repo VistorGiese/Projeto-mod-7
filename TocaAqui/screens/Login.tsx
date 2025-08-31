@@ -21,12 +21,9 @@ export default function Login() {
     <View style={styles.container}>
       <Fund />
 
-
       <ToBack />
 
-
       <Image source={require("../assets/images/TelaLogin/AccessYourAccount.png")} style={styles.centerImage} />
-
 
       <View style={styles.registerContainer}>
         <Text style={styles.registerText}>Não tem conta? </Text>
@@ -34,7 +31,6 @@ export default function Login() {
           Cadastre-se
         </Text>
       </View>
-
 
       <Input
         label="Nome do Responsável"
@@ -45,7 +41,6 @@ export default function Login() {
         autoCapitalize="words"
       />
 
-
       <Input
         label="Senha"
         iconName="lock"
@@ -55,7 +50,6 @@ export default function Login() {
         secureTextEntry
       />
 
-
       <View style={styles.registerContainer}>
 
         <Text style={styles.forgotPassword} onPress={() => navigation.navigate("ForgotPassword")}>
@@ -63,8 +57,7 @@ export default function Login() {
         </Text>
       </View>
 
-
-      <Button style={styles.buttonPosition} onPress={() => navigation.navigate("Inicial")}>
+      <Button style={styles.buttonPosition} onPress={() => navigation.navigate("Initial")}>
         <Text style={styles.textButton}>Entrar</Text>
       </Button>
     </View>

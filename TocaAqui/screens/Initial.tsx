@@ -1,11 +1,4 @@
-import {
-  View,
-  StyleSheet,
-  Image,
-  Dimensions,
-  Text,
-  TouchableOpacity,
-} from "react-native";
+import { View, StyleSheet, Image, Dimensions, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import Logo from "../components/InitialPage/Logo";
 import People from "../components/InitialPage/People";
@@ -18,7 +11,7 @@ const { width } = Dimensions.get("window");
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-export default function Inicial() {
+export default function Initial() {
   const navigation = useNavigation<NavigationProp>();
 
   return (

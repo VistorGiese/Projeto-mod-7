@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  Dimensions,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, View, Text, Image, Dimensions } from "react-native";
 import Input from "../components/Allcomponents/Input";
 import Button from "../components/Allcomponents/Button";
 import { useNavigation } from "@react-navigation/native";
@@ -16,23 +9,18 @@ import Fund from "../components/Allcomponents/Fund";
 import ToBack from "../components/LoginPage/ToBack";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
 const { width, height } = Dimensions.get("window");
 
 export default function RegisterLocationName() {
   const navigation = useNavigation<NavigationProp>();
   const [name, setName] = useState("");
-  const [showMessage, setShowMessage] = useState(false);
+  const [showFullText, setShowFullText] = useState(false);
 
-  const handleSaibaMais = () => {
-    setShowMessage(true);
-    setTimeout(() => setShowMessage(false), 3000);
-  };
+  const handleToggleText = () => setShowFullText((prev) => !prev);
 
   return (
     <View style={styles.container}>
       <Fund />
-
       <ToBack />
 
       <Image
@@ -43,13 +31,17 @@ export default function RegisterLocationName() {
       <Text style={styles.title}>Nome do Estabelecimento</Text>
 
       <Text style={styles.subtitle}>
-        Insira o nome completo do seu estabelecimento...{" "}
-        <TouchableOpacity onPress={handleSaibaMais}>
-          <Text style={styles.saibaMais}>Saiba mais</Text>
-        </TouchableOpacity>
+        {showFullText
+          ? "Insira o nome completo do seu estabelecimento, que será exibido para os usuários."
+          : "Insira o nome completo do seu estabelecimento... "}
+        <Text
+          style={styles.saibaMais}
+          onPress={handleToggleText}
+          accessibilityRole="button"
+        >
+          {showFullText ? "Ver menos" : "Saiba mais"}
+        </Text>
       </Text>
-
-      {showMessage && <Text style={styles.tempMessage}>Texto de teste ao clicar em saiba mais</Text>}
 
       <Input
         label=""
@@ -60,7 +52,10 @@ export default function RegisterLocationName() {
         autoCapitalize="words"
       />
 
-      <Button style={styles.button} onPress={() => navigation.navigate("RegisterLocationAndress")}>
+      <Button
+        style={styles.button}
+        onPress={() => navigation.navigate("RegisterLocationAndress")}
+      >
         <Text style={styles.buttonText}>Continuar</Text>
       </Button>
     </View>
@@ -100,15 +95,8 @@ const styles = StyleSheet.create({
   },
   saibaMais: {
     fontSize: 16,
-    color: "#5000c9ff",
     textDecorationLine: "underline",
-  },
-  tempMessage: {
-    color: "#fff",
-    fontSize: 14,
-    marginBottom: 20,
-    alignSelf: "flex-start",
-    marginLeft: 15,
+    color: "#5000c9ff",
   },
   button: {
     width: "95%",

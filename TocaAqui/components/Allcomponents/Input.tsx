@@ -1,13 +1,5 @@
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  ViewStyle,
-  TextStyle,
-  TextInputProps,
-} from "react-native";
+import { StyleSheet, View, Text, TextInput, ViewStyle, TextStyle, TextInputProps } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface InputProps {
@@ -38,12 +30,14 @@ export default function Input({
     <View style={[styles.container]}>
       <Text style={[styles.label, textStyle]}>{label}</Text>
       <View style={styles.inputContainer}>
+
         <MaterialCommunityIcons
           name={iconName}
           size={20}
           color="#888"
           style={styles.icon}
         />
+
         <TextInput
           style={styles.input}
           placeholder={placeholder}
@@ -54,6 +48,7 @@ export default function Input({
           autoCapitalize={autoCapitalize}
           keyboardType={keyboardType}
         />
+
       </View>
     </View>
   );

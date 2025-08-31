@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-  GestureResponderEvent,
-  ViewStyle,
-  TextStyle,
-} from "react-native";
+import { StyleSheet, TouchableOpacity, Text, GestureResponderEvent, ViewStyle, TextStyle } from "react-native";
 import { useFonts } from "expo-font";
 import { customFonts } from "../../assets/fonts/fonts";
 
