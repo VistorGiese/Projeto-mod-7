@@ -1,3 +1,0 @@
-hooks/
-React hooks personalizados podem encapsular lógica comum (por exemplo, buscar dados, lidar com formulários) de forma reutilizável. Colocá-los em sua própria pasta ajuda a 
-manter a separação de preocupações.

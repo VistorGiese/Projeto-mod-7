@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  Dimensions,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, View, Text, Image, Dimensions, ScrollView } from "react-native";
 import Input from "../components/Allcomponents/Input";
 import Button from "../components/Allcomponents/Button";
 import { useNavigation } from "@react-navigation/native";
@@ -104,7 +97,7 @@ export default function RegisterLocationAndress() {
 
         <Button
           style={styles.button}
-          onPress={() => navigation.navigate("Inicial")}
+          onPress={() => navigation.navigate("Initial")}
         >
           <Text style={styles.buttonText}>Continuar</Text>
         </Button>

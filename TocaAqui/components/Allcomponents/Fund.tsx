@@ -2,7 +2,7 @@ import { Image, StyleSheet, View } from "react-native";
 
 export default function Fund() {
   return (
-    <View style={styles.background}>
+    <View style={styles.background} pointerEvents="none">
       <Image
         source={require("../../assets/images/TelaLogin/gridStarts.png")}
         style={styles.image}
@@ -30,8 +30,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    width: undefined,
-    height: undefined,
     resizeMode: "cover",
     zIndex: 1,
   },
