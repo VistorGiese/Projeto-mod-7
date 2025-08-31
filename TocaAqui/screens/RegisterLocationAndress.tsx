@@ -98,7 +98,7 @@ export default function RegisterLocationAndress() {
 
         <Button
           style={styles.button}
-          onPress={() => navigation.navigate("Initial")}
+          onPress={() => navigation.navigate("InformationPersonResponsible")}
         >
           <Text style={styles.buttonText}>Continuar</Text>
         </Button>
