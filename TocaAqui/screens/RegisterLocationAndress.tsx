@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Image, Dimensions, ScrollView } from "react-native";
+import { StyleSheet, View, Text, ScrollView } from "react-native";
 import Input from "../components/Allcomponents/Input";
 import Button from "../components/Allcomponents/Button";
 import { useNavigation } from "@react-navigation/native";
@@ -9,18 +9,18 @@ import Fund from "../components/Allcomponents/Fund";
 import ToBack from "../components/LoginPage/ToBack";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-const { width, height } = Dimensions.get("window");
 
 export default function RegisterLocationAndress() {
   const navigation = useNavigation<NavigationProp>();
 
-  const [establishmentName, setEstablishmentName] = useState("");
-  const [logradouro, setLogradouro] = useState("");
   const [cep, setCep] = useState("");
   const [estado, setEstado] = useState("");
   const [cidade, setCidade] = useState("");
   const [bairro, setBairro] = useState("");
   const [endereco, setEndereco] = useState("");
+  const [showFullText, setShowFullText] = useState(false);
+
+  const handleToggleText = () => setShowFullText((prev) => !prev);
 
   return (
     <View style={styles.container}>
@@ -31,69 +31,70 @@ export default function RegisterLocationAndress() {
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
       >
-        <Image
-          source={require("../assets/images/TelaRegister/CreateAccount.png")}
-          style={styles.image}
-        />
+        <Text style={styles.title}>ENDEREÇO</Text>
 
-        <Text style={styles.title}>Cadastro de Endereço</Text>
+        <Text style={styles.subtitle}>
+          {showFullText
+            ? "Forneça o endereço completo do estabelecimento. Esse campo é importante para que os clientes encontrem facilmente o seu local."
+            : "Forneça o endereço completo do estabelecimento... "}
+          <Text
+            style={styles.saibaMais}
+            onPress={handleToggleText}
+            accessibilityRole="button"
+          >
+            {showFullText ? " Ver menos" : " Saiba mais"}
+          </Text>
+        </Text>
 
-        <Input
-          label="Nome do Estabelecimento"
-          iconName="store"
-          placeholder="Digite o nome"
-          value={establishmentName}
-          onChangeText={setEstablishmentName}
-        />
+        <View style={styles.inputWrapper}>
+          <Input
+            label="CEP"
+            iconName="map-marker-radius"
+            placeholder="Digite o CEP"
+            value={cep}
+            onChangeText={setCep}
+          />
+        </View>
 
-        <Input
-          label="Logradouro"
-          iconName="map-marker"
-          placeholder="Digite o logradouro"
-          value={logradouro}
-          onChangeText={setLogradouro}
-        />
+        <View style={styles.inputWrapper}>
+          <Input
+            label="Estado"
+            iconName="flag"
+            placeholder="Digite o estado"
+            value={estado}
+            onChangeText={setEstado}
+          />
+        </View>
 
-        <Input
-          label="CEP"
-          iconName="map-marker-radius"
-          placeholder="Digite o CEP"
-          value={cep}
-          onChangeText={setCep}
-          keyboardType="numeric"
-        />
+        <View style={styles.inputWrapper}>
+          <Input
+            label="Cidade"
+            iconName="city"
+            placeholder="Digite a cidade"
+            value={cidade}
+            onChangeText={setCidade}
+          />
+        </View>
 
-        <Input
-          label="Estado"
-          iconName="flag"
-          placeholder="Digite o estado"
-          value={estado}
-          onChangeText={setEstado}
-        />
+        <View style={styles.inputWrapper}>
+          <Input
+            label="Bairro"
+            iconName="home-city-outline"
+            placeholder="Digite o bairro"
+            value={bairro}
+            onChangeText={setBairro}
+          />
+        </View>
 
-        <Input
-          label="Cidade"
-          iconName="city"
-          placeholder="Digite a cidade"
-          value={cidade}
-          onChangeText={setCidade}
-        />
-
-        <Input
-          label="Bairro"
-          iconName="home-city-outline"
-          placeholder="Digite o bairro"
-          value={bairro}
-          onChangeText={setBairro}
-        />
-
-        <Input
-          label="Endereço"
-          iconName="road-variant"
-          placeholder="Digite o endereço completo"
-          value={endereco}
-          onChangeText={setEndereco}
-        />
+        <View style={styles.inputWrapper}>
+          <Input
+            label="Endereço"
+            iconName="road-variant"
+            placeholder="Digite o endereço completo"
+            value={endereco}
+            onChangeText={setEndereco}
+          />
+        </View>
 
         <Button
           style={styles.button}
@@ -115,25 +116,41 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingBottom: 50,
     alignItems: "center",
-  },
-  image: {
-    width: width * 0.6,
-    height: height * 0.25,
-    resizeMode: "contain",
-    marginBottom: 20,
-    marginTop: 20,
+    justifyContent: "flex-start",
   },
   title: {
-    fontSize: 28,
-    fontWeight: "bold",
+    fontSize: 35,
+    fontFamily: "AkiraExpanded-Superbold",
     color: "#fff",
     alignSelf: "flex-start",
-    marginBottom: 20,
+    marginBottom: 30,
+    marginTop: 200,
+    marginLeft: 15,
+  },
+  subtitle: {
+    fontSize: 23,
+    color: "#ccc",
+    marginBottom: 25,
+    textAlign: "left",
+    width: "98%",
+    marginLeft: 25,
+  },
+  saibaMais: {
+    fontSize: 16,
+    textDecorationLine: "underline",
+    color: "#5000c9ff",
+  },
+  inputWrapper: {
+    width: "100%",
+    marginBottom: 25,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
   },
   button: {
-    width: "100%",
+    width: "95%",
     height: 60,
-    marginTop: 20,
+    marginTop: 120,
   },
   buttonText: {
     color: "#28024E",

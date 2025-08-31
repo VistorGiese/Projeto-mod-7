@@ -61,7 +61,8 @@ const styles = StyleSheet.create({
   },
   label: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 20,
+    fontFamily: "AkiraExpanded-Semibold",
     marginBottom: 5,
   },
   inputContainer: {
