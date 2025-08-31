@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  Image,
-  Dimensions,
-} from "react-native";
+import { StyleSheet, View, Text, Image, Dimensions } from "react-native";
 import ToBack from "../components/LoginPage/ToBack";
 import Fund from "../components/Allcomponents/Fund";
 import Input from "../components/Allcomponents/Input";
@@ -30,19 +23,13 @@ export default function Login() {
 
       <ToBack />
 
-      <Image
-        source={require("../assets/images/TelaLogin/AccessYourAccount.png")}
-        style={styles.centerImage}
-      />
+      <Image source={require("../assets/images/TelaLogin/AccessYourAccount.png")} style={styles.centerImage} />
 
       <View style={styles.registerContainer}>
-        <Text style={styles.registerText}>Ainda não tem conta? </Text>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("RegisterLocationName")}
-          style={{ backgroundColor: "transparent" }}
-        >
-          <Text style={styles.registerLink}>Cadastre-se</Text>
-        </TouchableOpacity>
+        <Text style={styles.registerText}>Não tem conta? </Text>
+        <Text style={styles.registerLink} onPress={() => navigation.navigate("RegisterLocationName")}>
+          Cadastre-se
+        </Text>
       </View>
 
       <Input
@@ -63,14 +50,14 @@ export default function Login() {
         secureTextEntry
       />
 
-      <TouchableOpacity onPress={() => navigation.navigate("Inicial")}>
-        <Text style={styles.forgotPassword}>Esqueci minha senha</Text>
-      </TouchableOpacity>
+      <View style={styles.registerContainer}>
 
-      <Button
-        style={styles.buttonPosition}
-        onPress={() => navigation.navigate("Inicial")}
-      >
+        <Text style={styles.forgotPassword} onPress={() => navigation.navigate("ForgotPassword")}>
+          Esqueci minha senha
+        </Text>
+      </View>
+
+      <Button style={styles.buttonPosition} onPress={() => navigation.navigate("Initial")}>
         <Text style={styles.textButton}>Entrar</Text>
       </Button>
     </View>
@@ -110,16 +97,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   forgotPassword: {
-    color: "#9370DB",
-    textDecorationLine: "underline",
-
+    color: "#ffffffff",
     marginTop: 250,
-    textAlign: "center",
+    fontSize: 16,
   },
   buttonPosition: {
     width: 420,
     height: 60,
-    marginTop: 20,
   },
   textButton: {
     fontFamily: "Montserrat-Regular",

@@ -6,30 +6,45 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/Navigate";
 import Fund from "../components/Allcomponents/Fund";
+import ToBack from "../components/LoginPage/ToBack";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
-
 const { width, height } = Dimensions.get("window");
 
 export default function RegisterLocationName() {
   const navigation = useNavigation<NavigationProp>();
   const [name, setName] = useState("");
+  const [showFullText, setShowFullText] = useState(false);
+
+  const handleToggleText = () => setShowFullText((prev) => !prev);
 
   return (
     <View style={styles.container}>
       <Fund />
+      <ToBack />
 
       <Image
-      //source={require("../assets/register-image.png")} // Substitua pelo caminho real da sua imagem
-      //style={styles.image}
+        source={require("../assets/images/TelaRegister/CreateAccount.png")}
+        style={styles.image}
       />
 
-      <Text style={styles.title}>Bem-vindo!</Text>
+      <Text style={styles.title}>Nome do Estabelecimento</Text>
 
-      <Text style={styles.subtitle}>Digite seu nome para continuar</Text>
+      <Text style={styles.subtitle}>
+        {showFullText
+          ? "Insira o nome completo do seu estabelecimento, que será exibido para os usuários."
+          : "Insira o nome completo do seu estabelecimento... "}
+        <Text
+          style={styles.saibaMais}
+          onPress={handleToggleText}
+          accessibilityRole="button"
+        >
+          {showFullText ? "Ver menos" : "Saiba mais"}
+        </Text>
+      </Text>
 
       <Input
-        label="Nome"
+        label=""
         iconName="account"
         placeholder="Digite seu nome"
         value={name}
@@ -39,7 +54,7 @@ export default function RegisterLocationName() {
 
       <Button
         style={styles.button}
-        onPress={() => navigation.navigate("Inicial")}
+        onPress={() => navigation.navigate("RegisterLocationAndress")}
       >
         <Text style={styles.buttonText}>Continuar</Text>
       </Button>
@@ -65,21 +80,31 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     color: "#fff",
+    textAlign: "left",
     marginBottom: 10,
+    marginLeft: 15,
+    alignSelf: "flex-start",
+    width: "95%",
   },
   subtitle: {
     fontSize: 16,
     color: "#ccc",
-    marginBottom: 20,
-    textAlign: "center",
+    marginBottom: 10,
+    textAlign: "left",
+    width: "95%",
+  },
+  saibaMais: {
+    fontSize: 16,
+    textDecorationLine: "underline",
+    color: "#5000c9ff",
   },
   button: {
-    width: "100%",
-    marginTop: 20,
+    width: "95%",
+    marginTop: 350,
     height: 60,
   },
   buttonText: {
-    color: "#fff",
+    color: "#28024E",
     fontSize: 22,
     fontWeight: "bold",
   },

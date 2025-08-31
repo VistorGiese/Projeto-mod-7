@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { RootStackParamList } from "../../navigation/Navigate";
@@ -21,7 +14,7 @@ export default function FormRegisterInitial() {
 
   const handleContinuePress = () => {
     console.log("Nome do Estabelecimento:", establishmentName);
-    navigation.navigate("Inicial"); // depois você troca para RegisterPartTwo
+    navigation.navigate("Inicial");
   };
 
   return (
@@ -29,7 +22,6 @@ export default function FormRegisterInitial() {
       <View style={styles.content}>
         <Text style={styles.title}>CRIAR CONTA</Text>
 
-        {/* 🔹 Troquei o trecho do login */}
         <View style={styles.subtitleContainer}>
           <Text style={styles.subtitle}>Já possui uma conta? </Text>
           <TouchableOpacity onPress={handleLoginPress}>
