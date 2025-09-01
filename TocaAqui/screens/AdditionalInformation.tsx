@@ -1,6 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import Button from "../components/Allcomponents/Button";
+import Input from "../components/Allcomponents/Input";
+import ToBack from "../components/Allcomponents/ToBack";
+import Fund from "../components/Allcomponents/Fund";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/Navigate";
@@ -10,29 +13,60 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function AdditionalInformation() {
     const navigation = useNavigation<NavigationProp>();
 
+    const [genre, setGenre] = useState("");
+    const [schedule, setSchedule] = useState("");
+    const [showFullText, setShowFullText] = useState(false);
+
+    const handleToggleText = () => setShowFullText((prev) => !prev);
+
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Informações adicionais</Text>
+            <Fund />
+            <ToBack />
 
-            <Text style={styles.subtitle}>
-                Aqui você pode adicionar informações adicionais sobre a pessoa responsável e sobre seu gosto.
-            </Text>
+            <View style={styles.content}>
+                <Text style={styles.title}>QUASE LÁ...</Text>
 
-            <View style={styles.buttonsContainer}>
-                <Button
-                    style={styles.button}
-                    onPress={() => navigation.navigate("InformationPersonResponsible")}
-                >
-                    <Text style={styles.buttonText}>Voltar</Text>
-                </Button>
+                <Text style={styles.subtitle}>
+                    {showFullText
+                        ? "Defina as preferências do seu estabelecimento. Essas informações ajudam as bandas a entender melhor o seu estilo e personalizar a apresentação de acordo com o que você e seus clientes preferem."
+                        : "Defina as preferências do seu estabelecimento... "}
+                    <Text
+                        style={styles.saibaMais}
+                        onPress={handleToggleText}
+                        accessibilityRole="button"
+                    >
+                        {showFullText ? " Saiba menos" : " Saiba mais"}
+                    </Text>
+                </Text>
 
-                <Button
-                    style={styles.button}
-                    onPress={() => navigation.navigate("Initial")}
-                >
-                    <Text style={styles.buttonText}>Próximo</Text>
-                </Button>
+                <View style={styles.inputWrapper}>
+                    <Input
+                        label="Gêneros Musicais"
+                        iconName="music"
+                        placeholder="Ex: Rock, Sertanejo, MPB"
+                        value={genre}
+                        onChangeText={setGenre}
+                    />
+                </View>
+
+                <View style={styles.inputWrapper}>
+                    <Input
+                        label="Horário de Atendimento"
+                        iconName="clock"
+                        placeholder="Ex: 18h às 23h"
+                        value={schedule}
+                        onChangeText={setSchedule}
+                    />
+                </View>
             </View>
+
+            <Button
+                style={styles.button}
+                onPress={() => navigation.navigate("HomePage")}
+            >
+                <Text style={styles.buttonText}>Cadastrar</Text>
+            </Button>
         </View>
     );
 }
@@ -45,33 +79,49 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingHorizontal: 20,
     },
+    content: {
+        flex: 1,
+        width: "100%",
+        marginTop: 200,
+        paddingHorizontal: 15,
+        alignItems: "flex-start",
+        marginLeft: 15,
+    },
     title: {
-        fontSize: 28,
-        fontWeight: "bold",
+        fontSize: 35,
+        fontFamily: "AkiraExpanded-Superbold",
         color: "#fff",
         marginBottom: 20,
-        textAlign: "center",
+        textAlign: "left",
+        alignSelf: "flex-start",
     },
     subtitle: {
-        fontSize: 18,
+        fontSize: 23,
         color: "#ccc",
-        marginBottom: 40,
-        textAlign: "center",
+        marginBottom: 25,
+        textAlign: "left",
+        width: "98%",
     },
-    buttonsContainer: {
+    saibaMais: {
+        fontSize: 16,
+        textDecorationLine: "underline",
+        color: "#5000c9ff",
+    },
+    inputWrapper: {
         width: "100%",
-        flexDirection: "row",
-        justifyContent: "space-between",
+        marginBottom: 20,
     },
     button: {
-        width: "45%",
-        height: 50,
+        width: "95%",
+        height: 60,
         justifyContent: "center",
         alignItems: "center",
+        position: "absolute",
+        marginTop: 900,
     },
     buttonText: {
         color: "#28024E",
-        fontSize: 18,
+        fontSize: 22,
         fontWeight: "bold",
     },
 });
