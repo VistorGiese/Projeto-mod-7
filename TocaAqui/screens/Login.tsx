@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, Image, Dimensions } from "react-native";
-import ToBack from "../components/LoginPage/ToBack";
+import ToBack from "../components/Allcomponents/ToBack";
 import Fund from "../components/Allcomponents/Fund";
 import Input from "../components/Allcomponents/Input";
 import Button from "../components/Allcomponents/Button";

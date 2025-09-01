@@ -12,7 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/Navigate";
 import Fund from "../components/Allcomponents/Fund";
-import ToBack from "../components/LoginPage/ToBack";
+import ToBack from "../components/Allcomponents/ToBack";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 

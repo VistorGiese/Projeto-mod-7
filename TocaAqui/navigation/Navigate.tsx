@@ -7,6 +7,7 @@ import RegisterLocationAndress from "../screens/RegisterLocationAndress";
 import ForgotPassword from "../screens/ForgotPassword";
 import InformationPersonResponsible from "../screens/InformationPersonResponsible";
 import AdditionalInformation from "../screens/AdditionalInformation";
+import HomePage from "../screens/HomePage";
 
 
 export type RootStackParamList = {
@@ -17,6 +18,7 @@ export type RootStackParamList = {
   ForgotPassword: undefined;
   InformationPersonResponsible: undefined;
   AdditionalInformation: undefined;
+  HomePage: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -28,13 +30,17 @@ export default function Navigate() {
       screenOptions={{ headerShown: false }}
     >
 
-      {/* Telas principais do app */}
+      {/* Telas principais do app Antes do Login */}
       <Stack.Screen name="Initial" component={Initial} />
       <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="RegisterLocationName" component={RegisterLocationName} />
       <Stack.Screen name="RegisterLocationAndress" component={RegisterLocationAndress} />
       <Stack.Screen name="InformationPersonResponsible" component={InformationPersonResponsible} />
       <Stack.Screen name="AdditionalInformation" component={AdditionalInformation} />
+
+      {/* Telas principais do app Após o Login */}
+      <Stack.Screen name="HomePage" component={HomePage} />
+
 
       {/* Telas secundárias do app */}
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
