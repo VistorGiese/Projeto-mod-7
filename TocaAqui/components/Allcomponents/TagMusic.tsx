@@ -39,10 +39,9 @@ export default function TagMusic({ genre }: TagMusicProps) {
 const styles = StyleSheet.create({
   content: {
     fontSize: 14,
-    paddingVertical: 4,
-    paddingHorizontal: 10,
+    paddingVertical: "1%",
+    paddingHorizontal: "3%",
     borderRadius: 50,
     color: "#0A0212",
-    marginVertical: 14,
   },
 });
