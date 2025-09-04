@@ -1,5 +1,13 @@
 import React from "react";
-import { StyleSheet, View, Text, TextInput, ViewStyle, TextStyle, TextInputProps } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TextInput,
+  ViewStyle,
+  TextStyle,
+  TextInputProps,
+} from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 interface InputProps {
@@ -12,7 +20,7 @@ interface InputProps {
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
   keyboardType?: TextInputProps["keyboardType"];
   style?: ViewStyle;
-  textStyle?: TextStyle;
+  labelStyle?: TextStyle; // <-- agora o label tem estilo próprio
 }
 
 export default function Input({
@@ -24,13 +32,13 @@ export default function Input({
   secureTextEntry = false,
   autoCapitalize = "none",
   keyboardType = "default",
-  textStyle,
+  labelStyle,
 }: InputProps) {
   return (
     <View style={[styles.container]}>
-      <Text style={[styles.label, textStyle]}>{label}</Text>
-      <View style={styles.inputContainer}>
+      <Text style={[styles.label, labelStyle]}>{label}</Text>
 
+      <View style={styles.inputContainer}>
         <MaterialCommunityIcons
           name={iconName}
           size={20}
@@ -48,7 +56,6 @@ export default function Input({
           autoCapitalize={autoCapitalize}
           keyboardType={keyboardType}
         />
-
       </View>
     </View>
   );
@@ -61,14 +68,14 @@ const styles = StyleSheet.create({
   },
   label: {
     color: "#fff",
-    fontSize: 20,
-    fontFamily: "AkiraExpanded-Semibold",
+    fontSize: 16,
+    fontFamily: "Montserrat-Regular",
     marginBottom: 5,
   },
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#4B0082",
+    backgroundColor: "#48216B",
     borderRadius: 10,
     paddingHorizontal: 15,
   },
@@ -79,6 +86,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 50,
     color: "#fff",
+    fontFamily: "Montserrat-Regular",
     fontSize: 16,
   },
 });

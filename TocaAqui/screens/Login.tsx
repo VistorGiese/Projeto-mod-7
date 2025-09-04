@@ -26,7 +26,7 @@ export default function Login() {
       <Image source={require("../assets/images/TelaLogin/AccessYourAccount.png")} style={styles.centerImage} />
 
       <View style={styles.registerContainer}>
-        <Text style={styles.registerText}>Não tem conta? </Text>
+        <Text style={styles.registerText}>Não tem uma conta? </Text>
         <Text style={styles.registerLink} onPress={() => navigation.navigate("RegisterLocationName")}>
           Cadastre-se
         </Text>
@@ -39,7 +39,11 @@ export default function Login() {
         value={name}
         onChangeText={setName}
         autoCapitalize="words"
+        labelStyle={{
+          fontFamily: "Montserrat-Regular",
+        }}
       />
+
 
       <Input
         label="Senha"
@@ -48,16 +52,18 @@ export default function Login() {
         value={password}
         onChangeText={setPassword}
         secureTextEntry
+        labelStyle={{
+          fontFamily: "Montserrat-Regular",
+        }}
       />
 
       <View style={styles.registerContainer}>
-
         <Text style={styles.forgotPassword} onPress={() => navigation.navigate("ForgotPassword")}>
           Esqueci minha senha
         </Text>
       </View>
 
-      <Button style={styles.buttonPosition} onPress={() => navigation.navigate("Initial")}>
+      <Button style={styles.buttonPosition} onPress={() => navigation.navigate("HomePage")}>
         <Text style={styles.textButton}>Entrar</Text>
       </Button>
     </View>
@@ -89,10 +95,11 @@ const styles = StyleSheet.create({
   registerText: {
     color: "#fff",
     fontSize: 16,
+    fontFamily: "Montserrat-Regular",
   },
   registerLink: {
     color: "#00c96fff",
-    fontWeight: "bold",
+    fontFamily: "Montserrat-Regular",
     textDecorationLine: "underline",
     fontSize: 16,
   },
@@ -100,6 +107,8 @@ const styles = StyleSheet.create({
     color: "#ffffffff",
     marginTop: 250,
     fontSize: 16,
+    textDecorationLine: "underline",
+    fontFamily: "Montserrat",
   },
   buttonPosition: {
     width: 420,

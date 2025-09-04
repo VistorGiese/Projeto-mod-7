@@ -37,12 +37,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#7381A8",
-    height: 60,
-    width: 250,
     borderRadius: 15,
   },
   text: {
-    color: "#130025",
+    color: "#28024E",
     fontSize: 24,
     fontFamily: "Poppins-ExtraBold",
   },

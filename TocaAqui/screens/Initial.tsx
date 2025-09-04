@@ -37,7 +37,7 @@ export default function Initial() {
         <Text style={styles.textButton}>Fazer Login</Text>
       </Button>
 
-      <View style={styles.registerContainer}>
+      <View style={styles.registerContainer}>/
         <Text style={styles.registerText}>Ainda não tem conta? </Text>
         <TouchableOpacity
           onPress={() => navigation.navigate("RegisterLocationName")}
@@ -56,8 +56,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#130025",
   },
   logoWrapper: {
-    marginTop: 120,
-    marginLeft: 70,
+    marginLeft: "10%",
     position: "absolute",
     top: 0,
     left: 0,
@@ -79,9 +78,10 @@ const styles = StyleSheet.create({
   },
   buttonPosition: {
     position: "absolute",
-    bottom: 120,
-    width: 320,
-    height: 110,
+    bottom: "10%",
+    width: "55%",
+    height: "9.5%",
+    alignSelf: "center",
     zIndex: 10,
   },
   registerContainer: {
@@ -94,9 +94,10 @@ const styles = StyleSheet.create({
   registerText: {
     color: "#8c93a5ff",
     fontSize: 16,
+    fontFamily: "Montserrat-Regular",
   },
   registerLink: {
-    color: "#5000c9ff",
+    color: "#48216B",
     fontWeight: "bold",
     textDecorationLine: "underline",
     fontSize: 16,
