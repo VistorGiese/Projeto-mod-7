@@ -2,6 +2,7 @@ import { View, Image, Text, StyleSheet, TouchableOpacity } from "react-native";
 import TagMusic from "./TagMusic";
 import ArtistType from "./ArtistType";
 import Stars from "./Stars";
+import { colors } from "@/utils/colors";
 
 export default function CardArtist() {
   return (
@@ -60,11 +61,11 @@ const styles = StyleSheet.create({
     paddingVertical: "5%",
     borderWidth: 1.5,
     borderRadius: 12,
-    borderColor: "#7381A8",
-    color: "#7381A8",
+    borderColor: colors.neutral,
+    color: colors.neutral,
   },
   buttonText: {
-    color: "#7381A8",
+    color: colors.neutral,
     textAlign: "center",
     fontFamily: "Montserrat",
     fontWeight: "semibold",

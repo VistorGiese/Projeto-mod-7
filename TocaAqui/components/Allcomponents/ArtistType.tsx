@@ -1,5 +1,6 @@
 import { Text, View, StyleSheet } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { colors } from "@/utils/colors";
 
 interface ArtistTypeProps {
   type: string;
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   text: {
-    color: "#7381A8",
+    color: colors.neutral,
     fontSize: 14,
     fontWeight: "500",
   },
