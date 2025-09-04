@@ -1,3 +1,4 @@
+import { colors } from "@/utils/colors";
 import { Text, StyleSheet } from "react-native";
 
 interface TagMusicProps {
@@ -42,6 +43,6 @@ const styles = StyleSheet.create({
     paddingVertical: "1%",
     paddingHorizontal: "3%",
     borderRadius: 50,
-    color: "#0A0212",
+    color: colors.purpleBlack,
   },
 });

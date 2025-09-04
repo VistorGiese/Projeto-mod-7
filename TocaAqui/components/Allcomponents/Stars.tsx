@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { colors } from "@/utils/colors";
 
 interface StarNumberProps {
   starNumber: number;
@@ -8,8 +9,8 @@ interface StarNumberProps {
 export default function Stars({ starNumber }: StarNumberProps) {
   return (
     <View style={styles.container}>
-      <Text style={{ color: "#7381A8" }}>{starNumber}</Text>
-      <FontAwesome name="star" size={16} color="#7381A8" />
+      <Text style={{ color: colors.neutral }}>{starNumber}</Text>
+      <FontAwesome name="star" size={16} color={colors.neutral} />
     </View>
   );
 }

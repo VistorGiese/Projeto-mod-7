@@ -7,6 +7,7 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/Navigate";
 import Fund from "../components/Allcomponents/Fund";
 import ToBack from "../components/Allcomponents/ToBack";
+import { colors } from "@/utils/colors";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const { width, height } = Dimensions.get("window");
@@ -104,7 +105,7 @@ const styles = StyleSheet.create({
     height: 60,
   },
   buttonText: {
-    color: "#28024E",
+    color: colors.purpleDark,
     fontSize: 22,
     fontWeight: "bold",
   },

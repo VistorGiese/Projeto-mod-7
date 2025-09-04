@@ -7,6 +7,7 @@ import Button from "../components/Allcomponents/Button";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/Navigate";
+import { colors } from "@/utils/colors";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -23,11 +24,17 @@ export default function Login() {
 
       <ToBack />
 
-      <Image source={require("../assets/images/TelaLogin/AccessYourAccount.png")} style={styles.centerImage} />
+      <Image
+        source={require("../assets/images/TelaLogin/AccessYourAccount.png")}
+        style={styles.centerImage}
+      />
 
       <View style={styles.registerContainer}>
         <Text style={styles.registerText}>Não tem uma conta? </Text>
-        <Text style={styles.registerLink} onPress={() => navigation.navigate("RegisterLocationName")}>
+        <Text
+          style={styles.registerLink}
+          onPress={() => navigation.navigate("RegisterLocationName")}
+        >
           Cadastre-se
         </Text>
       </View>
@@ -44,7 +51,6 @@ export default function Login() {
         }}
       />
 
-
       <Input
         label="Senha"
         iconName="lock"
@@ -58,12 +64,18 @@ export default function Login() {
       />
 
       <View style={styles.registerContainer}>
-        <Text style={styles.forgotPassword} onPress={() => navigation.navigate("ForgotPassword")}>
+        <Text
+          style={styles.forgotPassword}
+          onPress={() => navigation.navigate("ForgotPassword")}
+        >
           Esqueci minha senha
         </Text>
       </View>
 
-      <Button style={styles.buttonPosition} onPress={() => navigation.navigate("HomePage")}>
+      <Button
+        style={styles.buttonPosition}
+        onPress={() => navigation.navigate("HomePage")}
+      >
         <Text style={styles.textButton}>Entrar</Text>
       </Button>
     </View>
@@ -117,6 +129,6 @@ const styles = StyleSheet.create({
   textButton: {
     fontFamily: "Montserrat-Regular",
     fontSize: 22,
-    color: "#28024E",
+    color: colors.purpleDark,
   },
 });

@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View, Image } from "react-native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { colors } from "@/utils/colors";
 
 interface Artist {
   name: string;
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     borderWidth: 1,
-    borderColor: "#28024E",
+    borderColor: colors.purpleDark,
     borderRadius: 12,
     padding: "4%",
     display: "flex",
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
   },
   artistTime: {
     fontFamily: "Montserrat-Regular",
-    color: "#7381A8",
+    color: colors.neutral,
     fontSize: 14,
   },
 });

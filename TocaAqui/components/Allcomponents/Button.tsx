@@ -1,7 +1,16 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity, Text, GestureResponderEvent, ViewStyle, TextStyle } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  GestureResponderEvent,
+  ViewStyle,
+  TextStyle,
+} from "react-native";
 import { useFonts } from "expo-font";
 import { customFonts } from "../../assets/fonts/fonts";
+import { colors } from "@/utils/colors";
+import { Colors } from "react-native/Libraries/NewAppScreen";
 
 interface ButtonProps {
   onPress: (event: GestureResponderEvent) => void;
@@ -36,11 +45,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#7381A8",
+    backgroundColor: colors.neutral,
     borderRadius: 15,
   },
   text: {
-    color: "#28024E",
+    color: Colors.purpleDark,
     fontSize: 24,
     fontFamily: "Poppins-ExtraBold",
   },
