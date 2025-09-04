@@ -35,8 +35,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   maskedView: {
-    height: 180,
-    width: 350,
+    height: "100%",
+    width: "100%",
   },
   maskContainer: {
     flex: 1,
@@ -51,6 +51,5 @@ const styles = StyleSheet.create({
   image: {
     flex: 1,
     width: 350,
-    height: 180,
   },
 });

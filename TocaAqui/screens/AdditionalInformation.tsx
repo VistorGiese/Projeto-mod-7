@@ -63,7 +63,7 @@ export default function AdditionalInformation() {
 
             <Button
                 style={styles.button}
-                onPress={() => navigation.navigate("HomePage")}
+                onPress={() => navigation.navigate("Login")}
             >
                 <Text style={styles.buttonText}>Cadastrar</Text>
             </Button>

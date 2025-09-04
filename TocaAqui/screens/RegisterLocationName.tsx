@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   title: {
-    fontSize: 28,
+    fontSize: 25,
     fontWeight: "bold",
     color: "#fff",
     textAlign: "left",
@@ -87,9 +87,9 @@ const styles = StyleSheet.create({
     width: "95%",
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 18,
     color: "#ccc",
-    marginBottom: 10,
+    marginBottom: 25,
     textAlign: "left",
     width: "95%",
   },
