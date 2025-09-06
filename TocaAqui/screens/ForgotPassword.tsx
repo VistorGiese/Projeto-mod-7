@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-    StyleSheet,
-    View,
-    Text,
-    Image,
-    Dimensions,
-} from "react-native";
+import { StyleSheet, View, Text, Image, Dimensions } from "react-native";
 import Input from "../components/Allcomponents/Input";
 import Button from "../components/Allcomponents/Button";
 import { useNavigation } from "@react-navigation/native";

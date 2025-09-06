@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#130025",
   },
   logoWrapper: {
-    marginLeft: "10%",
+    marginLeft: 15,
     position: "absolute",
     top: 0,
     left: 0,

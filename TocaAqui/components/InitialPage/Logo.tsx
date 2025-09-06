@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
   maskedView: {
     height: "100%",
     width: "100%",
+    marginLeft: "12%",
   },
   maskContainer: {
     flex: 1,
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
   },
   maskText: {
-    fontSize: 80,
+    fontSize: 60,
     fontFamily: "AkiraExpanded-Superbold",
     color: "black",
   },

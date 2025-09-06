@@ -7,36 +7,21 @@ import { RootStackParamList } from "../navigation/Navigate";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-export default function HomePage() {
+export default function InfoEvent() {
     const navigation = useNavigation<NavigationProp>();
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Bem vindo(a)!</Text>
+            <Text style={styles.title}>Informações do Evento</Text>
 
             <View style={styles.buttonsContainer}>
                 <Button
                     style={styles.button}
-                    onPress={() => navigation.navigate("RegisterLocationAndress")}
+                    onPress={() => navigation.navigate("ArtistProfile")}
                 >
-                    <Text style={styles.buttonText}>Voltar</Text>
-                </Button>
-
-                <Button
-                    style={styles.button}
-                    onPress={() => navigation.navigate("RegisterLocationName")}
-                >
-                    <Text style={styles.buttonText}>Próximo</Text>
-                </Button>
-
-                <Button
-                    style={styles.button}
-                    onPress={() => navigation.navigate("Schedulling")}
-                >
-                    <Text style={styles.buttonText}>Agendamento</Text>
+                    <Text style={styles.buttonText}>Perfil do Cantor</Text>
                 </Button>
             </View>
-            <Text style={styles.TextExemplo}>Fazer aqui barra de tarefas</Text>
         </View>
     );
 }
