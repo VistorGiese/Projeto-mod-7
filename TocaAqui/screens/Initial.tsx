@@ -7,8 +7,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import React from "react";
-import Logo from "../components/InitialPage/Logo";
-import People from "../components/InitialPage/People";
+import FundInitialPage from "../components/Allcomponents/FundInitialPage";
 import Button from "../components/Allcomponents/Button";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -24,12 +23,9 @@ export default function Initial() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.logoWrapper}>
-        <Logo />
-      </View>
 
-      <View style={styles.peopleWrapper}>
-        <People />
+      <View style={styles.Fund}>
+        <FundInitialPage />
       </View>
 
       <Image
@@ -63,18 +59,11 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#130025",
   },
-  logoWrapper: {
-    marginLeft: 15,
-    position: "absolute",
-    top: 0,
-    left: 0,
-    zIndex: 10,
-  },
-  peopleWrapper: {
+  Fund: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginHorizontal: 30,
+    marginHorizontal: 5,
     zIndex: 1,
   },
   shadowImage: {
