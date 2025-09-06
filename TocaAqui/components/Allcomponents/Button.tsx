@@ -18,7 +18,6 @@ interface ButtonProps {
   textStyle?: TextStyle;
   children?: React.ReactNode;
 }
-
 export default function Button({
   onPress,
   style,
