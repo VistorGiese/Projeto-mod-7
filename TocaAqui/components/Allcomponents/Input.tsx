@@ -9,6 +9,7 @@ import {
   TextInputProps,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { colors } from "@/utils/colors";
 
 interface InputProps {
   label: string;
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#48216B",
+    backgroundColor: colors.purple,
     borderRadius: 10,
     paddingHorizontal: 15,
   },
