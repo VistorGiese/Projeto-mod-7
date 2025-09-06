@@ -25,7 +25,7 @@ export default function Login() {
       <ToBack />
 
       <Image
-        source={require("../assets/images/TelaLogin/AccessYourAccount.png")}
+        source={require("../assets/images/Login/AccessYourAccount.png")}
         style={styles.centerImage}
       />
 

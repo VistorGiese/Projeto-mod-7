@@ -24,7 +24,7 @@ export default function ForgotPassword() {
       <ToBack />
 
       <Image
-        source={require("../assets/images/TelaLogin/AccessYourAccount.png")}
+        source={require("../assets/images/Login/AccessYourAccount.png")}
         style={styles.image}
       />
 

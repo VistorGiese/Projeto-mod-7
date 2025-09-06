@@ -20,7 +20,7 @@ export default function Logo() {
         }
       >
         <Image
-          source={require("../../assets/images/TelaInicial/BackgroundText.png")}
+          source={require("../../assets/images/Initial/BackgroundText.png")}
           style={styles.image}
           resizeMode="cover"
         />

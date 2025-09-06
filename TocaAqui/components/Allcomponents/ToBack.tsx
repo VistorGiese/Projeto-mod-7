@@ -14,7 +14,7 @@ export default function BackButton() {
   return (
     <TouchableOpacity style={styles.container} onPress={handleGoBack}>
       <Image
-        source={require("../../assets/images/TelaLogin/Arrow.png")}
+        source={require("../../assets/images/Login/Arrow.png")}
         style={styles.icon}
         resizeMode="contain"
       />

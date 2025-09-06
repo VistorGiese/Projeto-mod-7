@@ -33,7 +33,7 @@ export default function Initial() {
       </View>
 
       <Image
-        source={require("../assets/images/TelaInicial/ShadowPurple.png")}
+        source={require("../assets/images/Initial/ShadowPurple.png")}
         style={styles.shadowImage}
         resizeMode="contain"
       />

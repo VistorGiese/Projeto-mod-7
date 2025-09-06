@@ -4,7 +4,6 @@ import Button from "../components/Allcomponents/Button";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/Navigate";
-import { colors } from "@/utils/colors";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -22,77 +21,21 @@ export default function HomePage() {
         >
           <Text style={styles.buttonText}>Voltar</Text>
         </Button>
-                <Button
-                    style={styles.button}
-                    onPress={() => navigation.navigate("RegisterLocationName")}
-                >
-                    <Text style={styles.buttonText}>Próximo</Text>
-                </Button>
-
-                <Button
-                    style={styles.button}
-                    onPress={() => navigation.navigate("Schedulling")}
-                >
-                    <Text style={styles.buttonText}>Agendamento</Text>
-                </Button>
-            </View>
-            <Text style={styles.TextExemplo}>Fazer aqui barra de tarefas</Text>
-        </View>
-    );
-}
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: "#1c0a37",
-        justifyContent: "center",
-        alignItems: "center",
-        paddingHorizontal: 20,
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: "bold",
-        color: "#fff",
-        marginBottom: 20,
-        textAlign: "center",
-    },
-    subtitle: {
-        fontSize: 18,
-        color: "#ccc",
-        marginBottom: 40,
-        textAlign: "center",
-    },
-    buttonsContainer: {
-        width: "100%",
-        flexDirection: "row",
-        justifyContent: "center",
-        flexWrap: "wrap",
-        gap: 20,
-    },
-    button: {
-        width: "45%",
-        height: 50,
-        justifyContent: "center",
-        alignItems: "center",
-    },
-    buttonText: {
-        color: "#28024E",
-        fontSize: 18,
-        fontWeight: "bold",
-    },
-    TextExemplo: {
-        color: "#fff",
-        fontSize: 16,
-        marginTop: 20,
-        boxShadow: "0px 4px 6px rgba(242, 18, 18, 1)"
-    },
         <Button
           style={styles.button}
           onPress={() => navigation.navigate("RegisterLocationName")}
         >
           <Text style={styles.buttonText}>Próximo</Text>
         </Button>
+
+        <Button
+          style={styles.button}
+          onPress={() => navigation.navigate("Schedulling")}
+        >
+          <Text style={styles.buttonText}>Agendamento</Text>
+        </Button>
       </View>
+      <Text style={styles.TextExemplo}>Fazer aqui barra de tarefas</Text>
     </View>
   );
 }
@@ -121,7 +64,9 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     width: "100%",
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    flexWrap: "wrap",
+    gap: 20,
   },
   button: {
     width: "45%",
@@ -130,8 +75,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
-    color: colors.purpleDark,
+    color: "#28024E",
     fontSize: 18,
     fontWeight: "bold",
+  },
+  TextExemplo: {
+    color: "#fff",
+    fontSize: 16,
+    marginTop: 20,
+    boxShadow: "0px 4px 6px rgba(242, 18, 18, 1)"
   },
 });

@@ -25,7 +25,7 @@ export default function RegisterLocationName() {
       <ToBack />
 
       <Image
-        source={require("../assets/images/TelaRegister/CreateAccount.png")}
+        source={require("../assets/images/Register/CreateAccount.png")}
         style={styles.image}
       />
 

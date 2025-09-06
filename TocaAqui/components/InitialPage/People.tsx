@@ -8,7 +8,7 @@ export default function People() {
     <View style={styles.container}>
       <Image
         style={styles.image}
-        source={require("../../assets/images/TelaInicial/AllImagens.png")}
+        source={require("../../assets/images/Initial/AllImagens.png")}
       />
     </View>
   );

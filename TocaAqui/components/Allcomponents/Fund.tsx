@@ -4,11 +4,11 @@ export default function Fund() {
   return (
     <View style={styles.background} pointerEvents="none">
       <Image
-        source={require("../../assets/images/TelaLogin/gridStarts.png")}
+        source={require("../../assets/images/Login/gridStarts.png")}
         style={styles.image}
       />
       <Image
-        source={require("../../assets/images/TelaLogin/Light.png")}
+        source={require("../../assets/images/Login/Light.png")}
         style={styles.image}
       />
     </View>
