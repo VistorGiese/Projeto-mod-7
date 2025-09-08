@@ -17,7 +17,7 @@ export default function HomePage() {
       <View style={styles.buttonsContainer}>
         <Button
           style={styles.button}
-          onPress={() => navigation.navigate("RegisterLocationAndress")}
+          onPress={() => navigation.navigate("Login")}
         >
           <Text style={styles.buttonText}>Voltar</Text>
         </Button>
