@@ -1,0 +1,54 @@
+{
+  "info": {
+    "name": "Genre CRUD",
+    "description": "Coleção CRUD para gêneros musicais",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Criar Gênero",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Rock\"\n}"
+        },
+        "url": {"raw": "http://localhost:3000/generos", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["generos"]}
+      }
+    },
+    {
+      "name": "Listar Gêneros",
+      "request": {
+        "method": "GET",
+        "url": {"raw": "http://localhost:3000/generos", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["generos"]}
+      }
+    },
+    {
+      "name": "Buscar Gênero por ID",
+      "request": {
+        "method": "GET",
+        "url": {"raw": "http://localhost:3000/generos/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["generos", "1"]}
+      }
+    },
+    {
+      "name": "Atualizar Gênero",
+      "request": {
+        "method": "PUT",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Pop Rock\"\n}"
+        },
+        "url": {"raw": "http://localhost:3000/generos/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["generos", "1"]}
+      }
+    },
+    {
+      "name": "Deletar Gênero",
+      "request": {
+        "method": "DELETE",
+        "url": {"raw": "http://localhost:3000/generos/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["generos", "1"]}
+      }
+    }
+  ]
+}

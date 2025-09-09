@@ -1,0 +1,54 @@
+{
+  "info": {
+    "name": "Rating CRUD",
+    "description": "Coleção CRUD para avaliações",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Criar Avaliação",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"usuario_id\": 1,\n  \"tipo_destinatario\": \"banda\",\n  \"destinatario_id\": 2,\n  \"nota\": 5,\n  \"aspectos_avaliados\": {\n    \"pontualidade\": 5,\n    \"qualidade_som\": 4\n  },\n  \"comentario_avaliacao\": \"Muito bom!\",\n  \"data_avaliacao\": \"2025-09-10T22:00:00\"\n}"
+        },
+        "url": {"raw": "http://localhost:3000/avaliacoes", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["avaliacoes"]}
+      }
+    },
+    {
+      "name": "Listar Avaliações",
+      "request": {
+        "method": "GET",
+        "url": {"raw": "http://localhost:3000/avaliacoes", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["avaliacoes"]}
+      }
+    },
+    {
+      "name": "Buscar Avaliação por ID",
+      "request": {
+        "method": "GET",
+        "url": {"raw": "http://localhost:3000/avaliacoes/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["avaliacoes", "1"]}
+      }
+    },
+    {
+      "name": "Atualizar Avaliação",
+      "request": {
+        "method": "PUT",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nota\": 4,\n  \"aspectos_avaliados\": {\n    \"pontualidade\": 4,\n    \"qualidade_som\": 3\n  }\n}"
+        },
+        "url": {"raw": "http://localhost:3000/avaliacoes/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["avaliacoes", "1"]}
+      }
+    },
+    {
+      "name": "Deletar Avaliação",
+      "request": {
+        "method": "DELETE",
+        "url": {"raw": "http://localhost:3000/avaliacoes/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["avaliacoes", "1"]}
+      }
+    }
+  ]
+}
