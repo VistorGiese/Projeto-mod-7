@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#07010C",
         padding: '8%',
         flexDirection: 'row',
-        width: '100%',
+        width: '120%',
         justifyContent: 'space-around',
         bottom: 0,
         position: 'absolute',
