@@ -4,6 +4,7 @@ import Button from "../components/Allcomponents/Button";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/Navigate";
+import NavBar from "@/components/Allcomponents/NavBar";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -35,7 +36,7 @@ export default function HomePage() {
           <Text style={styles.buttonText}>Agendamento</Text>
         </Button>
       </View>
-      <Text style={styles.TextExemplo}>Fazer aqui barra de tarefas</Text>
+      <NavBar />
     </View>
   );
 }
