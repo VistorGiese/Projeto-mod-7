@@ -11,13 +11,12 @@ export default function NavBar() {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const route = useRoute();
 
-  // Mapeamento de telas para os ids do NavBar
   const currentSection =
     route.name === "HomePage"
       ? "home"
       : route.name === "Schedulling"
       ? "calendar"
-      : route.name === "CreateEvent" // ou tela de favoritos, se tiver
+      : route.name === "CreateEvent"
       ? "favorites"
       : route.name === "ArtistProfile"
       ? "profile"
