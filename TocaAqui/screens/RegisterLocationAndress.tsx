@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, ScrollView } from "react-native";
+import { StyleSheet, View, Text, ScrollView, Alert } from "react-native";
 import Input from "../components/Allcomponents/Input";
 import Button from "../components/Allcomponents/Button";
 import { useNavigation } from "@react-navigation/native";
@@ -8,20 +8,30 @@ import { RootStackParamList } from "../navigation/Navigate";
 import Fund from "../components/Allcomponents/Fund";
 import ToBack from "../components/Allcomponents/ToBack";
 import { colors } from "@/utils/colors";
+import { useRegistration } from "../contexts/RegistrationUserContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function RegisterLocationAndress() {
   const navigation = useNavigation<NavigationProp>();
-
-  const [cep, setCep] = useState("");
-  const [estado, setEstado] = useState("");
-  const [cidade, setCidade] = useState("");
-  const [bairro, setBairro] = useState("");
-  const [endereco, setEndereco] = useState("");
+  const { formData, updateFormData } = useRegistration();
+  const [cep, setCep] = useState(formData.address?.cep || "");
+  const [estado, setEstado] = useState(formData.address?.estado || "");
+  const [cidade, setCidade] = useState(formData.address?.cidade || "");
+  const [bairro, setBairro] = useState(formData.address?.bairro || "");
+  const [endereco, setEndereco] = useState(formData.address?.endereco || "");
   const [showFullText, setShowFullText] = useState(false);
 
   const handleToggleText = () => setShowFullText((prev) => !prev);
+  const handleNext = () => {
+    if (!cep || !estado || !cidade || !bairro || !endereco) {
+      Alert.alert("Campos obrigatórios", "Por favor, preencha todos os campos de endereço.");
+      return;
+    }
+    const addressData = { cep, estado, cidade, bairro, endereco };
+    updateFormData({ address: addressData });
+    navigation.navigate("InformationPersonResponsible");
+  };
 
   return (
     <View style={styles.container}>
@@ -33,7 +43,6 @@ export default function RegisterLocationAndress() {
         showsVerticalScrollIndicator={false}
       >
         <Text style={styles.title}>ENDEREÇO</Text>
-
         <Text style={styles.subtitle}>
           {showFullText
             ? "Forneça o endereço completo do estabelecimento. Esse campo é importante para que os clientes encontrem facilmente o seu local."
@@ -54,6 +63,7 @@ export default function RegisterLocationAndress() {
             placeholder="Digite o CEP"
             value={cep}
             onChangeText={setCep}
+            keyboardType="numeric"
           />
         </View>
 
@@ -91,7 +101,7 @@ export default function RegisterLocationAndress() {
           <Input
             label="Endereço"
             iconName="road-variant"
-            placeholder="Digite o endereço completo"
+            placeholder="Rua, número e complemento"
             value={endereco}
             onChangeText={setEndereco}
           />
@@ -99,7 +109,7 @@ export default function RegisterLocationAndress() {
 
         <Button
           style={styles.button}
-          onPress={() => navigation.navigate("InformationPersonResponsible")}
+          onPress={handleNext}
         >
           <Text style={styles.buttonText}>Continuar</Text>
         </Button>
@@ -107,7 +117,6 @@ export default function RegisterLocationAndress() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -152,6 +161,7 @@ const styles = StyleSheet.create({
     width: "95%",
     height: 60,
     marginTop: 120,
+    marginBottom: 40,
   },
   buttonText: {
     color: colors.purpleDark,

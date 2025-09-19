@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Alert } from "react-native";
 import Button from "../components/Allcomponents/Button";
 import Input from "../components/Allcomponents/Input";
 import ToBack from "../components/Allcomponents/ToBack";
@@ -8,26 +8,53 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/Navigate";
 import { colors } from "@/utils/colors";
+import { useRegistration } from "../contexts/RegistrationUserContext";
+import * as FileSystem from 'expo-file-system';
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function AdditionalInformation() {
   const navigation = useNavigation<NavigationProp>();
-
-  const [genre, setGenre] = useState("");
-  const [schedule, setSchedule] = useState("");
+  const { formData, updateFormData } = useRegistration();
+  const [genre, setGenre] = useState(formData.additionalInfo?.genre || "");
+  const [schedule, setSchedule] = useState(formData.additionalInfo?.schedule || "");
   const [showFullText, setShowFullText] = useState(false);
-
   const handleToggleText = () => setShowFullText((prev) => !prev);
+  const handleFinishRegistration = async () => {
+
+    const currentScreenData = { genre, schedule };
+    updateFormData({ additionalInfo: currentScreenData });
+    const finalData = {
+      ...formData,
+      additionalInfo: currentScreenData
+    };
+
+    const jsonString = JSON.stringify(finalData, null, 2);
+    const fileName = `registration_${Date.now()}.json`;
+    const filePath = `${FileSystem.documentDirectory}${fileName}`;
+
+    try {
+      await FileSystem.writeAsStringAsync(filePath, jsonString, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+      console.log('Arquivo salvo em:', filePath);
+      Alert.alert(
+        "Cadastro Concluído!",
+        `Dados salvos com sucesso em: ${filePath}`, // <-- AQUI A MUDANÇA
+        [{ text: "OK", onPress: () => navigation.navigate("Login") }]
+      );
+    } catch (error) {
+      console.error("Erro ao salvar o arquivo:", error);
+      Alert.alert("Erro", "Ocorreu um erro ao salvar o cadastro. Tente novamente.");
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Fund />
       <ToBack />
-
       <View style={styles.content}>
         <Text style={styles.title}>QUASE LÁ...</Text>
-
         <Text style={styles.subtitle}>
           {showFullText
             ? "Defina as preferências do seu estabelecimento. Essas informações ajudam as bandas a entender melhor o seu estilo e personalizar a apresentação de acordo com o que você e seus clientes preferem."
@@ -40,7 +67,6 @@ export default function AdditionalInformation() {
             {showFullText ? " Saiba menos" : " Saiba mais"}
           </Text>
         </Text>
-
         <View style={styles.inputWrapper}>
           <Input
             label="Gêneros Musicais"
@@ -50,7 +76,6 @@ export default function AdditionalInformation() {
             onChangeText={setGenre}
           />
         </View>
-
         <View style={styles.inputWrapper}>
           <Input
             label="Horário de Atendimento"
@@ -61,17 +86,15 @@ export default function AdditionalInformation() {
           />
         </View>
       </View>
-
       <Button
         style={styles.button}
-        onPress={() => navigation.navigate("Login")}
+        onPress={handleFinishRegistration}
       >
         <Text style={styles.buttonText}>Cadastrar</Text>
       </Button>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

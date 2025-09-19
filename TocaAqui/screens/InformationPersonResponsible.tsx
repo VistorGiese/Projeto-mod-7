@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, Alert } from "react-native";
 import Button from "../components/Allcomponents/Button";
 import Input from "../components/Allcomponents/Input";
 import ToBack from "../components/Allcomponents/ToBack";
@@ -9,27 +9,40 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/Navigate";
 import { colors } from "@/utils/colors";
 
+import { useRegistration } from "../contexts/RegistrationUserContext";
+
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function InformationPersonResponsible() {
   const navigation = useNavigation<NavigationProp>();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-
+  const { formData, updateFormData } = useRegistration();
+  const [name, setName] = useState(formData.personalInfo?.name || "");
+  const [email, setEmail] = useState(formData.personalInfo?.email || "");
+  const [phone, setPhone] = useState(formData.personalInfo?.phone || "");
   const [showFullText, setShowFullText] = useState(false);
 
   const handleToggleText = () => setShowFullText((prev) => !prev);
+  const handleNext = () => {
+    if (name.trim() === "" || email.trim() === "") {
+      Alert.alert("Campos obrigatórios", "Nome e Email são obrigatórios.");
+      return;
+    }
+    if (!email.includes('@')) {
+      Alert.alert("Email inválido", "Por favor, insira um email válido.");
+      return;
+    }
+    const personalInfoData = { name, email, phone };
+    updateFormData({ personalInfo: personalInfoData });
+    navigation.navigate("AdditionalInformation");
+  };
 
   return (
     <View style={styles.container}>
       <Fund />
       <ToBack />
-
       <View style={styles.content}>
         <Text style={styles.title}>INFORMAÇÕES</Text>
-
         <Text style={styles.subtitle}>
           {showFullText
             ? "Preencha as informações do proprietário do estabelecimento para facilitar o contato das bandas, caso haja necessidade de mais detalhes ou ajustes sobre a contratação."
@@ -46,28 +59,30 @@ export default function InformationPersonResponsible() {
         <View style={styles.inputWrapper}>
           <Input
             label="Nome"
-            iconName="eye"
+            iconName="account-outline"
             placeholder="Nome do responsável"
             value={name}
             onChangeText={setName}
+            autoCapitalize="words"
           />
         </View>
 
         <View style={styles.inputWrapper}>
           <Input
             label="Email"
-            iconName="mail"
+            iconName="email-outline"
             placeholder="Email do responsável"
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
+            autoCapitalize="none"
           />
         </View>
 
         <View style={styles.inputWrapper}>
           <Input
             label="Telefone"
-            iconName="phone"
+            iconName="phone-outline"
             placeholder="Telefone do responsável"
             value={phone}
             onChangeText={setPhone}
@@ -78,14 +93,13 @@ export default function InformationPersonResponsible() {
 
       <Button
         style={styles.button}
-        onPress={() => navigation.navigate("AdditionalInformation")}
+        onPress={handleNext}
       >
         <Text style={styles.buttonText}>Continuar</Text>
       </Button>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -132,7 +146,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    marginTop: 900,
+    bottom: 40,
   },
   buttonText: {
     color: colors.purpleDark,

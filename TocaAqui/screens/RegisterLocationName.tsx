@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Image, Dimensions } from "react-native";
+import { StyleSheet, View, Text, Image, Dimensions, Alert } from "react-native"; // ALTERAÇÃO: Adicionado Alert
 import Input from "../components/Allcomponents/Input";
 import Button from "../components/Allcomponents/Button";
 import { useNavigation } from "@react-navigation/native";
@@ -8,29 +8,35 @@ import { RootStackParamList } from "../navigation/Navigate";
 import Fund from "../components/Allcomponents/Fund";
 import ToBack from "../components/Allcomponents/ToBack";
 import { colors } from "@/utils/colors";
+import { useRegistration } from "../contexts/RegistrationUserContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const { width, height } = Dimensions.get("window");
 
 export default function RegisterLocationName() {
   const navigation = useNavigation<NavigationProp>();
-  const [name, setName] = useState("");
+  const { formData, updateFormData } = useRegistration();
+  const [name, setName] = useState(formData.establishmentName || "");
   const [showFullText, setShowFullText] = useState(false);
-
   const handleToggleText = () => setShowFullText((prev) => !prev);
+  const handleNext = () => {
+    if (name.trim() === "") {
+      Alert.alert("Campo obrigatório", "Por favor, digite o nome do estabelecimento.");
+      return;
+    }
+    updateFormData({ establishmentName: name });
+    navigation.navigate("RegisterLocationAndress");
+  };
 
   return (
     <View style={styles.container}>
       <Fund />
       <ToBack />
-
       <Image
         source={require("../assets/images/Register/CreateAccount.png")}
         style={styles.image}
       />
-
       <Text style={styles.title}>Nome do Estabelecimento</Text>
-
       <Text style={styles.subtitle}>
         {showFullText
           ? "Insira o nome completo do seu estabelecimento, que será exibido para os usuários."
@@ -43,26 +49,23 @@ export default function RegisterLocationName() {
           {showFullText ? "Ver menos" : "Saiba mais"}
         </Text>
       </Text>
-
       <Input
         label=""
         iconName="account"
-        placeholder="Digite seu nome"
+        placeholder="Digite o nome do estabelecimento"
         value={name}
         onChangeText={setName}
         autoCapitalize="words"
       />
-
       <Button
         style={styles.button}
-        onPress={() => navigation.navigate("RegisterLocationAndress")}
+        onPress={handleNext}
       >
         <Text style={styles.buttonText}>Continuar</Text>
       </Button>
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
