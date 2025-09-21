@@ -1,13 +1,13 @@
 import 'react-native-gesture-handler';
 
 import React from "react";
+import { AccountProvider } from '../contexts/AccountFromContexto';
 import Navigate from "../navigation/Navigate";
-import { RegistrationProvider } from '../contexts/RegistrationUserContext';
 
 export default function App() {
   return (
-    <RegistrationProvider>
+    <AccountProvider>
       <Navigate />
-    </RegistrationProvider>
+    </AccountProvider>
   );
 }

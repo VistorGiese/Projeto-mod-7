@@ -1,0 +1,22 @@
+{
+  "info": {
+    "name": "Get Band Members",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Listar membros de uma banda",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": {
+          "raw": "http://localhost:3000/membros_banda/banda/{{banda_id}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["membros_banda", "banda", "{{banda_id}}"]
+        }
+      }
+    }
+  ]
+}

@@ -1,13 +1,15 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Text, Image, Dimensions } from "react-native";
-import ToBack from "../components/Allcomponents/ToBack";
-import Fund from "../components/Allcomponents/Fund";
-import Input from "../components/Allcomponents/Input";
-import Button from "../components/Allcomponents/Button";
+import { colors } from "@/utils/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, { useRef } from "react";
+import { useForm } from "react-hook-form";
+import { Dimensions, Image, StyleSheet, Text, TextInput, View } from "react-native";
+import Button from "../components/Allcomponents/Button";
+import Fund from "../components/Allcomponents/Fund";
+import Input from "../components/Allcomponents/Input";
+import ToBack from "../components/Allcomponents/ToBack";
+import { AccountProps } from "../contexts/AccountFromContexto";
 import { RootStackParamList } from "../navigation/Navigate";
-import { colors } from "@/utils/colors";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -15,20 +17,28 @@ const { width, height } = Dimensions.get("window");
 
 export default function Login() {
   const navigation = useNavigation<NavigationProp>();
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AccountProps>(); 
+
+  const emailRef = useRef<TextInput>(null);
+  const passwordRef = useRef<TextInput>(null);
+
+  function onSubmit(data: AccountProps) {
+    console.log("Login data:", data);
+    navigation.navigate("HomePage");
+  }
 
   return (
     <View style={styles.container}>
       <Fund />
-
       <ToBack />
-
       <Image
         source={require("../assets/images/Login/AccessYourAccount.png")}
         style={styles.centerImage}
       />
-
       <View style={styles.registerContainer}>
         <Text style={styles.registerText}>Não tem uma conta? </Text>
         <Text
@@ -40,26 +50,49 @@ export default function Login() {
       </View>
 
       <Input
-        label="Nome do Responsável"
-        iconName="account"
-        placeholder="Digite seu nome"
-        value={name}
-        onChangeText={setName}
-        autoCapitalize="words"
-        labelStyle={{
-          fontFamily: "Montserrat-Regular",
+        ref={emailRef}
+        label="Email"
+        iconName="email-outline"
+        error={errors.email?.message}
+        formProps={{
+          control,
+          name: "email",
+          rules: {
+            required: "E-mail é obrigatório",
+            pattern: {
+              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+              message: "E-mail inválido",
+            },
+          },
+        }}
+        inputProps={{
+          placeholder: "E-mail",
+          onSubmitEditing: () => passwordRef.current?.focus(),
+          returnKeyType: "next",
         }}
       />
 
       <Input
+        ref={passwordRef}
         label="Senha"
-        iconName="lock"
-        placeholder="Digite sua senha"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        labelStyle={{
-          fontFamily: "Montserrat-Regular",
+        iconName="lock-outline"
+        error={errors.password?.message}
+        formProps={{
+          control,
+          name: "password",
+          rules: {
+            required: "Senha é obrigatória",
+            minLength: {
+              value: 8,
+              message: "A senha deve ter no mínimo 6 caracteres",
+            },
+          },
+        }}
+        inputProps={{
+          placeholder: "Senha",
+          secureTextEntry: true,
+          onSubmitEditing: handleSubmit(onSubmit),
+          returnKeyType: "done",
         }}
       />
 
@@ -72,10 +105,7 @@ export default function Login() {
         </Text>
       </View>
 
-      <Button
-        style={styles.buttonPosition}
-        onPress={() => navigation.navigate("HomePage")}
-      >
+      <Button style={styles.buttonPosition} onPress={handleSubmit(onSubmit)}>
         <Text style={styles.textButton}>Entrar</Text>
       </Button>
     </View>

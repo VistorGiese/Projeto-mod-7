@@ -1,0 +1,66 @@
+{
+  "info": {
+    "name": "Band CRUD",
+    "description": "Coleção CRUD para bandas",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Criar Banda",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"usuario_id\": 1,\n  \"ano_formacao\": 2020,\n  \"descricao\": \"Banda de rock\",\n  \"tem_instrumentos_proprios\": true,\n  \"aceita_agendamentos\": true,\n  \"preco_base\": 1000,\n  \"tempo_apresentacao_padrao\": 60,\n  \"raio_atuacao\": 50,\n  \"tempo_antecedencia_minimo\": 7\n}"
+        },
+        "url": {"raw": "http://localhost:3000/bandas", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["bandas"]}
+      }
+    },
+    {
+      "name": "Listar Bandas",
+      "request": {
+        "method": "GET",
+        "url": {"raw": "http://localhost:3000/bandas", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["bandas"]}
+      }
+    },
+    {
+      "name": "Buscar Banda por ID",
+      "request": {
+        "method": "GET",
+        "url": {"raw": "http://localhost:3000/bandas/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["bandas", "1"]}
+      }
+    },
+    {
+      "name": "Atualizar Banda",
+      "request": {
+        "method": "PUT",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"descricao\": \"Banda de pop rock\",\n  \"preco_base\": 1200\n}"
+        },
+        "url": {"raw": "http://localhost:3000/bandas/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["bandas", "1"]}
+      }
+    },
+    {
+      "name": "Deletar Banda",
+      "request": {
+        "method": "DELETE",
+        "url": {"raw": "http://localhost:3000/bandas/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["bandas", "1"]}
+      }
+    },
+    {
+      "name": "Adicionar Gestor à Banda",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"userId\": 2,\n  \"bandId\": 1\n}"
+        },
+        "url": {"raw": "http://localhost:3000/bandas/add-manager", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["bandas", "add-manager"]}
+      }
+    }
+  ]
+}

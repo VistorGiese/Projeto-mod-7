@@ -1,19 +1,19 @@
-import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import React from "react";
 
 // Telas
+import AdditionalInformation from "../screens/AdditionalInformation";
+import ArtistProfile from "../screens/ArtistProfile";
+import CreateEvent from "../screens/CreateEvent";
+import ForgotPassword from "../screens/ForgotPassword";
+import HomePage from "../screens/HomePage";
+import InfoEvent from "../screens/InfoEvent";
+import InformationPersonResponsible from "../screens/InformationPersonResponsible";
 import Initial from "../screens/Initial";
 import Login from "../screens/Login";
-import RegisterLocationName from "../screens/RegisterLocationName";
 import RegisterLocationAndress from "../screens/RegisterLocationAndress";
-import ForgotPassword from "../screens/ForgotPassword";
-import InformationPersonResponsible from "../screens/InformationPersonResponsible";
-import AdditionalInformation from "../screens/AdditionalInformation";
-import HomePage from "../screens/HomePage";
+import RegisterLocationName from "../screens/RegisterLocationName";
 import Schedulling from "../screens/Schedulling";
-import CreateEvent from "../screens/CreateEvent";
-import InfoEvent from "../screens/InfoEvent";
-import ArtistProfile from "../screens/ArtistProfile";
 
 export type RootStackParamList = {
   Initial: undefined;

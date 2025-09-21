@@ -1,0 +1,90 @@
+{
+  "info": {
+    "name": "CRUD Usuário",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Criar Usuário",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Vitor\",\n  \"email\": \"vitor@example.com\",\n  \"senha\": \"123456\",\n  \"telefone\": \"11999999999\",\n  \"tipo_usuario\": \"banda\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/usuarios",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["usuarios"]
+        }
+      },
+      "event": [{
+        "listen": "test",
+        "script": {
+          "type": "text/javascript",
+          "exec": ["pm.globals.set('usuario_id', pm.response.json().id);"]
+        }
+      }]
+    },
+    {
+      "name": "Listar Usuários",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/usuarios",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["usuarios"]
+        }
+      }
+    },
+    {
+      "name": "Buscar Usuário por ID",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/usuarios/{{usuario_id}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["usuarios", "{{usuario_id}}"]
+        }
+      }
+    },
+    {
+      "name": "Atualizar Usuário",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Vitor Atualizado\",\n  \"email\": \"vitor2@example.com\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/usuarios/{{usuario_id}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["usuarios", "{{usuario_id}}"]
+        }
+      }
+    },
+    {
+      "name": "Deletar Usuário",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "http://localhost:3000/usuarios/{{usuario_id}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["usuarios", "{{usuario_id}}"]
+        }
+      }
+    }
+  ]
+}

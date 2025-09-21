@@ -1,53 +1,55 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
-import Button from "../components/Allcomponents/Button";
-import Input from "../components/Allcomponents/Input";
-import ToBack from "../components/Allcomponents/ToBack";
-import Fund from "../components/Allcomponents/Fund";
+import { colors } from "@/utils/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, { useContext, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { StyleSheet, Text, TextInput, View } from "react-native";
+import Button from "../components/Allcomponents/Button";
+import Fund from "../components/Allcomponents/Fund";
+import Input from "../components/Allcomponents/Input";
+import ToBack from "../components/Allcomponents/ToBack";
+import { AccontFormContext, AccountProps } from "../contexts/AccountFromContexto";
 import { RootStackParamList } from "../navigation/Navigate";
-import { colors } from "@/utils/colors";
-import { useRegistration } from "../contexts/RegistrationUserContext";
-import * as FileSystem from 'expo-file-system';
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+const formatSchedule = (value: string) => {
+  const cleanedValue = value.replace(/\D/g, '');
 
+  if (cleanedValue.length <= 2) {
+    return cleanedValue.length > 0 ? `${cleanedValue}h` : '';
+  }
+  if (cleanedValue.length <= 4) {
+    const startHour = cleanedValue.substring(0, 2);
+    const endHour = cleanedValue.substring(2, 4);
+    return `${startHour}h às ${endHour}`;
+  }
+  const startHour = cleanedValue.substring(0, 2);
+  const endHour = cleanedValue.substring(2, 4);
+  return `${startHour}h às ${endHour}h`;
+};
 export default function AdditionalInformation() {
-  const navigation = useNavigation<NavigationProp>();
-  const { formData, updateFormData } = useRegistration();
-  const [genre, setGenre] = useState(formData.additionalInfo?.genre || "");
-  const [schedule, setSchedule] = useState(formData.additionalInfo?.schedule || "");
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { accountFormData: formData, updateFormData } = useContext(AccontFormContext);
   const [showFullText, setShowFullText] = useState(false);
   const handleToggleText = () => setShowFullText((prev) => !prev);
-  const handleFinishRegistration = async () => {
 
-    const currentScreenData = { genre, schedule };
-    updateFormData({ additionalInfo: currentScreenData });
-    const finalData = {
-      ...formData,
-      additionalInfo: currentScreenData
-    };
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AccountProps>({
+    defaultValues: {
+      genre: formData.genre || "",
+      schedule: formData.schedule || "",
+    },
+  });
 
-    const jsonString = JSON.stringify(finalData, null, 2);
-    const fileName = `registration_${Date.now()}.json`;
-    const filePath = `${FileSystem.documentDirectory}${fileName}`;
+  const scheduleRef = useRef<TextInput>(null);
 
-    try {
-      await FileSystem.writeAsStringAsync(filePath, jsonString, {
-        encoding: FileSystem.EncodingType.UTF8,
-      });
-      console.log('Arquivo salvo em:', filePath);
-      Alert.alert(
-        "Cadastro Concluído!",
-        `Dados salvos com sucesso em: ${filePath}`, // <-- AQUI A MUDANÇA
-        [{ text: "OK", onPress: () => navigation.navigate("Login") }]
-      );
-    } catch (error) {
-      console.error("Erro ao salvar o arquivo:", error);
-      Alert.alert("Erro", "Ocorreu um erro ao salvar o cadastro. Tente novamente.");
-    }
-  };
+  function handleNext(data: AccountProps) {
+    updateFormData(data);
+    console.log(data);
+    navigation.navigate("Login");
+  }
 
   return (
     <View style={styles.container}>
@@ -72,29 +74,67 @@ export default function AdditionalInformation() {
             label="Gêneros Musicais"
             iconName="music"
             placeholder="Ex: Rock, Sertanejo, MPB"
-            value={genre}
-            onChangeText={setGenre}
+            error={errors.genre?.message}
+            formProps={{
+              control,
+              name: "genre",
+              rules: {
+                required: "O gênero musical é obrigatório",
+              },
+            }}
+            inputProps={{
+              onSubmitEditing: () => scheduleRef.current?.focus(),
+              returnKeyType: "next",
+            }}
           />
         </View>
         <View style={styles.inputWrapper}>
-          <Input
-            label="Horário de Atendimento"
-            iconName="clock"
-            placeholder="Ex: 18h às 23h"
-            value={schedule}
-            onChangeText={setSchedule}
+          <Controller
+            control={control}
+            name="schedule"
+            rules={{
+              required: "O horário de atendimento é obrigatório",
+              validate: value => value?.length === 10 || "Horário inválido (Ex: 18h às 23h)"
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                ref={scheduleRef}
+                label="Horário de Atendimento"
+                iconName="clock"
+                error={errors.schedule?.message}
+                formProps={{
+                  control,
+                  name: "schedule",
+                  rules: {
+                    required: "O horário de atendimento é obrigatório",
+                    validate: value => value?.length === 10 || "Horário inválido (Ex: 18h às 23h)"
+                  },
+                }}
+                inputProps={{
+                  placeholder: "Ex: 18h às 23h",
+                  keyboardType: "numeric",
+                  onBlur,
+                  onChangeText: (text) => onChange(formatSchedule(text)),
+                  value,
+                  maxLength: 10,
+                  onSubmitEditing: handleSubmit(handleNext),
+                  returnKeyType: "done",
+                }}
+              />
+            )}
           />
         </View>
       </View>
       <Button
         style={styles.button}
-        onPress={handleFinishRegistration}
+        onPress={handleSubmit(handleNext)}
       >
         <Text style={styles.buttonText}>Cadastrar</Text>
       </Button>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -141,7 +181,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    marginTop: 900,
+    bottom: 40,
   },
   buttonText: {
     color: colors.purpleDark,

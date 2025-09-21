@@ -1,0 +1,56 @@
+{
+  "info": {
+    "name": "Establishment Schedule CRUD",
+    "description": "CRUD para horários disponíveis de estabelecimentos",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Consultar Horários Disponíveis",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:3000/estabelecimentos/1/horarios-disponiveis?data=2025-09-10",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["estabelecimentos", "1", "horarios-disponiveis"],
+          "query": [
+            {"key": "data", "value": "2025-09-10"}
+          ]
+        }
+      }
+    },
+    {
+      "name": "Criar Horário Disponível",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"estabelecimento_id\": 1,\n  \"dia_semana\": \"segunda-feira\",\n  \"horario_inicio\": \"18:00\",\n  \"horario_fim\": \"23:00\"\n}"
+        },
+        "url": {"raw": "http://localhost:3000/estabelecimentos/horarios", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["estabelecimentos", "horarios"]}
+      }
+    },
+    {
+      "name": "Atualizar Horário Disponível",
+      "request": {
+        "method": "PATCH",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"horario_inicio\": \"19:00\",\n  \"horario_fim\": \"23:30\"\n}"
+        },
+        "url": {"raw": "http://localhost:3000/estabelecimentos/horarios/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["estabelecimentos", "horarios", "1"]}
+      }
+    },
+    {
+      "name": "Deletar Horário Disponível",
+      "request": {
+        "method": "DELETE",
+        "url": {"raw": "http://localhost:3000/estabelecimentos/horarios/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["estabelecimentos", "horarios", "1"]}
+      }
+    }
+  ]
+}

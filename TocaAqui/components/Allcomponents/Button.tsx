@@ -1,16 +1,15 @@
+import { colors } from "@/utils/colors";
+import { useFonts } from "expo-font";
 import React from "react";
 import {
-  StyleSheet,
-  TouchableOpacity,
-  Text,
   GestureResponderEvent,
-  ViewStyle,
+  StyleSheet,
+  Text,
   TextStyle,
+  TouchableOpacity,
+  ViewStyle,
 } from "react-native";
-import { useFonts } from "expo-font";
 import { customFonts } from "../../assets/fonts/fonts";
-import { colors } from "@/utils/colors";
-import { Colors } from "react-native/Libraries/NewAppScreen";
 
 interface ButtonProps {
   onPress: (event: GestureResponderEvent) => void;
@@ -48,7 +47,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   text: {
-    color: Colors.purpleDark,
+    color: colors.purpleDark,
     fontSize: 24,
     fontFamily: "Poppins-ExtraBold",
   },

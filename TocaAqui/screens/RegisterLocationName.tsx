@@ -1,32 +1,42 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Text, Image, Dimensions, Alert } from "react-native"; // ALTERAÇÃO: Adicionado Alert
-import Input from "../components/Allcomponents/Input";
-import Button from "../components/Allcomponents/Button";
+import { colors } from "@/utils/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../navigation/Navigate";
+import React, { useContext, useState } from "react";
+import { useForm } from "react-hook-form";
+import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import Button from "../components/Allcomponents/Button";
 import Fund from "../components/Allcomponents/Fund";
+import Input from "../components/Allcomponents/Input";
 import ToBack from "../components/Allcomponents/ToBack";
-import { colors } from "@/utils/colors";
-import { useRegistration } from "../contexts/RegistrationUserContext";
+import { AccontFormContext, AccountProps } from "../contexts/AccountFromContexto";
+import { RootStackParamList } from "../navigation/Navigate";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const { width, height } = Dimensions.get("window");
 
 export default function RegisterLocationName() {
   const navigation = useNavigation<NavigationProp>();
-  const { formData, updateFormData } = useRegistration();
-  const [name, setName] = useState(formData.establishmentName || "");
+  // Corrigido: usando useContext para acessar o contexto correto
+  const { accountFormData: formData, updateFormData } = useContext(AccontFormContext);
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AccountProps>({
+    defaultValues: {
+      establishmentName: formData.establishmentName || "",
+    },
+  });
+
   const [showFullText, setShowFullText] = useState(false);
   const handleToggleText = () => setShowFullText((prev) => !prev);
-  const handleNext = () => {
-    if (name.trim() === "") {
-      Alert.alert("Campo obrigatório", "Por favor, digite o nome do estabelecimento.");
-      return;
-    }
-    updateFormData({ establishmentName: name });
+
+  function handleNext(data: AccountProps) {
+    updateFormData({ establishmentName: data.establishmentName });
+    console.log(data);
     navigation.navigate("RegisterLocationAndress");
-  };
+  }
 
   return (
     <View style={styles.container}>
@@ -49,23 +59,32 @@ export default function RegisterLocationName() {
           {showFullText ? "Ver menos" : "Saiba mais"}
         </Text>
       </Text>
+
       <Input
-        label=""
-        iconName="account"
-        placeholder="Digite o nome do estabelecimento"
-        value={name}
-        onChangeText={setName}
-        autoCapitalize="words"
+        label="Nome do Estabelecimento"
+        iconName="store"
+        error={errors.establishmentName?.message}
+        formProps={{
+          control,
+          name: "establishmentName",
+          rules: {
+            required: "O nome do estabelecimento é obrigatório",
+          },
+        }}
+        inputProps={{
+          placeholder: "Nome do estabelecimento",
+          onSubmitEditing: handleSubmit(handleNext),
+          returnKeyType: "done",
+        }}
       />
-      <Button
-        style={styles.button}
-        onPress={handleNext}
-      >
+
+      <Button style={styles.button} onPress={handleSubmit(handleNext)}>
         <Text style={styles.buttonText}>Continuar</Text>
       </Button>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

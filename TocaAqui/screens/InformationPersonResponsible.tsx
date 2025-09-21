@@ -1,41 +1,62 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
-import Button from "../components/Allcomponents/Button";
-import Input from "../components/Allcomponents/Input";
-import ToBack from "../components/Allcomponents/ToBack";
-import Fund from "../components/Allcomponents/Fund";
+import { colors } from "@/utils/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, { useContext, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form"; // Importado Controller
+import { StyleSheet, Text, TextInput, View } from "react-native";
+import Button from "../components/Allcomponents/Button";
+import Fund from "../components/Allcomponents/Fund";
+import Input from "../components/Allcomponents/Input";
+import ToBack from "../components/Allcomponents/ToBack";
+import { AccontFormContext, AccountProps } from "../contexts/AccountFromContexto";
 import { RootStackParamList } from "../navigation/Navigate";
-import { colors } from "@/utils/colors";
-
-import { useRegistration } from "../contexts/RegistrationUserContext";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
+// Função de formatação automática do telefone
+const formatPhone = (value: string) => {
+  // Remove todos os caracteres que não são dígitos
+  const cleanedValue = value.replace(/\D/g, '');
+
+  if (cleanedValue.length <= 2) {
+    return `(${cleanedValue}`;
+  }
+  if (cleanedValue.length <= 7) {
+    return `(${cleanedValue.substring(0, 2)}) ${cleanedValue.substring(2, 7)}`;
+  }
+  if (cleanedValue.length <= 11) {
+    return `(${cleanedValue.substring(0, 2)}) ${cleanedValue.substring(2, 7)}-${cleanedValue.substring(7, 11)}`;
+  }
+  return `(${cleanedValue.substring(0, 2)}) ${cleanedValue.substring(2, 7)}-${cleanedValue.substring(7, 11)}`;
+};
+
 export default function InformationPersonResponsible() {
   const navigation = useNavigation<NavigationProp>();
-
-  const { formData, updateFormData } = useRegistration();
-  const [name, setName] = useState(formData.personalInfo?.name || "");
-  const [email, setEmail] = useState(formData.personalInfo?.email || "");
-  const [phone, setPhone] = useState(formData.personalInfo?.phone || "");
+  const { accountFormData: formData, updateFormData } = useContext(AccontFormContext);
   const [showFullText, setShowFullText] = useState(false);
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AccountProps>({
+    defaultValues: {
+      ownerName: formData.ownerName || "",
+      email: formData.email || "",
+      phone: formData.phone || "",
+    },
+  });
+
+  const emailRef = useRef<TextInput>(null);
+  const phoneRef = useRef<TextInput>(null);
+
   const handleToggleText = () => setShowFullText((prev) => !prev);
-  const handleNext = () => {
-    if (name.trim() === "" || email.trim() === "") {
-      Alert.alert("Campos obrigatórios", "Nome e Email são obrigatórios.");
-      return;
-    }
-    if (!email.includes('@')) {
-      Alert.alert("Email inválido", "Por favor, insira um email válido.");
-      return;
-    }
-    const personalInfoData = { name, email, phone };
-    updateFormData({ personalInfo: personalInfoData });
+
+  function handleNext(data: AccountProps) {
+    updateFormData(data);
+    console.log(data);
     navigation.navigate("AdditionalInformation");
-  };
+  }
 
   return (
     <View style={styles.container}>
@@ -58,48 +79,103 @@ export default function InformationPersonResponsible() {
 
         <View style={styles.inputWrapper}>
           <Input
-            label="Nome"
-            iconName="account-outline"
-            placeholder="Nome do responsável"
-            value={name}
-            onChangeText={setName}
-            autoCapitalize="words"
+            label="Nome do responsável"
+            iconName="account"
+            error={errors.ownerName?.message}
+            formProps={{
+              control,
+              name: "ownerName",
+              rules: {
+                required: "O nome é obrigatório",
+              },
+            }}
+            inputProps={{
+              placeholder: "Nome do responsável",
+              onSubmitEditing: () => emailRef.current?.focus(),
+              returnKeyType: "next",
+            }}
           />
         </View>
 
         <View style={styles.inputWrapper}>
           <Input
-            label="Email"
-            iconName="email-outline"
-            placeholder="Email do responsável"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
+            ref={emailRef}
+            label="E-mail do responsável"
+            iconName="email"
+            error={errors.email?.message}
+            formProps={{
+              control,
+              name: "email",
+              rules: {
+                required: "O e-mail é obrigatório",
+                pattern: {
+                  value: /^\S+@\S+$/i,
+                  message: "E-mail inválido",
+                },
+              },
+            }}
+            inputProps={{
+              placeholder: "E-mail do responsável",
+              keyboardType: "email-address",
+              onSubmitEditing: () => phoneRef.current?.focus(),
+              returnKeyType: "next",
+            }}
           />
         </View>
 
         <View style={styles.inputWrapper}>
-          <Input
-            label="Telefone"
-            iconName="phone-outline"
-            placeholder="Telefone do responsável"
-            value={phone}
-            onChangeText={setPhone}
-            keyboardType="phone-pad"
+          <Controller
+            control={control}
+            name="phone"
+            rules={{
+              required: "O telefone é obrigatório",
+              pattern: {
+                value: /^\(\d{2}\)\s\d{4,5}-\d{4}$/,
+                message: "Telefone inválido (formato (XX) XXXXX-XXXX)",
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                ref={phoneRef}
+                label="Telefone do responsável"
+                iconName="phone"
+                error={errors.phone?.message}
+                formProps={{
+                  control,
+                  name: "phone",
+                  rules: {
+                    required: "O telefone é obrigatório",
+                    pattern: {
+                      value: /^\(\d{2}\)\s\d{4,5}-\d{4}$/,
+                      message: "Telefone inválido (formato (XX) XXXXX-XXXX)",
+                    },
+                  },
+                }}
+                inputProps={{
+                  placeholder: "Telefone do responsável",
+                  keyboardType: "phone-pad",
+                  onBlur,
+                  onChangeText: (text) => onChange(formatPhone(text)),
+                  value,
+                  onSubmitEditing: handleSubmit(handleNext),
+                  returnKeyType: "done",
+                }}
+              />
+            )}
           />
         </View>
       </View>
 
       <Button
         style={styles.button}
-        onPress={handleNext}
+        onPress={handleSubmit(handleNext)}
       >
         <Text style={styles.buttonText}>Continuar</Text>
       </Button>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

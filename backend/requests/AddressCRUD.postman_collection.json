@@ -1,0 +1,54 @@
+{
+  "info": {
+    "name": "Address CRUD",
+    "description": "Coleção CRUD para endereços",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Criar Endereço",
+      "request": {
+        "method": "POST",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rua\": \"Av. Brasil\",\n  \"numero\": \"100\",\n  \"bairro\": \"Centro\",\n  \"cidade\": \"São Paulo\",\n  \"estado\": \"SP\",\n  \"cep\": \"01000-000\"\n}"
+        },
+        "url": {"raw": "http://localhost:3000/enderecos", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["enderecos"]}
+      }
+    },
+    {
+      "name": "Listar Endereços",
+      "request": {
+        "method": "GET",
+        "url": {"raw": "http://localhost:3000/enderecos", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["enderecos"]}
+      }
+    },
+    {
+      "name": "Buscar Endereço por ID",
+      "request": {
+        "method": "GET",
+        "url": {"raw": "http://localhost:3000/enderecos/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["enderecos", "1"]}
+      }
+    },
+    {
+      "name": "Atualizar Endereço",
+      "request": {
+        "method": "PUT",
+        "header": [{"key": "Content-Type", "value": "application/json"}],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rua\": \"Av. Paulista\",\n  \"numero\": \"200\"\n}"
+        },
+        "url": {"raw": "http://localhost:3000/enderecos/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["enderecos", "1"]}
+      }
+    },
+    {
+      "name": "Deletar Endereço",
+      "request": {
+        "method": "DELETE",
+        "url": {"raw": "http://localhost:3000/enderecos/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["enderecos", "1"]}
+      }
+    }
+  ]
+}

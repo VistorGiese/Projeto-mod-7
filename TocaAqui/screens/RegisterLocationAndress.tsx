@@ -1,167 +1,185 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Text, ScrollView, Alert } from "react-native";
-import Input from "../components/Allcomponents/Input";
-import Button from "../components/Allcomponents/Button";
+import { colors } from "@/utils/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../navigation/Navigate";
+import React, { useContext, useRef } from "react";
+import { useForm } from "react-hook-form";
+import { Dimensions, Image, StyleSheet, Text, TextInput, View } from "react-native";
+import Button from "../components/Allcomponents/Button";
 import Fund from "../components/Allcomponents/Fund";
+import Input from "../components/Allcomponents/Input";
 import ToBack from "../components/Allcomponents/ToBack";
-import { colors } from "@/utils/colors";
-import { useRegistration } from "../contexts/RegistrationUserContext";
+import { AccontFormContext, AccountProps } from "../contexts/AccountFromContexto";
+import { RootStackParamList } from "../navigation/Navigate";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+const { width, height } = Dimensions.get("window");
 
 export default function RegisterLocationAndress() {
   const navigation = useNavigation<NavigationProp>();
-  const { formData, updateFormData } = useRegistration();
-  const [cep, setCep] = useState(formData.address?.cep || "");
-  const [estado, setEstado] = useState(formData.address?.estado || "");
-  const [cidade, setCidade] = useState(formData.address?.cidade || "");
-  const [bairro, setBairro] = useState(formData.address?.bairro || "");
-  const [endereco, setEndereco] = useState(formData.address?.endereco || "");
-  const [showFullText, setShowFullText] = useState(false);
+  const { accountFormData: formData, updateFormData } = useContext(AccontFormContext);
 
-  const handleToggleText = () => setShowFullText((prev) => !prev);
-  const handleNext = () => {
-    if (!cep || !estado || !cidade || !bairro || !endereco) {
-      Alert.alert("Campos obrigatórios", "Por favor, preencha todos os campos de endereço.");
-      return;
-    }
-    const addressData = { cep, estado, cidade, bairro, endereco };
-    updateFormData({ address: addressData });
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AccountProps>({
+    defaultValues: {
+      road: formData.road || "",
+      number: formData.number || "",
+      neighborhood: formData.neighborhood || "",
+      cep: formData.cep || "",
+    },
+  });
+
+  const numeroRef = useRef<TextInput>(null);
+  const bairroRef = useRef<TextInput>(null);
+  const cepRef = useRef<TextInput>(null);
+
+  function handleNext(data: AccountProps) {
+    updateFormData(data);
+    console.log(data);
     navigation.navigate("InformationPersonResponsible");
-  };
+  }
 
   return (
     <View style={styles.container}>
       <Fund />
       <ToBack />
+      <Image
+        source={require("../assets/images/Register/CreateAccount.png")}
+        style={styles.image}
+      />
+      <Text style={styles.title}>Endereço do Estabelecimento</Text>
+      <Text style={styles.subtitle}>
+        Insira o endereço completo do seu estabelecimento.
+      </Text>
 
-      <ScrollView
-        contentContainerStyle={styles.scrollContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        <Text style={styles.title}>ENDEREÇO</Text>
-        <Text style={styles.subtitle}>
-          {showFullText
-            ? "Forneça o endereço completo do estabelecimento. Esse campo é importante para que os clientes encontrem facilmente o seu local."
-            : "Forneça o endereço completo do estabelecimento... "}
-          <Text
-            style={styles.saibaMais}
-            onPress={handleToggleText}
-            accessibilityRole="button"
-          >
-            {showFullText ? " Ver menos" : " Saiba mais"}
-          </Text>
-        </Text>
+      <Input
+        label="Rua"
+        iconName="road"
+        error={errors.road?.message}
+        formProps={{
+          control,
+          name: "road",
+          rules: {
+            required: "A rua é obrigatória",
+          },
+        }}
+        inputProps={{
+          placeholder: "Rua",
+          onSubmitEditing: () => numeroRef.current?.focus(),
+          returnKeyType: "next",
+        }}
+      />
 
-        <View style={styles.inputWrapper}>
-          <Input
-            label="CEP"
-            iconName="map-marker-radius"
-            placeholder="Digite o CEP"
-            value={cep}
-            onChangeText={setCep}
-            keyboardType="numeric"
-          />
-        </View>
+      <Input
+        ref={numeroRef}
+        label="Número"
+        iconName="numeric"
+        error={errors.number?.message}
+        formProps={{
+          control,
+          name: "number",
+          rules: {
+            required: "O número é obrigatório",
+          },
+        }}
+        inputProps={{
+          placeholder: "Número",
+          onSubmitEditing: () => bairroRef.current?.focus(),
+          returnKeyType: "next",
+        }}
+      />
 
-        <View style={styles.inputWrapper}>
-          <Input
-            label="Estado"
-            iconName="flag"
-            placeholder="Digite o estado"
-            value={estado}
-            onChangeText={setEstado}
-          />
-        </View>
+      <Input
+        ref={bairroRef}
+        label="Bairro"
+        iconName="city"
+        error={errors.neighborhood?.message}
+        formProps={{
+          control,
+          name: "neighborhood",
+          rules: {
+            required: "O bairro é obrigatório",
+          },
+        }}
+        inputProps={{
+          placeholder: "Bairro",
+          onSubmitEditing: () => cepRef.current?.focus(),
+          returnKeyType: "next",
+        }}
+      />
 
-        <View style={styles.inputWrapper}>
-          <Input
-            label="Cidade"
-            iconName="city"
-            placeholder="Digite a cidade"
-            value={cidade}
-            onChangeText={setCidade}
-          />
-        </View>
+      <Input
+        ref={cepRef}
+        label="CEP"
+        iconName="post"
+        error={errors.cep?.message}
+        formProps={{
+          control,
+          name: "cep",
+          rules: {
+            required: "O CEP é obrigatório",
+            pattern: {
+              value: /^\d{5}-?\d{3}$/,
+              message: "CEP inválido (formato XXXXX-XXX)",
+            },
+          },
+        }}
+        inputProps={{
+          placeholder: "CEP",
+          keyboardType: "numeric",
+          onSubmitEditing: handleSubmit(handleNext),
+          returnKeyType: "done",
+        }}
+      />
 
-        <View style={styles.inputWrapper}>
-          <Input
-            label="Bairro"
-            iconName="home-city-outline"
-            placeholder="Digite o bairro"
-            value={bairro}
-            onChangeText={setBairro}
-          />
-        </View>
-
-        <View style={styles.inputWrapper}>
-          <Input
-            label="Endereço"
-            iconName="road-variant"
-            placeholder="Rua, número e complemento"
-            value={endereco}
-            onChangeText={setEndereco}
-          />
-        </View>
-
-        <Button
-          style={styles.button}
-          onPress={handleNext}
-        >
-          <Text style={styles.buttonText}>Continuar</Text>
-        </Button>
-      </ScrollView>
+      <Button style={styles.button} onPress={handleSubmit(handleNext)}>
+        <Text style={styles.buttonText}>Continuar</Text>
+      </Button>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#1c0a37",
-  },
-  scrollContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 50,
     alignItems: "center",
-    justifyContent: "flex-start",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+  image: {
+    width: width * 0.6,
+    height: height * 0.3,
+    resizeMode: "contain",
   },
   title: {
-    fontSize: 35,
-    fontFamily: "AkiraExpanded-Superbold",
+    fontSize: 25,
+    fontWeight: "bold",
     color: "#fff",
-    alignSelf: "flex-start",
-    marginBottom: 30,
-    marginTop: 200,
+    textAlign: "left",
+    marginBottom: 10,
     marginLeft: 15,
+    alignSelf: "flex-start",
+    width: "95%",
   },
   subtitle: {
-    fontSize: 23,
+    fontSize: 18,
     color: "#ccc",
     marginBottom: 25,
     textAlign: "left",
-    width: "98%",
-    marginLeft: 25,
+    width: "95%",
   },
   saibaMais: {
     fontSize: 16,
     textDecorationLine: "underline",
     color: "#5000c9ff",
   },
-  inputWrapper: {
-    width: "100%",
-    marginBottom: 25,
-    alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "center",
-  },
   button: {
     width: "95%",
+    marginTop: 100,
     height: 60,
-    marginTop: 120,
-    marginBottom: 40,
   },
   buttonText: {
     color: colors.purpleDark,
