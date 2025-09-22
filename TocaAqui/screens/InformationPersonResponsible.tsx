@@ -2,20 +2,19 @@ import { colors } from "@/utils/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useContext, useRef, useState } from "react";
-import { Controller, useForm } from "react-hook-form"; // Importado Controller
+import { Controller, useForm } from "react-hook-form";
 import { StyleSheet, Text, TextInput, View } from "react-native";
+import { AccontFormContext, AccountProps } from "../contexts/AccountFromContexto";
+import { RootStackParamList } from "../navigation/Navigate";
+
 import Button from "../components/Allcomponents/Button";
 import Fund from "../components/Allcomponents/Fund";
 import Input from "../components/Allcomponents/Input";
 import ToBack from "../components/Allcomponents/ToBack";
-import { AccontFormContext, AccountProps } from "../contexts/AccountFromContexto";
-import { RootStackParamList } from "../navigation/Navigate";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-// Função de formatação automática do telefone
 const formatPhone = (value: string) => {
-  // Remove todos os caracteres que não são dígitos
   const cleanedValue = value.replace(/\D/g, '');
 
   if (cleanedValue.length <= 2) {

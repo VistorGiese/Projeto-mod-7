@@ -4,19 +4,20 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import { AccontFormContext, AccountProps } from "../contexts/AccountFromContexto";
+import { RootStackParamList } from "../navigation/Navigate";
+
 import Button from "../components/Allcomponents/Button";
 import Fund from "../components/Allcomponents/Fund";
 import Input from "../components/Allcomponents/Input";
 import ToBack from "../components/Allcomponents/ToBack";
-import { AccontFormContext, AccountProps } from "../contexts/AccountFromContexto";
-import { RootStackParamList } from "../navigation/Navigate";
+
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const { width, height } = Dimensions.get("window");
 
 export default function RegisterLocationName() {
   const navigation = useNavigation<NavigationProp>();
-  // Corrigido: usando useContext para acessar o contexto correto
   const { accountFormData: formData, updateFormData } = useContext(AccontFormContext);
 
   const {
