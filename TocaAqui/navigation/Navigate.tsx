@@ -2,6 +2,13 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
 // Telas
+import Initial from "../screens/Initial";
+import Login from "../screens/Login";
+import RegisterLocationName from "../screens/RegisterLocationName";
+import RegisterLocationAndress from "../screens/RegisterLocationAndress";
+import RegisterPassword from "../screens/RegisterPassword";
+import InformationPersonResponsible from "../screens/InformationPersonResponsible";
+import Schedulling from "../screens/Schedulling";
 import AdditionalInformation from "../screens/AdditionalInformation";
 import ArtistProfile from "../screens/ArtistProfile";
 import ConfirmRegister from "../screens/ConfirmRegister";
@@ -9,18 +16,13 @@ import CreateEvent from "../screens/CreateEvent";
 import ForgotPassword from "../screens/ForgotPassword";
 import HomePage from "../screens/HomePage";
 import InfoEvent from "../screens/InfoEvent";
-import InformationPersonResponsible from "../screens/InformationPersonResponsible";
-import Initial from "../screens/Initial";
-import Login from "../screens/Login";
-import RegisterLocationAndress from "../screens/RegisterLocationAndress";
-import RegisterLocationName from "../screens/RegisterLocationName";
-import Schedulling from "../screens/Schedulling";
 
 export type RootStackParamList = {
   Initial: undefined;
   Login: undefined;
   RegisterLocationName: undefined;
   RegisterLocationAndress: undefined;
+  RegisterPassword: undefined;
   ForgotPassword: undefined;
   InformationPersonResponsible: undefined;
   AdditionalInformation: undefined;
@@ -49,6 +51,7 @@ export default function Navigate() {
       <Stack.Group>
         <Stack.Screen name="RegisterLocationName" component={RegisterLocationName} />
         <Stack.Screen name="RegisterLocationAndress" component={RegisterLocationAndress} />
+        <Stack.Screen name="RegisterPassword" component={RegisterPassword} />
         <Stack.Screen name="InformationPersonResponsible" component={InformationPersonResponsible} />
         <Stack.Screen name="AdditionalInformation" component={AdditionalInformation} />
         <Stack.Screen name="ConfirmRegister" component={ConfirmRegister} />

@@ -10,7 +10,7 @@ interface InputProps<TFieldValues extends FieldValues = AccountProps> {
     iconName: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
     placeholder?: string;
     error?: string;
-    formProps: UseControllerProps<TFieldValues>;
+    formProps?: UseControllerProps<TFieldValues>;
     inputProps?: TextInputProps;
     labelStyle?: object;
 }
@@ -18,6 +18,35 @@ interface InputProps<TFieldValues extends FieldValues = AccountProps> {
 const Input = forwardRef<TextInput, InputProps>(
     ({ label, iconName, placeholder, error = "", formProps, inputProps, labelStyle }, ref) => {
         const hasError = !!error;
+
+        if (!formProps) {
+            return (
+                <View style={styles.container}>
+                    <Text style={[styles.label, labelStyle]}>{label}</Text>
+                    <View
+                        style={[
+                            styles.inputContainer,
+                            hasError && { borderColor: "red", borderWidth: 1 },
+                        ]}
+                    >
+                        <MaterialCommunityIcons
+                            name={iconName}
+                            size={20}
+                            color={hasError ? "red" : "#888"}
+                            style={styles.icon}
+                        />
+                        <TextInput
+                            ref={ref}
+                            style={styles.input}
+                            placeholder={placeholder}
+                            placeholderTextColor="#888"
+                            {...inputProps}
+                        />
+                    </View>
+                    {hasError && <Text style={styles.error}>{error}</Text>}
+                </View>
+            );
+        }
 
         return (
             <View style={styles.container}>

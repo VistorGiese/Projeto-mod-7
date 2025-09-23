@@ -16,16 +16,8 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 const formatPhone = (value: string) => {
   const cleanedValue = value.replace(/\D/g, '');
-
-  if (cleanedValue.length <= 2) {
-    return `(${cleanedValue}`;
-  }
-  if (cleanedValue.length <= 7) {
-    return `(${cleanedValue.substring(0, 2)}) ${cleanedValue.substring(2, 7)}`;
-  }
-  if (cleanedValue.length <= 11) {
-    return `(${cleanedValue.substring(0, 2)}) ${cleanedValue.substring(2, 7)}-${cleanedValue.substring(7, 11)}`;
-  }
+  if (cleanedValue.length <= 2) return `(${cleanedValue}`;
+  if (cleanedValue.length <= 7) return `(${cleanedValue.substring(0, 2)}) ${cleanedValue.substring(2, 7)}`;
   return `(${cleanedValue.substring(0, 2)}) ${cleanedValue.substring(2, 7)}-${cleanedValue.substring(7, 11)}`;
 };
 
@@ -40,9 +32,9 @@ export default function InformationPersonResponsible() {
     formState: { errors },
   } = useForm<AccountProps>({
     defaultValues: {
-      ownerName: formData.ownerName || "",
-      email: formData.email || "",
-      phone: formData.phone || "",
+      nome_dono: formData.nome_dono || "",
+      email_responsavel: formData.email_responsavel || "",
+      celular_responsavel: formData.celular_responsavel || "",
     },
   });
 
@@ -52,8 +44,18 @@ export default function InformationPersonResponsible() {
   const handleToggleText = () => setShowFullText((prev) => !prev);
 
   function handleNext(data: AccountProps) {
-    updateFormData(data);
-    console.log(data);
+    const maskedPhone = data.celular_responsavel;
+
+    const cleanedPhone = maskedPhone ? maskedPhone.replace(/\D/g, '') : "";
+
+    const dataToSave = {
+      ...data,
+      celular_responsavel: cleanedPhone,
+    };
+
+    updateFormData(dataToSave);
+
+    console.log("Dados salvos no contexto:", dataToSave);
     navigation.navigate("AdditionalInformation");
   }
 
@@ -67,11 +69,7 @@ export default function InformationPersonResponsible() {
           {showFullText
             ? "Preencha as informações do proprietário do estabelecimento para facilitar o contato das bandas, caso haja necessidade de mais detalhes ou ajustes sobre a contratação."
             : "Preencha as informações do proprietário... "}
-          <Text
-            style={styles.saibaMais}
-            onPress={handleToggleText}
-            accessibilityRole="button"
-          >
+          <Text style={styles.saibaMais} onPress={handleToggleText}>
             {showFullText ? " Ver menos" : " Saiba mais"}
           </Text>
         </Text>
@@ -80,13 +78,11 @@ export default function InformationPersonResponsible() {
           <Input
             label="Nome do responsável"
             iconName="account"
-            error={errors.ownerName?.message}
+            error={errors.nome_dono?.message}
             formProps={{
               control,
-              name: "ownerName",
-              rules: {
-                required: "O nome é obrigatório",
-              },
+              name: "nome_dono",
+              rules: { required: "O nome é obrigatório" },
             }}
             inputProps={{
               placeholder: "Nome do responsável",
@@ -101,10 +97,10 @@ export default function InformationPersonResponsible() {
             ref={emailRef}
             label="E-mail do responsável"
             iconName="email"
-            error={errors.email?.message}
+            error={errors.email_responsavel?.message}
             formProps={{
               control,
-              name: "email",
+              name: "email_responsavel",
               rules: {
                 required: "O e-mail é obrigatório",
                 pattern: {
@@ -125,34 +121,21 @@ export default function InformationPersonResponsible() {
         <View style={styles.inputWrapper}>
           <Controller
             control={control}
-            name="phone"
+            name="celular_responsavel"
             rules={{
               required: "O telefone é obrigatório",
-              pattern: {
-                value: /^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-                message: "Telefone inválido (formato (XX) XXXXX-XXXX)",
-              },
+              validate: value => value && value.replace(/\D/g, '').length === 11 || "Telefone inválido (11 dígitos)",
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
                 ref={phoneRef}
                 label="Telefone do responsável"
                 iconName="phone"
-                error={errors.phone?.message}
-                formProps={{
-                  control,
-                  name: "phone",
-                  rules: {
-                    required: "O telefone é obrigatório",
-                    pattern: {
-                      value: /^\(\d{2}\)\s\d{4,5}-\d{4}$/,
-                      message: "Telefone inválido (formato (XX) XXXXX-XXXX)",
-                    },
-                  },
-                }}
+                error={errors.celular_responsavel?.message}
                 inputProps={{
-                  placeholder: "Telefone do responsável",
+                  placeholder: "(XX) XXXXX-XXXX",
                   keyboardType: "phone-pad",
+                  maxLength: 15,
                   onBlur,
                   onChangeText: (text) => onChange(formatPhone(text)),
                   value,
@@ -165,10 +148,7 @@ export default function InformationPersonResponsible() {
         </View>
       </View>
 
-      <Button
-        style={styles.button}
-        onPress={handleSubmit(handleNext)}
-      >
+      <Button style={styles.button} onPress={handleSubmit(handleNext)}>
         <Text style={styles.buttonText}>Continuar</Text>
       </Button>
     </View>

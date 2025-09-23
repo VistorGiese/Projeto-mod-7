@@ -12,7 +12,6 @@ import Fund from "../components/Allcomponents/Fund";
 import Input from "../components/Allcomponents/Input";
 import ToBack from "../components/Allcomponents/ToBack";
 
-
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const { width, height } = Dimensions.get("window");
 
@@ -26,7 +25,7 @@ export default function RegisterLocationName() {
     formState: { errors },
   } = useForm<AccountProps>({
     defaultValues: {
-      establishmentName: formData.establishmentName || "",
+      nome_estabelecimento: formData.nome_estabelecimento || "",
     },
   });
 
@@ -34,8 +33,8 @@ export default function RegisterLocationName() {
   const handleToggleText = () => setShowFullText((prev) => !prev);
 
   function handleNext(data: AccountProps) {
-    updateFormData({ establishmentName: data.establishmentName });
-    console.log(data);
+    updateFormData({ nome_estabelecimento: data.nome_estabelecimento });
+    console.log({ nome_estabelecimento: data.nome_estabelecimento });
     navigation.navigate("RegisterLocationAndress");
   }
 
@@ -64,10 +63,10 @@ export default function RegisterLocationName() {
       <Input
         label="Nome do Estabelecimento"
         iconName="store"
-        error={errors.establishmentName?.message}
+        error={errors.nome_estabelecimento?.message}
         formProps={{
           control,
-          name: "establishmentName",
+          name: "nome_estabelecimento",
           rules: {
             required: "O nome do estabelecimento é obrigatório",
           },

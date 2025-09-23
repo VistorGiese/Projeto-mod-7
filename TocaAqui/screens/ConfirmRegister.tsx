@@ -1,34 +1,53 @@
 import { colors } from "@/utils/colors";
 import React, { useContext, useState } from "react";
-import {
-    ActivityIndicator,
-    Alert,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
-} from "react-native";
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import Button from "../components/Allcomponents/Button";
 import ToBack from "../components/Allcomponents/ToBack";
 import { AccontFormContext } from "../contexts/AccountFromContexto";
-import { registerAccount } from "../services/api";
+import { createEndereco, createEstabelecimento } from "../services/api";
 
 export default function ConfirmRegister() {
     const { accountFormData } = useContext(AccontFormContext);
-
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleFinalSubmit = async () => {
         setIsSubmitting(true);
         try {
-            console.log("Enviando os seguintes dados para o backend:", accountFormData);
+            const enderecoPayload = {
+                rua: accountFormData.rua,
+                numero: accountFormData.numero,
+                bairro: accountFormData.bairro,
+                cidade: accountFormData.cidade,
+                estado: accountFormData.estado,
+                cep: accountFormData.cep,
+            };
 
-            const result = await registerAccount(accountFormData);
+            const enderecoCriado = await createEndereco(enderecoPayload);
+            const enderecoId = enderecoCriado.id;
+
+            if (!enderecoId) {
+                throw new Error("O ID do endereço não foi retornado pelo backend.");
+            }
+
+            const estabelecimentoPayload = {
+                nome_estabelecimento: accountFormData.nome_estabelecimento,
+                nome_dono: accountFormData.nome_dono,
+                email_responsavel: accountFormData.email_responsavel,
+                celular_responsavel: accountFormData.celular_responsavel,
+                generos_musicais: accountFormData.generos_musicais,
+                horario_funcionamento_inicio: `${accountFormData.horario_funcionamento_inicio}:00`,
+                horario_funcionamento_fim: `${accountFormData.horario_funcionamento_fim}:00`,
+                senha: accountFormData.password,
+                endereco_id: enderecoId,
+            };
+
+            await createEstabelecimento(estabelecimentoPayload);
 
             Alert.alert("Sucesso!", "Sua conta foi criada com sucesso.");
 
         } catch (error) {
-            Alert.alert("Erro", "Não foi possível criar sua conta. Verifique sua conexão e tente novamente.");
+            console.error("--- ERRO NO PROCESSO DE CADASTRO ---", error);
+            Alert.alert("Erro", "Não foi possível criar sua conta. Verifique os dados e tente novamente.");
         } finally {
             setIsSubmitting(false);
         }
@@ -45,26 +64,25 @@ export default function ConfirmRegister() {
                     </Text>
                 </View>
 
-                {/* Seus blocos de dados continuam os mesmos */}
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Dados de Acesso</Text>
-                    <Text style={styles.text}>Nome: {accountFormData.nome}</Text>
-                    <Text style={styles.text}>E-mail: {accountFormData.email}</Text>
-                    <Text style={styles.text}>Senha: {accountFormData.password}</Text>
-                    <Text style={styles.text}>Confirmar Senha: {accountFormData.passwordConfirm}</Text>
+                    <Text style={styles.text}>Nome do estabelecimento: {accountFormData.nome_estabelecimento}</Text>
+                    <Text style={styles.text}>Nome do responsável: {accountFormData.nome_dono}</Text>
+                    <Text style={styles.text}>E-mail: {accountFormData.email_responsavel}</Text>
+                    <Text style={styles.text}>Telefone: {accountFormData.celular_responsavel}</Text>
+                    <Text style={styles.text}>Senha: *********</Text>
+                    <Text style={styles.text}>Início de atendimento: {accountFormData.horario_funcionamento_inicio}</Text>
+                    <Text style={styles.text}>Fim de atendimento: {accountFormData.horario_funcionamento_fim}</Text>
                 </View>
 
-                {/* ...outros blocos de dados... */}
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Dados do Estabelecimento</Text>
-                    <Text style={styles.text}>Nome: {accountFormData.establishmentName}</Text>
-                    <Text style={styles.text}>Endereço: {accountFormData.road}</Text>
-                    <Text style={styles.text}>Cidade: {accountFormData.number}</Text>
-                    <Text style={styles.text}>Bairro: {accountFormData.neighborhood}</Text>
+                    <Text style={styles.text}>Rua: {accountFormData.rua}, {accountFormData.numero}</Text>
+                    <Text style={styles.text}>Bairro: {accountFormData.bairro}</Text>
+                    <Text style={styles.text}>Cidade: {accountFormData.cidade} - {accountFormData.estado}</Text>
                     <Text style={styles.text}>CEP: {accountFormData.cep}</Text>
                 </View>
 
-                {/* ADIÇÃO 7: Botão agora chama a função e mostra o loading */}
                 <Button
                     style={styles.button}
                     onPress={handleFinalSubmit}

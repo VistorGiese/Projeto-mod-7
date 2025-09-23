@@ -11,22 +11,14 @@ import Button from "../components/Allcomponents/Button";
 import Fund from "../components/Allcomponents/Fund";
 import Input from "../components/Allcomponents/Input";
 import ToBack from "../components/Allcomponents/ToBack";
-
-const formatSchedule = (value: string) => {
-  const cleanedValue = value.replace(/\D/g, '');
-
-  if (cleanedValue.length <= 2) {
-    return cleanedValue.length > 0 ? `${cleanedValue}h` : '';
+const formatTime = (value: string) => {
+  const cleaned = value.replace(/\D/g, '').slice(0, 4);
+  if (cleaned.length > 2) {
+    return `${cleaned.slice(0, 2)}:${cleaned.slice(2)}`;
   }
-  if (cleanedValue.length <= 4) {
-    const startHour = cleanedValue.substring(0, 2);
-    const endHour = cleanedValue.substring(2, 4);
-    return `${startHour}h às ${endHour}`;
-  }
-  const startHour = cleanedValue.substring(0, 2);
-  const endHour = cleanedValue.substring(2, 4);
-  return `${startHour}h às ${endHour}h`;
+  return cleaned;
 };
+
 export default function AdditionalInformation() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { accountFormData: formData, updateFormData } = useContext(AccontFormContext);
@@ -36,15 +28,19 @@ export default function AdditionalInformation() {
   const {
     control,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<AccountProps>({
     defaultValues: {
-      genre: formData.genre || "",
-      schedule: formData.schedule || "",
+      generos_musicais: formData.generos_musicais || "",
+      horario_funcionamento_inicio: formData.horario_funcionamento_inicio || "",
+      horario_funcionamento_fim: formData.horario_funcionamento_fim || "",
     },
+    mode: "onChange",
   });
 
-  const scheduleRef = useRef<TextInput>(null);
+  const horarioInicio = watch("horario_funcionamento_inicio");
+  const fimRef = useRef<TextInput>(null);
 
   function handleNext(data: AccountProps) {
     updateFormData(data);
@@ -59,71 +55,95 @@ export default function AdditionalInformation() {
       <View style={styles.content}>
         <Text style={styles.title}>QUASE LÁ...</Text>
         <Text style={styles.subtitle}>
-          {showFullText
-            ? "Defina as preferências do seu estabelecimento. Essas informações ajudam as bandas a entender melhor o seu estilo e personalizar a apresentação de acordo com o que você e seus clientes preferem."
-            : "Defina as preferências do seu estabelecimento... "}
-          <Text
-            style={styles.saibaMais}
-            onPress={handleToggleText}
-            accessibilityRole="button"
-          >
+          Defina as preferências do seu estabelecimento...
+          <Text style={styles.saibaMais} onPress={handleToggleText}>
             {showFullText ? " Saiba menos" : " Saiba mais"}
           </Text>
         </Text>
+
         <View style={styles.inputWrapper}>
           <Input
             label="Gêneros Musicais"
             iconName="music"
             placeholder="Ex: Rock, Sertanejo, MPB"
-            error={errors.genre?.message}
+            error={errors.generos_musicais?.message}
             formProps={{
               control,
-              name: "genre",
-              rules: {
-                required: "O gênero musical é obrigatório",
-              },
+              name: "generos_musicais",
+              rules: { required: "O gênero musical é obrigatório" },
             }}
             inputProps={{
-              onSubmitEditing: () => scheduleRef.current?.focus(),
               returnKeyType: "next",
             }}
           />
         </View>
-        <View style={styles.inputWrapper}>
-          <Controller
-            control={control}
-            name="schedule"
-            rules={{
-              required: "O horário de atendimento é obrigatório",
-              validate: value => value?.length === 10 || "Horário inválido (Ex: 18h às 23h)"
-            }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                ref={scheduleRef}
-                label="Horário de Atendimento"
-                iconName="clock"
-                error={errors.schedule?.message}
-                formProps={{
-                  control,
-                  name: "schedule",
-                  rules: {
-                    required: "O horário de atendimento é obrigatório",
-                    validate: value => value?.length === 10 || "Horário inválido (Ex: 18h às 23h)"
-                  },
-                }}
-                inputProps={{
-                  placeholder: "Ex: 18h às 23h",
-                  keyboardType: "numeric",
-                  onBlur,
-                  onChangeText: (text) => onChange(formatSchedule(text)),
-                  value,
-                  maxLength: 10,
-                  onSubmitEditing: handleSubmit(handleNext),
-                  returnKeyType: "done",
-                }}
-              />
-            )}
-          />
+
+        <View style={styles.horarioContainer}>
+          <View style={styles.horarioInput}>
+            <Controller
+              control={control}
+              name="horario_funcionamento_inicio"
+              rules={{
+                required: "O horário de início é obrigatório",
+                pattern: {
+                  value: /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/,
+                  message: "Hora inválida (HH:MM)",
+                },
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  label="Horário de Início"
+                  iconName="clock"
+                  placeholder="HH:MM"
+                  error={errors.horario_funcionamento_inicio?.message}
+                  inputProps={{
+                    keyboardType: "numeric",
+                    maxLength: 5,
+                    value: value,
+                    onBlur: onBlur,
+                    onChangeText: (text) => onChange(formatTime(text)),
+                    onSubmitEditing: () => fimRef.current?.focus(),
+                    returnKeyType: "next",
+                  }}
+                />
+              )}
+            />
+          </View>
+
+          <View style={styles.horarioInput}>
+            <Controller
+              control={control}
+              name="horario_funcionamento_fim"
+              rules={{
+                required: "O horário de fim é obrigatório",
+                pattern: {
+                  value: /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/,
+                  message: "Hora inválida (HH:MM)",
+                },
+                validate: (endTime) => {
+                  return endTime !== horarioInicio || "Os horários não podem ser iguais";
+                },
+              }}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <Input
+                  ref={fimRef}
+                  label="Horário de Fim"
+                  iconName="clock"
+                  placeholder="HH:MM"
+                  error={errors.horario_funcionamento_fim?.message}
+                  inputProps={{
+                    keyboardType: "numeric",
+                    maxLength: 5,
+                    value: value,
+                    onBlur: onBlur,
+                    onChangeText: (text) => onChange(formatTime(text)),
+                    onSubmitEditing: handleSubmit(handleNext),
+                    returnKeyType: "done",
+                  }}
+                />
+              )}
+            />
+          </View>
         </View>
       </View>
       <Button
@@ -175,6 +195,14 @@ const styles = StyleSheet.create({
   inputWrapper: {
     width: "100%",
     marginBottom: 20,
+  },
+  horarioContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  horarioInput: {
+    width: '48%',
   },
   button: {
     width: "95%",
