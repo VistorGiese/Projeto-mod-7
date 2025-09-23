@@ -22,6 +22,7 @@ interface InputProps {
   keyboardType?: TextInputProps["keyboardType"];
   style?: ViewStyle;
   labelStyle?: TextStyle; // <-- agora o label tem estilo próprio
+  inputContainerStyle?: ViewStyle;
 }
 
 export default function Input({
@@ -34,12 +35,13 @@ export default function Input({
   autoCapitalize = "none",
   keyboardType = "default",
   labelStyle,
+  inputContainerStyle,
 }: InputProps) {
   return (
     <View style={[styles.container]}>
       <Text style={[styles.label, labelStyle]}>{label}</Text>
 
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, inputContainerStyle]}>
         <MaterialCommunityIcons
           name={iconName}
           size={20}
