@@ -13,7 +13,7 @@ import { colors } from "@/utils/colors";
 
 interface InputProps {
   label: string;
-  iconName: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
+  iconName?: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
   placeholder?: string;
   value: string;
   onChangeText: (text: string) => void;
