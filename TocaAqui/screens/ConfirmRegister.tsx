@@ -1,59 +1,36 @@
 import { colors } from "@/utils/colors";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { documentDirectory, getInfoAsync, makeDirectoryAsync, writeAsStringAsync } from 'expo-file-system';
-import React, { useContext } from "react";
-import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import React, { useContext, useState } from "react";
+import {
+    ActivityIndicator,
+    Alert,
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+} from "react-native";
 import Button from "../components/Allcomponents/Button";
 import ToBack from "../components/Allcomponents/ToBack";
 import { AccontFormContext } from "../contexts/AccountFromContexto";
-import { RootStackParamList } from "../navigation/Navigate";
-
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+import { registerAccount } from "../services/api";
 
 export default function ConfirmRegister() {
-    const navigation = useNavigation<NavigationProp>();
     const { accountFormData } = useContext(AccontFormContext);
 
-    const handleFinishRegistration = async () => {
-        const finalData = accountFormData;
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
-        const jsonString = JSON.stringify(finalData, null, 2);
-
-        const dataDirectory = `${documentDirectory}data/`;
-
+    const handleFinalSubmit = async () => {
+        setIsSubmitting(true);
         try {
-            const dirInfo = await getInfoAsync(dataDirectory);
-            if (!dirInfo.exists) {
-                await makeDirectoryAsync(dataDirectory, { intermediates: true });
-                console.log('Pasta "data" criada com sucesso.');
-            }
-        } catch (e) {
-            console.error("Erro ao criar a pasta:", e);
-            Alert.alert("Erro", "Não foi possível criar o diretório de dados.");
-            return;
-        }
+            console.log("Enviando os seguintes dados para o backend:", accountFormData);
 
-        const filePath = `${dataDirectory}dataLogging.json`;
+            const result = await registerAccount(accountFormData);
 
-        try {
-            await writeAsStringAsync(filePath, jsonString, {
-                encoding: "utf8", // Corrigido para 'utf8' (minúsculas)
-            });
+            Alert.alert("Sucesso!", "Sua conta foi criada com sucesso.");
 
-            console.log('Arquivo salvo em:', filePath);
-
-            Alert.alert(
-                "Cadastro Concluído!",
-                `Dados salvos com sucesso em: ${filePath}`,
-                [{ text: "OK", onPress: () => navigation.navigate("Login") }]
-            );
         } catch (error) {
-            console.error("Erro ao salvar o arquivo:", error);
-            Alert.alert(
-                "Erro",
-                "Ocorreu um erro ao salvar o cadastro. Tente novamente."
-            );
+            Alert.alert("Erro", "Não foi possível criar sua conta. Verifique sua conexão e tente novamente.");
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -68,38 +45,36 @@ export default function ConfirmRegister() {
                     </Text>
                 </View>
 
+                {/* Seus blocos de dados continuam os mesmos */}
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Dados de Acesso</Text>
                     <Text style={styles.text}>Nome: {accountFormData.nome}</Text>
                     <Text style={styles.text}>E-mail: {accountFormData.email}</Text>
-                    <Text style={styles.text}>Senha: *********</Text>
+                    <Text style={styles.text}>Senha: {accountFormData.password}</Text>
+                    <Text style={styles.text}>Confirmar Senha: {accountFormData.passwordConfirm}</Text>
                 </View>
 
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Informações do Responsável</Text>
-                    <Text style={styles.text}>Nome: {accountFormData.ownerName}</Text>
-                    <Text style={styles.text}>Telefone: {accountFormData.phone}</Text>
-                </View>
-
+                {/* ...outros blocos de dados... */}
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Dados do Estabelecimento</Text>
                     <Text style={styles.text}>Nome: {accountFormData.establishmentName}</Text>
-                    <Text style={styles.text}>Endereço: {accountFormData.road}, {accountFormData.number}</Text>
+                    <Text style={styles.text}>Endereço: {accountFormData.road}</Text>
+                    <Text style={styles.text}>Cidade: {accountFormData.number}</Text>
                     <Text style={styles.text}>Bairro: {accountFormData.neighborhood}</Text>
                     <Text style={styles.text}>CEP: {accountFormData.cep}</Text>
                 </View>
 
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Preferências</Text>
-                    <Text style={styles.text}>Gêneros Musicais: {accountFormData.genre}</Text>
-                    <Text style={styles.text}>Horário de Atendimento: {accountFormData.schedule}</Text>
-                </View>
-
+                {/* ADIÇÃO 7: Botão agora chama a função e mostra o loading */}
                 <Button
                     style={styles.button}
-                    onPress={handleFinishRegistration}
+                    onPress={handleFinalSubmit}
+                    disabled={isSubmitting}
                 >
-                    <Text style={styles.buttonText}>Confirmar e Finalizar</Text>
+                    {isSubmitting ? (
+                        <ActivityIndicator size="small" color={colors.purpleDark} />
+                    ) : (
+                        <Text style={styles.buttonText}>Confirmar e Finalizar</Text>
+                    )}
                 </Button>
             </ScrollView>
         </View>
@@ -139,7 +114,7 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 22,
         fontFamily: "AkiraExpanded-Superbold",
-        color: colors.purpleLight,
+        color: colors.purple,
         marginBottom: 10,
     },
     text: {

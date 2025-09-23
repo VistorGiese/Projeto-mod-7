@@ -49,7 +49,7 @@ export default function AdditionalInformation() {
   function handleNext(data: AccountProps) {
     updateFormData(data);
     console.log(data);
-    navigation.navigate("Initial");
+    navigation.navigate("ConfirmRegister");
   }
 
   return (

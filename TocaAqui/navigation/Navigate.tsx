@@ -4,6 +4,7 @@ import React from "react";
 // Telas
 import AdditionalInformation from "../screens/AdditionalInformation";
 import ArtistProfile from "../screens/ArtistProfile";
+import ConfirmRegister from "../screens/ConfirmRegister";
 import CreateEvent from "../screens/CreateEvent";
 import ForgotPassword from "../screens/ForgotPassword";
 import HomePage from "../screens/HomePage";
@@ -28,6 +29,7 @@ export type RootStackParamList = {
   CreateEvent: undefined;
   InfoEvent: undefined;
   ArtistProfile: undefined;
+  ConfirmRegister: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -49,6 +51,7 @@ export default function Navigate() {
         <Stack.Screen name="RegisterLocationAndress" component={RegisterLocationAndress} />
         <Stack.Screen name="InformationPersonResponsible" component={InformationPersonResponsible} />
         <Stack.Screen name="AdditionalInformation" component={AdditionalInformation} />
+        <Stack.Screen name="ConfirmRegister" component={ConfirmRegister} />
       </Stack.Group>
 
       {/* Telas principais do app Após o Login */}
