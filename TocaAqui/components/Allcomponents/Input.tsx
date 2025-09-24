@@ -21,8 +21,9 @@ interface InputProps {
   autoCapitalize?: "none" | "sentences" | "words" | "characters";
   keyboardType?: TextInputProps["keyboardType"];
   style?: ViewStyle;
-  labelStyle?: TextStyle; // <-- agora o label tem estilo próprio
+  labelStyle?: TextStyle;
   inputContainerStyle?: ViewStyle;
+  app?: boolean; // <-- nova prop
 }
 
 export default function Input({
@@ -36,23 +37,32 @@ export default function Input({
   keyboardType = "default",
   labelStyle,
   inputContainerStyle,
+  app = false,
 }: InputProps) {
   return (
     <View style={[styles.container]}>
       <Text style={[styles.label, labelStyle]}>{label}</Text>
 
-      <View style={[styles.inputContainer, inputContainerStyle]}>
-        <MaterialCommunityIcons
-          name={iconName}
-          size={20}
-          color="#888"
-          style={styles.icon}
-        />
+      <View
+        style={[
+          styles.inputContainer,
+          app && styles.inputContainerApp,
+          inputContainerStyle,
+        ]}
+      >
+        {iconName && (
+          <MaterialCommunityIcons
+            name={iconName}
+            size={20}
+            color={colors.neutral}
+            style={styles.icon}
+          />
+        )}
 
         <TextInput
-          style={styles.input}
+          style={[styles.input, app && styles.inputApp]}
           placeholder={placeholder}
-          placeholderTextColor="#888"
+          placeholderTextColor={colors.neutral}
           value={value}
           onChangeText={onChangeText}
           secureTextEntry={secureTextEntry}
@@ -82,6 +92,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 15,
   },
+  inputContainerApp: {
+    backgroundColor: colors.purpleBlack2,
+    borderWidth: 1,
+    borderColor: colors.purple,
+  },
   icon: {
     marginRight: 10,
   },
@@ -91,5 +106,8 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontFamily: "Montserrat-Regular",
     fontSize: 16,
+  },
+  inputApp: {
+    color: colors.neutral,
   },
 });
