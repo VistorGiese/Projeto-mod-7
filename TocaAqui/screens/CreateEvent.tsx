@@ -179,6 +179,7 @@ const styles = StyleSheet.create({
   timeInput: {
     padding: 15,
     fontSize: 14,
+    color: colors.neutral,
     fontFamily: "Montserrat-Regular",
   },
   deleteButton: {
