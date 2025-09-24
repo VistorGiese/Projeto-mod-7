@@ -7,7 +7,6 @@ import {
   ScrollView,
   TextInput,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../utils/colors";
 import HorizontalCalendar from "@/components/Allcomponents/HorizontalCalendar";
@@ -19,8 +18,7 @@ interface TimeSlot {
   end: string;
 }
 
-export default function CreateEvent() {
-  const navigation = useNavigation();
+export default function CreateEvent({ onClose }: { onClose: () => void }) {
   const [name, setName] = useState<string>("");
   const [desc, setDesc] = useState<string>("");
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([
@@ -52,7 +50,14 @@ export default function CreateEvent() {
 
   return (
     <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+        <Ionicons name="close-outline" size={32} color={colors.neutral} />
+      </TouchableOpacity>
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{ marginTop: 40 }}
+      >
         <HorizontalCalendar
           selectedDate={selectedDate}
           onDateSelect={setSelectedDate}
@@ -121,14 +126,15 @@ export default function CreateEvent() {
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
           style={[styles.button, styles.cancel]}
-          onPress={() => navigation.goBack()}
+          onPress={onClose}
         >
           <Text style={styles.buttonTextCancel}>Cancelar</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, styles.confirm]}
           onPress={() => {
-            /* Lógica de agendamento aqui */
+            // Lógica de agendamento aqui
+            onClose();
           }}
         >
           <Text style={styles.buttonText}>Agendar</Text>
@@ -141,9 +147,12 @@ export default function CreateEvent() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.purpleBlack2,
-    paddingHorizontal: 20,
-    paddingTop: 20,
+  },
+  closeButton: {
+    position: "absolute",
+    top: 0,
+    right: 0,
+    zIndex: 10,
   },
   subtitle: {
     fontSize: 16,

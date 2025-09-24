@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   ImageBackground,
   FlatList,
 } from "react-native";
+import Modal from "react-native-modal";
 import Button from "../components/Allcomponents/Button";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -15,11 +16,13 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { colors } from "@/utils/colors";
 import CardEvent from "@/components/Allcomponents/CardEvent";
 import { eventsMock } from "@/components/Allcomponents/mockEvents";
+import CreateEvent from "./CreateEvent";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function Schedulling() {
   const navigation = useNavigation<NavigationProp>();
+  const [isModalVisible, setModalVisible] = useState(false);
 
   return (
     <ImageBackground
@@ -33,10 +36,7 @@ export default function Schedulling() {
 
       <View style={styles.containerContent}>
         <View style={styles.buttonsContainer}>
-          <Button
-            style={styles.button}
-            onPress={() => navigation.navigate("CreateEvent")}
-          >
+          <Button style={styles.button} onPress={() => setModalVisible(true)}>
             <Text style={styles.buttonText}>Crie um evento</Text>
             <FontAwesome5 name="plus" size={18} color={colors.purpleBlack} />
           </Button>
@@ -62,11 +62,29 @@ export default function Schedulling() {
       </View>
 
       <NavBar />
+
+      <Modal
+        isVisible={isModalVisible}
+        onBackdropPress={() => setModalVisible(false)}
+        onSwipeComplete={() => setModalVisible(false)}
+        swipeDirection="down"
+        style={styles.bottomModal}
+      >
+        <View style={styles.modalContent}>
+          <CreateEvent onClose={() => setModalVisible(false)} />
+        </View>
+      </Modal>
     </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+    backgroundColor: colors.purpleBlack,
+    paddingBottom: "10%",
+  },
   header: {
     position: "absolute",
     top: "10%",
@@ -75,11 +93,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "110%",
   },
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    backgroundColor: colors.purpleBlack2,
-    paddingBottom: "10%",
+  title: {
+    fontSize: 24,
+    fontFamily: "AkiraExpanded-Superbold",
+    color: "#fff",
+    marginBottom: 20,
+    textAlign: "center",
   },
   containerContent: {
     top: "20%",
@@ -87,13 +106,6 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     flex: 1,
-  },
-  title: {
-    fontSize: 24,
-    fontFamily: "AkiraExpanded-Superbold",
-    color: "#fff",
-    marginBottom: 20,
-    textAlign: "center",
   },
   buttonsContainer: {
     width: "100%",
@@ -117,5 +129,17 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: 20,
+  },
+
+  bottomModal: {
+    justifyContent: "flex-end",
+    margin: 0,
+  },
+  modalContent: {
+    backgroundColor: colors.purpleBlack2,
+    height: "90%",
+    padding: 22,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
 });
