@@ -59,26 +59,18 @@ export default function CreateEvent() {
         />
 
         <Input
+          app
           label="Nome do Evento"
           placeholder="Quartou do João"
           value={name}
           onChangeText={setName}
-          inputContainerStyle={{
-            backgroundColor: colors.purpleBlack2,
-            borderColor: colors.purple,
-            borderWidth: 1,
-          }}
         />
         <Input
+          app
           label="Descrição do Evento"
           placeholder="Descrição da Quartou do João"
           value={desc}
           onChangeText={setDesc}
-          inputContainerStyle={{
-            backgroundColor: colors.purpleBlack2,
-            borderColor: colors.purple,
-            borderWidth: 1,
-          }}
         />
 
         <Text style={styles.subtitle}>Horários Disponíveis</Text>
@@ -95,6 +87,7 @@ export default function CreateEvent() {
                   value={slot.start}
                   onChangeText={(val) => updateTimeSlot(slot.id, "start", val)}
                   style={styles.timeInput}
+                  placeholderTextColor={colors.neutral}
                 />
               </View>
               <View style={styles.timeInputContainer}>
@@ -103,6 +96,7 @@ export default function CreateEvent() {
                   value={slot.end}
                   onChangeText={(val) => updateTimeSlot(slot.id, "end", val)}
                   style={styles.timeInput}
+                  placeholderTextColor={colors.neutral}
                 />
               </View>
               {index > 0 && (
@@ -184,7 +178,6 @@ const styles = StyleSheet.create({
   },
   timeInput: {
     padding: 15,
-    color: colors.neutral,
     fontSize: 14,
     fontFamily: "Montserrat-Regular",
   },
