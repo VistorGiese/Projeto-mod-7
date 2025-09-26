@@ -3,16 +3,29 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useContext, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { StyleSheet, Text, TextInput, View } from "react-native";
-import { AccontFormContext, AccountProps } from "../contexts/AccountFromContexto";
-import { RootStackParamList } from "../navigation/Navigate";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 import Button from "../components/Allcomponents/Button";
 import Fund from "../components/Allcomponents/Fund";
 import Input from "../components/Allcomponents/Input";
 import ToBack from "../components/Allcomponents/ToBack";
+import {
+  AccontFormContext,
+  AccountProps,
+} from "../contexts/AccountFromContexto";
+import { RootStackParamList } from "../navigation/Navigate";
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
 const formatTime = (value: string) => {
-  const cleaned = value.replace(/\D/g, '').slice(0, 4);
+  if (!value) return "";
+  const cleaned = value.replace(/\D/g, "").slice(0, 4);
   if (cleaned.length > 2) {
     return `${cleaned.slice(0, 2)}:${cleaned.slice(2)}`;
   }
@@ -20,15 +33,14 @@ const formatTime = (value: string) => {
 };
 
 export default function AdditionalInformation() {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-  const { accountFormData: formData, updateFormData } = useContext(AccontFormContext);
+  const navigation = useNavigation<NavigationProp>();
+  const { accountFormData: formData, updateFormData } =
+    useContext(AccontFormContext);
   const [showFullText, setShowFullText] = useState(false);
-  const handleToggleText = () => setShowFullText((prev) => !prev);
 
   const {
     control,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<AccountProps>({
     defaultValues: {
@@ -36,15 +48,16 @@ export default function AdditionalInformation() {
       horario_funcionamento_inicio: formData.horario_funcionamento_inicio || "",
       horario_funcionamento_fim: formData.horario_funcionamento_fim || "",
     },
-    mode: "onChange",
+    mode: "onTouched",
   });
 
-  const horarioInicio = watch("horario_funcionamento_inicio");
-  const fimRef = useRef<TextInput>(null);
+  const startTimeRef = useRef<TextInput>(null);
+  const endTimeRef = useRef<TextInput>(null);
+  const handleToggleText = () => setShowFullText((prev) => !prev);
 
-  function handleNext(data: AccountProps) {
+  function handleRegister(data: AccountProps) {
     updateFormData(data);
-    console.log(data);
+    console.log("Dados salvos no contexto:", { ...formData, ...data });
     navigation.navigate("ConfirmRegister");
   }
 
@@ -52,34 +65,46 @@ export default function AdditionalInformation() {
     <View style={styles.container}>
       <Fund />
       <ToBack />
-      <View style={styles.content}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.title}>QUASE LÁ...</Text>
         <Text style={styles.subtitle}>
-          Defina as preferências do seu estabelecimento...
-          <Text style={styles.saibaMais} onPress={handleToggleText}>
-            {showFullText ? " Saiba menos" : " Saiba mais"}
+          {showFullText
+            ? "Defina as preferências do seu estabelecimento. Essas informações ajudam as bandas a entender melhor o seu estilo e personalizar a apresentação de acordo com o que você e seus clientes preferem."
+            : "Defina as preferências do seu estabelecimento... "}
+          <Text
+            style={styles.saibaMais}
+            onPress={handleToggleText}
+            accessibilityRole="button"
+          >
+            {showFullText ? " Ver menos" : " Saiba mais"}
           </Text>
         </Text>
 
-        <View style={styles.inputWrapper}>
-          <Input
-            label="Gêneros Musicais"
-            iconName="music"
-            placeholder="Ex: Rock, Sertanejo, MPB"
-            error={errors.generos_musicais?.message}
-            formProps={{
-              control,
-              name: "generos_musicais",
-              rules: { required: "O gênero musical é obrigatório" },
-            }}
-            inputProps={{
-              returnKeyType: "next",
-            }}
-          />
-        </View>
+        <Controller
+          control={control}
+          name="generos_musicais"
+          rules={{
+            required: "Pelo menos um gênero musical é obrigatório",
+          }}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              containerStyle={{ width: "100%" }}
+              inputRef={ref}
+              label="Gêneros Musicais"
+              iconName="music-note"
+              placeholder="Ex: Rock, Sertanejo, MPB"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              error={errors.generos_musicais?.message}
+              returnKeyType="next"
+              onSubmitEditing={() => startTimeRef.current?.focus()}
+            />
+          )}
+        />
 
-        <View style={styles.horarioContainer}>
-          <View style={styles.horarioInput}>
+        <View style={styles.timeInputsContainer}>
+          <View style={styles.timeInputWrapper}>
             <Controller
               control={control}
               name="horario_funcionamento_inicio"
@@ -87,70 +112,72 @@ export default function AdditionalInformation() {
                 required: "O horário de início é obrigatório",
                 pattern: {
                   value: /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/,
-                  message: "Hora inválida (HH:MM)",
+                  message: "Formato inválido (HH:MM)",
                 },
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
+              render={({ field: { onChange, onBlur, value, ref } }) => (
                 <Input
-                  label="Horário de Início"
-                  iconName="clock"
-                  placeholder="HH:MM"
-                  error={errors.horario_funcionamento_inicio?.message}
-                  inputProps={{
-                    keyboardType: "numeric",
-                    maxLength: 5,
-                    value: value,
-                    onBlur: onBlur,
-                    onChangeText: (text) => onChange(formatTime(text)),
-                    onSubmitEditing: () => fimRef.current?.focus(),
-                    returnKeyType: "next",
+                  containerStyle={{ width: "100%" }}
+                  inputRef={(e) => {
+                    ref(e);
+                    startTimeRef.current = e;
                   }}
+                  label="Início do Atendimento"
+                  iconName="clock-start"
+                  placeholder="Ex: 18:00"
+                  onBlur={onBlur}
+                  onChangeText={(text) => onChange(formatTime(text))}
+                  value={value}
+                  error={errors.horario_funcionamento_inicio?.message}
+                  keyboardType="numeric"
+                  maxLength={5}
+                  returnKeyType="next"
+                  onSubmitEditing={() => endTimeRef.current?.focus()}
                 />
               )}
             />
           </View>
-
-          <View style={styles.horarioInput}>
+          <View style={styles.timeInputWrapper}>
             <Controller
               control={control}
               name="horario_funcionamento_fim"
               rules={{
-                required: "O horário de fim é obrigatório",
+                required: "O horário de término é obrigatório",
                 pattern: {
                   value: /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/,
-                  message: "Hora inválida (HH:MM)",
-                },
-                validate: (endTime) => {
-                  return endTime !== horarioInicio || "Os horários não podem ser iguais";
+                  message: "Formato inválido (HH:MM)",
                 },
               }}
-              render={({ field: { onChange, onBlur, value } }) => (
+              render={({ field: { onChange, onBlur, value, ref } }) => (
                 <Input
-                  ref={fimRef}
-                  label="Horário de Fim"
-                  iconName="clock"
-                  placeholder="HH:MM"
-                  error={errors.horario_funcionamento_fim?.message}
-                  inputProps={{
-                    keyboardType: "numeric",
-                    maxLength: 5,
-                    value: value,
-                    onBlur: onBlur,
-                    onChangeText: (text) => onChange(formatTime(text)),
-                    onSubmitEditing: handleSubmit(handleNext),
-                    returnKeyType: "done",
+                  containerStyle={{ width: "100%" }}
+                  inputRef={(e) => {
+                    ref(e);
+                    endTimeRef.current = e;
                   }}
+                  label="Fim do Atendimento"
+                  iconName="clock-end"
+                  placeholder="Ex: 23:00"
+                  onBlur={onBlur}
+                  onChangeText={(text) => onChange(formatTime(text))}
+                  value={value}
+                  error={errors.horario_funcionamento_fim?.message}
+                  keyboardType="numeric"
+                  maxLength={5}
+                  returnKeyType="done"
+                  onSubmitEditing={handleSubmit(handleRegister)}
                 />
               )}
             />
           </View>
         </View>
-      </View>
+      </ScrollView>
+
       <Button
         style={styles.button}
-        onPress={handleSubmit(handleNext)}
+        onPress={handleSubmit(handleRegister)}
       >
-        <Text style={styles.buttonText}>Cadastrar</Text>
+        <Text style={styles.buttonText}>Continuar</Text>
       </Button>
     </View>
   );
@@ -160,17 +187,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#1c0a37",
-    justifyContent: "center",
-    alignItems: "center",
     paddingHorizontal: 20,
   },
-  content: {
-    flex: 1,
-    width: "100%",
-    marginTop: 200,
-    paddingHorizontal: 15,
-    alignItems: "flex-start",
-    marginLeft: 15,
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 120,
   },
   title: {
     fontSize: 35,
@@ -179,42 +202,42 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "left",
     alignSelf: "flex-start",
+    width: "100%",
   },
   subtitle: {
     fontSize: 23,
     color: "#ccc",
     marginBottom: 25,
     textAlign: "left",
-    width: "98%",
+    width: "100%",
+    fontFamily: "Montserrat-Regular",
   },
   saibaMais: {
     fontSize: 16,
     textDecorationLine: "underline",
     color: "#5000c9ff",
   },
-  inputWrapper: {
+  timeInputsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     width: "100%",
-    marginBottom: 20,
   },
-  horarioContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  horarioInput: {
-    width: '48%',
+  timeInputWrapper: {
+    width: "48%",
   },
   button: {
-    width: "95%",
+    width: "100%",
     height: 60,
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
     bottom: 40,
+    alignSelf: "center",
   },
   buttonText: {
     color: colors.purpleDark,
     fontSize: 22,
-    fontWeight: "bold",
+    fontFamily: "Montserrat-Bold",
   },
 });
+

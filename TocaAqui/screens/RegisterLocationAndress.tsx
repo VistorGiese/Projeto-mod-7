@@ -2,31 +2,54 @@ import { colors } from "@/utils/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useContext, useRef } from "react";
-
 import { Controller, useForm } from "react-hook-form";
-import { Dimensions, Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
-import { AccontFormContext, AccountProps } from "../contexts/AccountFromContexto";
-import { RootStackParamList } from "../navigation/Navigate";
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 
 import Button from "../components/Allcomponents/Button";
 import Fund from "../components/Allcomponents/Fund";
 import Input from "../components/Allcomponents/Input";
 import ToBack from "../components/Allcomponents/ToBack";
+import {
+  AccontFormContext,
+  AccountProps,
+} from "../contexts/AccountFromContexto";
+import { RootStackParamList } from "../navigation/Navigate";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const { width, height } = Dimensions.get("window");
 
 const formatCep = (value: string) => {
-  const cleaned = value.replace(/\D/g, '').slice(0, 8);
+  const cleaned = value.replace(/\D/g, "").slice(0, 8);
   if (cleaned.length > 5) {
     return `${cleaned.slice(0, 5)}-${cleaned.slice(5)}`;
   }
   return cleaned;
 };
 
+const formatState = (value: string) => {
+  return value.replace(/[^a-zA-Z]/g, "").toUpperCase().slice(0, 2);
+};
+
+
+const brazilianStates = [
+  "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
+  "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
+  "RS", "RO", "RR", "SC", "SP", "SE", "TO"
+];
+
+
 export default function RegisterLocationAndress() {
   const navigation = useNavigation<NavigationProp>();
-  const { accountFormData: formData, updateFormData } = useContext(AccontFormContext);
+  const { accountFormData: formData, updateFormData } =
+    useContext(AccontFormContext);
 
   const {
     control,
@@ -41,7 +64,7 @@ export default function RegisterLocationAndress() {
       estado: formData.estado || "",
       cep: formData.cep || "",
     },
-    mode: 'onBlur',
+    mode: "onTouched",
   });
 
   const numeroRef = useRef<TextInput>(null);
@@ -60,7 +83,10 @@ export default function RegisterLocationAndress() {
     <View style={styles.container}>
       <Fund />
       <ToBack />
-      <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContainer}
+        showsVerticalScrollIndicator={false}
+      >
         <Image
           source={require("../assets/images/Register/CreateAccount.png")}
           style={styles.image}
@@ -70,88 +96,124 @@ export default function RegisterLocationAndress() {
           Insira o endereço completo do seu estabelecimento.
         </Text>
 
-        <Input
-          label="Rua"
-          iconName="road"
-          error={errors.rua?.message}
-          formProps={{
-            control,
-            name: "rua",
-            rules: { required: "A rua é obrigatória" },
-          }}
-          inputProps={{
-            placeholder: "Rua",
-            onSubmitEditing: () => numeroRef.current?.focus(),
-            returnKeyType: "next",
-          }}
+        <Controller
+          control={control}
+          name="rua"
+          rules={{ required: "O nome da rua é obrigatório" }}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              inputRef={ref}
+              label="Rua"
+              iconName="road-variant"
+              placeholder="Ex: Av. Paulista"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              error={errors.rua?.message}
+              returnKeyType="next"
+              onSubmitEditing={() => numeroRef.current?.focus()}
+            />
+          )}
         />
 
-        <Input
-          ref={numeroRef}
-          label="Número"
-          iconName="numeric"
-          error={errors.numero?.message}
-          formProps={{
-            control,
-            name: "numero",
-            rules: { required: "O número é obrigatório" },
-          }}
-          inputProps={{
-            placeholder: "Número",
-            onSubmitEditing: () => bairroRef.current?.focus(),
-            returnKeyType: "next",
-          }}
+        <Controller
+          control={control}
+          name="numero"
+          rules={{ required: "O número é obrigatório" }}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              inputRef={(e) => {
+                ref(e);
+                numeroRef.current = e;
+              }}
+              label="Número"
+              iconName="numeric"
+              placeholder="Ex: 123"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              error={errors.numero?.message}
+              keyboardType="numeric"
+              returnKeyType="next"
+              onSubmitEditing={() => bairroRef.current?.focus()}
+            />
+          )}
         />
 
-        <Input
-          ref={bairroRef}
-          label="Bairro"
-          iconName="city"
-          error={errors.bairro?.message}
-          formProps={{
-            control,
-            name: "bairro",
-            rules: { required: "O bairro é obrigatório" },
-          }}
-          inputProps={{
-            placeholder: "Bairro",
-            onSubmitEditing: () => cidadeRef.current?.focus(),
-            returnKeyType: "next",
-          }}
+        <Controller
+          control={control}
+          name="bairro"
+          rules={{ required: "O bairro é obrigatório" }}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              inputRef={(e) => {
+                ref(e);
+                bairroRef.current = e;
+              }}
+              label="Bairro"
+              iconName="home-group"
+              placeholder="Ex: Bela Vista"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              error={errors.bairro?.message}
+              returnKeyType="next"
+              onSubmitEditing={() => cidadeRef.current?.focus()}
+            />
+          )}
         />
 
-        <Input
-          ref={cidadeRef}
-          label="Cidade"
-          iconName="city"
-          error={errors.cidade?.message}
-          formProps={{
-            control,
-            name: "cidade",
-            rules: { required: "A cidade é obrigatória" },
-          }}
-          inputProps={{
-            placeholder: "Cidade",
-            onSubmitEditing: () => estadoRef.current?.focus(),
-            returnKeyType: "next",
-          }}
+        <Controller
+          control={control}
+          name="cidade"
+          rules={{ required: "A cidade é obrigatória" }}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              inputRef={(e) => {
+                ref(e);
+                cidadeRef.current = e;
+              }}
+              label="Cidade"
+              iconName="city-variant"
+              placeholder="Ex: São Paulo"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              error={errors.cidade?.message}
+              returnKeyType="next"
+              onSubmitEditing={() => estadoRef.current?.focus()}
+            />
+          )}
         />
 
-        <Input
-          ref={estadoRef}
-          label="Estado"
-          iconName="city"
-          error={errors.estado?.message}
-          formProps={{
-            control,
-            name: "estado",
-            rules: { required: "O estado é obrigatório" },
+        <Controller
+          control={control}
+          name="estado"
+          rules={{
+            required: "O estado é obrigatório",
+            validate: (value) =>
+              !value ||
+              brazilianStates.includes(value) ||
+              "precisa ser digitado uma sigla de estado",
           }}
-          inputProps={{
-            placeholder: "Estado",
-            onSubmitEditing: () => cepRef.current?.focus(),
-            returnKeyType: "next",
-          }}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              inputRef={(e) => {
+                ref(e);
+                estadoRef.current = e;
+              }}
+              label="Estado"
+              iconName="map-marker-radius"
+              placeholder="Ex: SP"
+              onBlur={onBlur}
+              onChangeText={(text) => onChange(formatState(text))}
+              value={value}
+              error={errors.estado?.message}
+              maxLength={2}
+              returnKeyType="next"
+              onSubmitEditing={() => cepRef.current?.focus()}
+            />
+          )}
         />
 
         <Controller
@@ -164,22 +226,23 @@ export default function RegisterLocationAndress() {
               message: "CEP inválido (formato XXXXX-XXX)",
             },
           }}
-          render={({ field: { onChange, onBlur, value } }) => (
+          render={({ field: { onChange, onBlur, value, ref } }) => (
             <Input
-              ref={cepRef}
-              label="CEP"
-              iconName="post"
-              error={errors.cep?.message}
-              inputProps={{
-                placeholder: "00000-000",
-                keyboardType: "numeric",
-                maxLength: 9,
-                value: value,
-                onBlur: onBlur,
-                onChangeText: (text) => onChange(formatCep(text)),
-                onSubmitEditing: handleSubmit(handleNext),
-                returnKeyType: "done",
+              inputRef={(e) => {
+                ref(e);
+                cepRef.current = e;
               }}
+              label="CEP"
+              iconName="mailbox"
+              placeholder="00000-000"
+              onBlur={onBlur}
+              onChangeText={(text) => onChange(formatCep(text))}
+              value={value}
+              error={errors.cep?.message}
+              keyboardType="numeric"
+              maxLength={9}
+              returnKeyType="done"
+              onSubmitEditing={handleSubmit(handleNext)}
             />
           )}
         />
@@ -196,33 +259,31 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#1c0a37",
-    paddingHorizontal: 20,
   },
   scrollContainer: {
     alignItems: "center",
-    justifyContent: "center",
-    paddingTop: 60,
+    paddingHorizontal: 20,
+    paddingTop: 20,
     paddingBottom: 100,
   },
   image: {
     width: width * 0.5,
-    height: height * 0.25,
+    height: height * 0.2,
     resizeMode: "contain",
+    marginBottom: 15,
   },
   title: {
     fontSize: 25,
-    fontWeight: "bold",
+    fontFamily: "Montserrat-Bold",
     color: "#fff",
-    textAlign: "left",
     marginBottom: 10,
-    alignSelf: "flex-start",
     width: "100%",
   },
   subtitle: {
     fontSize: 18,
+    fontFamily: "Montserrat-Regular",
     color: "#ccc",
     marginBottom: 25,
-    textAlign: "left",
     width: "100%",
   },
   button: {
@@ -233,6 +294,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: colors.purpleDark,
     fontSize: 22,
-    fontWeight: "bold",
+    fontFamily: "Montserrat-Bold",
   },
 });
+

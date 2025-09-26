@@ -22,6 +22,7 @@ export default function ConfirmRegister() {
                 cep: accountFormData.cep,
             };
 
+            console.log("Enviando para criar endereço:", enderecoPayload);
             const enderecoCriado = await createEndereco(enderecoPayload);
             const enderecoId = enderecoCriado.id;
 
@@ -41,13 +42,25 @@ export default function ConfirmRegister() {
                 endereco_id: enderecoId,
             };
 
+            console.log("Enviando para criar estabelecimento:", estabelecimentoPayload);
             await createEstabelecimento(estabelecimentoPayload);
 
             Alert.alert("Sucesso!", "Sua conta foi criada com sucesso.");
 
-        } catch (error) {
-            console.error("--- ERRO NO PROCESSO DE CADASTRO ---", error);
-            Alert.alert("Erro", "Não foi possível criar sua conta. Verifique os dados e tente novamente.");
+        } catch (error: any) {
+            console.error("--- ERRO NO PROCESSO DE CADASTRO ---");
+            if (error.response) {
+                console.error("Dados do erro:", error.response.data);
+                console.error("Status do erro:", error.response.status);
+                const errorMessage = error.response.data?.message || "Verifique os dados e tente novamente.";
+                Alert.alert("Erro no Cadastro", `Ocorreu um erro: ${errorMessage}`);
+            } else if (error.request) {
+                console.error("Requisição enviada, mas sem resposta:", error.request);
+                Alert.alert("Erro de Rede", "Não foi possível conectar ao servidor. Verifique sua conexão com a internet.");
+            } else {
+                console.error("Erro ao configurar a requisição:", error.message);
+                Alert.alert("Erro", "Ocorreu um erro inesperado ao preparar os dados.");
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -70,7 +83,7 @@ export default function ConfirmRegister() {
                     <Text style={styles.text}>Nome do responsável: {accountFormData.nome_dono}</Text>
                     <Text style={styles.text}>E-mail: {accountFormData.email_responsavel}</Text>
                     <Text style={styles.text}>Telefone: {accountFormData.celular_responsavel}</Text>
-                    <Text style={styles.text}>Senha: *********</Text>
+                    <Text style={styles.text}>Senha: {"*".repeat(accountFormData.password?.length || 0)}</Text>
                     <Text style={styles.text}>Início de atendimento: {accountFormData.horario_funcionamento_inicio}</Text>
                     <Text style={styles.text}>Fim de atendimento: {accountFormData.horario_funcionamento_fim}</Text>
                 </View>
@@ -153,3 +166,4 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
 });
+

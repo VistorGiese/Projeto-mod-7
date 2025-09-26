@@ -1,23 +1,34 @@
 import { colors } from "@/utils/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React, { useContext } from "react";
-import { useForm } from "react-hook-form";
-import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
-import { AccontFormContext, AccountProps } from "../contexts/AccountFromContexto";
-import { RootStackParamList } from "../navigation/Navigate";
+import React, { useContext, useRef } from "react";
+import { Controller, useForm } from "react-hook-form";
+import {
+    Dimensions,
+    Image,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
+} from "react-native";
 
 import Button from "../components/Allcomponents/Button";
 import Fund from "../components/Allcomponents/Fund";
 import Input from "../components/Allcomponents/Input";
 import ToBack from "../components/Allcomponents/ToBack";
+import {
+    AccontFormContext,
+    AccountProps,
+} from "../contexts/AccountFromContexto";
+import { RootStackParamList } from "../navigation/Navigate";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const { width, height } = Dimensions.get("window");
 
 export default function RegisterPassword() {
     const navigation = useNavigation<NavigationProp>();
-    const { accountFormData: formData, updateFormData } = useContext(AccontFormContext);
+    const { accountFormData: formData, updateFormData } =
+        useContext(AccontFormContext);
 
     const {
         control,
@@ -28,10 +39,11 @@ export default function RegisterPassword() {
         defaultValues: {
             password: formData.password || "",
         },
-        mode: "onChange",
+        mode: "onTouched",
     });
 
     const password = watch("password");
+    const passwordConfirmRef = useRef<TextInput>(null);
 
     function handleNext(data: AccountProps) {
         updateFormData({ password: data.password });
@@ -52,47 +64,59 @@ export default function RegisterPassword() {
                 Escolha uma senha segura. Ela será usada para proteger sua conta.
             </Text>
 
-            <Input
-                label="Senha"
-                iconName="lock"
-                error={errors.password?.message}
-                formProps={{
-                    control,
-                    name: "password",
-                    rules: {
-                        required: "A senha é obrigatória",
-                        minLength: {
-                            value: 8,
-                            message: "A senha deve ter no mínimo 8 caracteres",
-                        },
+            <Controller
+                control={control}
+                name="password"
+                rules={{
+                    required: "A senha é obrigatória",
+                    minLength: {
+                        value: 8,
+                        message: "A senha deve ter no mínimo 8 caracteres",
                     },
                 }}
-                inputProps={{
-                    placeholder: "Digite sua senha",
-                    secureTextEntry: true,
-                    returnKeyType: "next",
-                }}
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                    <Input
+                        inputRef={ref}
+                        label="Senha"
+                        iconName="lock"
+                        placeholder="Digite sua senha"
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        error={errors.password?.message}
+                        secureTextEntry
+                        returnKeyType="next"
+                        onSubmitEditing={() => passwordConfirmRef.current?.focus()}
+                    />
+                )}
             />
 
-            <Input
-                label="Confirmar Senha"
-                iconName="lock"
-                error={errors.passwordConfirm?.message}
-                formProps={{
-                    control,
-                    name: "passwordConfirm",
-                    rules: {
-                        required: "A confirmação da senha é obrigatória",
-                        validate: (value) =>
-                            value === password || "As senhas não conferem",
-                    },
+            <Controller
+                control={control}
+                name="passwordConfirm"
+                rules={{
+                    required: "A confirmação da senha é obrigatória",
+                    validate: (value) =>
+                        value === password || "As senhas não conferem",
                 }}
-                inputProps={{
-                    placeholder: "Confirme sua senha",
-                    secureTextEntry: true,
-                    onSubmitEditing: handleSubmit(handleNext),
-                    returnKeyType: "done",
-                }}
+                render={({ field: { onChange, onBlur, value, ref } }) => (
+                    <Input
+                        inputRef={(e) => {
+                            ref(e);
+                            passwordConfirmRef.current = e;
+                        }}
+                        label="Confirmar Senha"
+                        iconName="lock-check"
+                        placeholder="Confirme sua senha"
+                        onBlur={onBlur}
+                        onChangeText={onChange}
+                        value={value}
+                        error={errors.passwordConfirm?.message}
+                        secureTextEntry
+                        returnKeyType="done"
+                        onSubmitEditing={handleSubmit(handleNext)}
+                    />
+                )}
             />
 
             <Button style={styles.button} onPress={handleSubmit(handleNext)}>
@@ -101,7 +125,6 @@ export default function RegisterPassword() {
         </View>
     );
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -119,16 +142,16 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 25,
-        fontWeight: "bold",
+        fontFamily: "Montserrat-Bold",
         color: "#fff",
         textAlign: "left",
         marginBottom: 10,
-        marginLeft: 15,
         alignSelf: "flex-start",
         width: "95%",
     },
     subtitle: {
         fontSize: 18,
+        fontFamily: "Montserrat-Regular",
         color: "#ccc",
         marginBottom: 25,
         textAlign: "left",
@@ -142,6 +165,6 @@ const styles = StyleSheet.create({
     buttonText: {
         color: colors.purpleDark,
         fontSize: 22,
-        fontWeight: "bold",
+        fontFamily: "Montserrat-Bold",
     },
 });

@@ -2,8 +2,15 @@ import { colors } from "@/utils/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useRef } from "react";
-import { useForm } from "react-hook-form";
-import { Dimensions, Image, StyleSheet, Text, TextInput, View } from "react-native";
+import { Controller, useForm } from "react-hook-form";
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import Button from "../components/Allcomponents/Button";
 import Fund from "../components/Allcomponents/Fund";
 import Input from "../components/Allcomponents/Input";
@@ -21,9 +28,10 @@ export default function Login() {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<AccountProps>(); 
+  } = useForm<AccountProps>({
+    mode: "onTouched",
+  });
 
-  const emailRef = useRef<TextInput>(null);
   const passwordRef = useRef<TextInput>(null);
 
   function onSubmit(data: AccountProps) {
@@ -49,51 +57,68 @@ export default function Login() {
         </Text>
       </View>
 
-      <Input
-        ref={emailRef}
-        label="Email"
-        iconName="email-outline"
-        error={errors.email?.message}
-        formProps={{
-          control,
-          name: "email",
-          rules: {
-            required: "E-mail é obrigatório",
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: "E-mail inválido",
-            },
+      <Controller
+        control={control}
+        name="email_responsavel"
+        rules={{
+          required: "E-mail é obrigatório",
+          pattern: {
+            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            message: "E-mail inválido",
           },
         }}
-        inputProps={{
-          placeholder: "E-mail",
-          onSubmitEditing: () => passwordRef.current?.focus(),
-          returnKeyType: "next",
-        }}
+        render={({
+          field: { onChange, onBlur, value, ref },
+          fieldState: { error },
+        }) => (
+          <Input
+            inputRef={ref}
+            label="Email"
+            iconName="email-outline"
+            placeholder="Seu e-mail"
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            error={error?.message}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            returnKeyType="next"
+            onSubmitEditing={() => passwordRef.current?.focus()}
+          />
+        )}
       />
 
-      <Input
-        ref={passwordRef}
-        label="Senha"
-        iconName="lock-outline"
-        error={errors.password?.message}
-        formProps={{
-          control,
-          name: "password",
-          rules: {
-            required: "Senha é obrigatória",
-            minLength: {
-              value: 8,
-              message: "A senha deve ter no mínimo 6 caracteres",
-            },
+      <Controller
+        control={control}
+        name="password"
+        rules={{
+          required: "Senha é obrigatória",
+          minLength: {
+            value: 8,
+            message: "A senha deve ter no mínimo 6 caracteres",
           },
         }}
-        inputProps={{
-          placeholder: "Senha",
-          secureTextEntry: true,
-          onSubmitEditing: handleSubmit(onSubmit),
-          returnKeyType: "done",
-        }}
+        render={({
+          field: { onChange, onBlur, value, ref },
+          fieldState: { error },
+        }) => (
+          <Input
+            inputRef={(element) => {
+              ref(element);
+              passwordRef.current = element;
+            }}
+            label="Senha"
+            iconName="lock-outline"
+            placeholder="Sua senha"
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            error={error?.message}
+            secureTextEntry
+            returnKeyType="done"
+            onSubmitEditing={handleSubmit(onSubmit)}
+          />
+        )}
       />
 
       <View style={styles.registerContainer}>
@@ -127,10 +152,11 @@ const styles = StyleSheet.create({
     height: 350,
     resizeMode: "contain",
     alignSelf: "center",
+    marginTop: -50,
   },
   registerContainer: {
     flexDirection: "row",
-    marginBottom: 25,
+    marginBottom: 50,
     alignItems: "center",
     zIndex: 10,
   },
@@ -147,13 +173,15 @@ const styles = StyleSheet.create({
   },
   forgotPassword: {
     color: "#ffffffff",
-    marginTop: 250,
     fontSize: 16,
     textDecorationLine: "underline",
-    fontFamily: "Montserrat",
+    fontFamily: "Montserrat-Regular",
+    alignSelf: "center",
+    width: "95%",
+    marginTop: 20,
   },
   buttonPosition: {
-    width: 420,
+    width: "95%",
     height: 60,
   },
   textButton: {

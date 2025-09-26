@@ -1,7 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
-// Telas
 import Initial from "../screens/Initial";
 import Login from "../screens/Login";
 import RegisterLocationName from "../screens/RegisterLocationName";

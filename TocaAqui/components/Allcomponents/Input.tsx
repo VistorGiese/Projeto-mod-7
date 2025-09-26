@@ -1,170 +1,49 @@
-import { colors } from "@/utils/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import React, { forwardRef } from "react";
-import { Controller, FieldValues, UseControllerProps } from "react-hook-form";
-import { StyleSheet, Text, TextInput, TextInputProps, View } from "react-native";
-import { AccountProps } from "../../contexts/AccountFromContexto";
+import React from "react";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TextInputProps,
+  TextStyle,
+  View,
+  ViewStyle,
+} from "react-native";
+import { colors } from "@/utils/colors";
 
-<<<<<<< HEAD
-interface InputProps<TFieldValues extends FieldValues = AccountProps> {
-    label: string;
-    iconName: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
-    placeholder?: string;
-    error?: string;
-    formProps?: UseControllerProps<TFieldValues>;
-    inputProps?: TextInputProps;
-    labelStyle?: object;
-}
-
-const Input = forwardRef<TextInput, InputProps>(
-    ({ label, iconName, placeholder, error = "", formProps, inputProps, labelStyle }, ref) => {
-        const hasError = !!error;
-
-        if (!formProps) {
-            return (
-                <View style={styles.container}>
-                    <Text style={[styles.label, labelStyle]}>{label}</Text>
-                    <View
-                        style={[
-                            styles.inputContainer,
-                            hasError && { borderColor: "red", borderWidth: 1 },
-                        ]}
-                    >
-                        <MaterialCommunityIcons
-                            name={iconName}
-                            size={20}
-                            color={hasError ? "red" : "#888"}
-                            style={styles.icon}
-                        />
-                        <TextInput
-                            ref={ref}
-                            style={styles.input}
-                            placeholder={placeholder}
-                            placeholderTextColor="#888"
-                            {...inputProps}
-                        />
-                    </View>
-                    {hasError && <Text style={styles.error}>{error}</Text>}
-                </View>
-            );
-        }
-
-        return (
-            <View style={styles.container}>
-                <Text style={[styles.label, labelStyle]}>{label}</Text>
-
-                <Controller
-                    {...formProps}
-                    render={({ field }) => (
-                        <View
-                            style={[
-                                styles.inputContainer,
-                                hasError && { borderColor: "red", borderWidth: 1 },
-                            ]}
-                        >
-                            <MaterialCommunityIcons
-                                name={iconName}
-                                size={20}
-                                color={hasError ? "red" : "#888"}
-                                style={styles.icon}
-                            />
-
-                            <TextInput
-                                ref={ref}
-                                style={styles.input}
-                                placeholder={placeholder}
-                                placeholderTextColor="#888"
-                                value={field.value}
-                                onChangeText={field.onChange}
-                                {...inputProps}
-                            />
-                        </View>
-                    )}
-                />
-
-                {hasError && <Text style={styles.error}>{error}</Text>}
-            </View>
-        );
-    }
-);
-
-Input.displayName = "Input";
-
-export default Input;
-
-const styles = StyleSheet.create({
-    container: {
-        width: "95%",
-        marginBottom: 15,
-    },
-    label: {
-        color: "#fff",
-        fontSize: 16,
-        fontFamily: "Montserrat-Regular",
-        marginBottom: 5,
-    },
-    inputContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: colors.purple,
-        borderRadius: 10,
-        paddingHorizontal: 15,
-        height: 50,
-    },
-    icon: {
-        marginRight: 10,
-    },
-    input: {
-        flex: 1,
-        color: "#fff",
-        fontFamily: "Montserrat-Regular",
-        fontSize: 16,
-    },
-    error: {
-        marginTop: 5,
-        color: "red",
-        fontSize: 14,
-        fontFamily: "Montserrat-Regular",
-    },
-});
-=======
-interface InputProps {
+interface InputProps extends TextInputProps {
   label: string;
   iconName?: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
-  placeholder?: string;
-  value: string;
-  onChangeText: (text: string) => void;
-  secureTextEntry?: boolean;
-  autoCapitalize?: "none" | "sentences" | "words" | "characters";
-  keyboardType?: TextInputProps["keyboardType"];
-  style?: ViewStyle;
+  containerStyle?: ViewStyle; // CORREÇÃO: Renomeado de 'style' para evitar conflito
   labelStyle?: TextStyle;
   inputContainerStyle?: ViewStyle;
-  app?: boolean; // <-- nova prop
+  app?: boolean;
+  error?: string;
+  inputRef?: React.Ref<TextInput>;
 }
 
 export default function Input({
   label,
   iconName,
-  placeholder,
-  value,
-  onChangeText,
-  secureTextEntry = false,
-  autoCapitalize = "none",
-  keyboardType = "default",
+  containerStyle,
   labelStyle,
   inputContainerStyle,
   app = false,
+  error,
+  inputRef,
+  ...textInputProps
 }: InputProps) {
-  return (
-    <View style={[styles.container]}>
-      <Text style={[styles.label, labelStyle]}>{label}</Text>
+  const hasError = !!error;
 
+  return (
+    <View style={[styles.container, containerStyle]}>
+      <Text style={[styles.label, labelStyle]}>{label}</Text>
       <View
         style={[
           styles.inputContainer,
           app && styles.inputContainerApp,
           inputContainerStyle,
+          hasError && styles.inputContainerError,
         ]}
       >
         {iconName && (
@@ -175,18 +54,14 @@ export default function Input({
             style={styles.icon}
           />
         )}
-
         <TextInput
-          style={[styles.input, app && styles.inputApp]}
-          placeholder={placeholder}
+          ref={inputRef}
+          style={[styles.input, app && styles.inputApp, textInputProps.style]}
           placeholderTextColor={colors.neutral}
-          value={value}
-          onChangeText={onChangeText}
-          secureTextEntry={secureTextEntry}
-          autoCapitalize={autoCapitalize}
-          keyboardType={keyboardType}
+          {...textInputProps}
         />
       </View>
+      {hasError && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 }
@@ -208,6 +83,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.purple,
     borderRadius: 10,
     paddingHorizontal: 15,
+    height: 50,
+  },
+  inputContainerError: {
+    borderWidth: 1,
+    borderColor: "#e53e3e",
   },
   inputContainerApp: {
     backgroundColor: colors.purpleBlack2,
@@ -219,7 +99,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    height: 50,
+    height: "100%",
     color: "#fff",
     fontFamily: "Montserrat-Regular",
     fontSize: 16,
@@ -227,5 +107,11 @@ const styles = StyleSheet.create({
   inputApp: {
     color: colors.neutral,
   },
+  errorText: {
+    color: "#e53e3e",
+    fontSize: 12,
+    fontFamily: "Montserrat-Regular",
+    marginTop: 4,
+    marginLeft: 5,
+  },
 });
->>>>>>> origin/dev
