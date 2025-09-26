@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   StyleSheet,
   ImageBackground,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import Modal from "react-native-modal";
 import Button from "../components/Allcomponents/Button";
@@ -15,14 +16,79 @@ import NavBar from "@/components/Allcomponents/NavBar";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { colors } from "@/utils/colors";
 import CardEvent from "@/components/Allcomponents/CardEvent";
-import { eventsMock } from "@/components/Allcomponents/mockEvents";
 import CreateEvent from "./CreateEvent";
+
+import { bookingService, Booking } from "../http/bookingService";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function Schedulling() {
   const navigation = useNavigation<NavigationProp>();
   const [isModalVisible, setModalVisible] = useState(false);
+
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        setLoading(true);
+        const data = await bookingService.getBookings();
+        setBookings(data);
+      } catch (error) {
+        console.error("Erro ao buscar eventos:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchEvents();
+  }, []);
+
+  const handleEventPress = (eventData: Booking) => {
+    navigation.navigate("EventDetail", { event: eventData });
+  };
+
+  const renderContent = () => {
+    if (loading) {
+      return (
+        <ActivityIndicator
+          size="large"
+          color={"#fff"}
+          style={{ marginTop: 50 }}
+        />
+      );
+    }
+
+    return (
+      <FlatList
+        data={bookings}
+        keyExtractor={(item) => item.id.toString()}
+        contentContainerStyle={styles.listContent}
+        renderItem={({ item }) => {
+          const dataObj = new Date(item.data_show);
+          const dia = format(dataObj, "dd");
+          const mesAbreviado = format(dataObj, "MM", {
+            locale: ptBR,
+          }).toUpperCase();
+
+          return (
+            <CardEvent
+              dia={dia}
+              mes={mesAbreviado}
+              eventName={item.titulo_evento}
+              interestedCount={0}
+              artists={item.banda ? [item.banda.nome_banda] : []}
+              onPress={() => handleEventPress(item)}
+            />
+          );
+        }}
+        ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+        showsVerticalScrollIndicator={false}
+      />
+    );
+  };
 
   return (
     <ImageBackground
@@ -42,23 +108,7 @@ export default function Schedulling() {
           </Button>
         </View>
 
-        <View style={styles.listContainer}>
-          <FlatList
-            data={eventsMock}
-            keyExtractor={(item, idx) => idx.toString()}
-            contentContainerStyle={styles.listContent}
-            renderItem={({ item }) => (
-              <CardEvent
-                date={item.date}
-                eventName={item.eventName}
-                interestedCount={item.interestedCount}
-                artists={item.artists}
-              />
-            )}
-            ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
-            showsVerticalScrollIndicator={false}
-          />
-        </View>
+        <View style={styles.listContainer}>{renderContent()}</View>
       </View>
 
       <NavBar />
@@ -125,12 +175,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   listContainer: {
+    flex: 1,
     paddingBottom: "80%",
   },
   listContent: {
     paddingBottom: 20,
   },
-
   bottomModal: {
     justifyContent: "flex-end",
     margin: 0,
