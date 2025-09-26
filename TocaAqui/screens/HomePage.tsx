@@ -1,41 +1,92 @@
 import React from "react";
-import { View, Text, StyleSheet } from "react-native";
-import Button from "../components/Allcomponents/Button";
-import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../navigation/Navigate";
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  StyleSheet,
+  StatusBar,
+  FlatList,
+} from "react-native";
+import { colors } from "@/utils/colors";
+
+import CardArtist from "@/components/Allcomponents/CardArtist";
+import FindArtistSection from "@/components/Allcomponents/CardArtistType";
+import CategorySection from "@/components/Allcomponents/CardCategory";
+import CardEvent from "@/components/Allcomponents/CardEvent";
 import NavBar from "@/components/Allcomponents/NavBar";
 
-type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+const MOCK_LAST_WORK = [
+  {
+    name: "Gusttavo Lima",
+    photoUrl:
+      "https://midias.correiobraziliense.com.br/_midias/jpg/2022/11/01/675x450/1_gusttavo_lima-26774173.jpg",
+    genres: ["Sertanejo"],
+    artistType: "Solo",
+    rating: 4,
+  },
+];
+
+const MOCK_EVENTS = [
+  { dia: "15", mes: "08", eventName: "Sextou do João", interestedCount: 2 },
+  { dia: "16", mes: "08", eventName: "Sábado de MPB", interestedCount: 7 },
+  {
+    dia: "17",
+    mes: "08",
+    eventName: "Domingo com pagode",
+    interestedCount: 12,
+  },
+];
 
 export default function HomePage() {
-  const navigation = useNavigation<NavigationProp>();
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bem vindo(a)!</Text>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor={colors.purpleBlack}
+      />
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+        <View style={styles.header}>
+          <Text style={styles.greeting}>Boa tarde👋</Text>
+        </View>
 
-      <View style={styles.buttonsContainer}>
-        <Button
-          style={styles.button}
-          onPress={() => navigation.navigate("Login")}
-        >
-          <Text style={styles.buttonText}>Voltar</Text>
-        </Button>
-        <Button
-          style={styles.button}
-          onPress={() => navigation.navigate("RegisterLocationName")}
-        >
-          <Text style={styles.buttonText}>Próximo</Text>
-        </Button>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>EXPLORE POR CATEGORIA</Text>
+          <CategorySection />
+        </View>
 
-        <Button
-          style={styles.button}
-          onPress={() => navigation.navigate("Schedulling")}
-        >
-          <Text style={styles.buttonText}>Agendamento</Text>
-        </Button>
-      </View>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>ULTIMO TRABALHO</Text>
+          <FlatList
+            data={MOCK_LAST_WORK}
+            horizontal
+            keyExtractor={(item) => item.name}
+            showsHorizontalScrollIndicator={false}
+            renderItem={({ item }) => <CardArtist artist={item} />}
+            contentContainerStyle={styles.artistListContainer}
+          />
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>PROXIMOS EVENTOS</Text>
+          <View style={styles.eventsContainer}>
+            {MOCK_EVENTS.map((ev, idx) => (
+              <CardEvent
+                key={idx}
+                dia={ev.dia}
+                mes={ev.mes}
+                eventName={ev.eventName}
+                interestedCount={ev.interestedCount}
+              />
+            ))}
+          </View>
+        </View>
+
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>ENCONTRE SEU ARTISTA</Text>
+          <FindArtistSection />
+        </View>
+      </ScrollView>
       <NavBar />
     </View>
   );
@@ -44,46 +95,37 @@ export default function HomePage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#1c0a37",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: "#0A0212",
     paddingHorizontal: 20,
+    paddingTop: 10,
   },
-  title: {
-    fontSize: 28,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  subtitle: {
-    fontSize: 18,
-    color: "#ccc",
-    marginBottom: 40,
-    textAlign: "center",
-  },
-  buttonsContainer: {
-    width: "100%",
+  header: {
     flexDirection: "row",
-    justifyContent: "center",
-    flexWrap: "wrap",
-    gap: 20,
-  },
-  button: {
-    width: "45%",
-    height: 50,
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
+    paddingVertical: 30,
   },
-  buttonText: {
-    color: "#28024E",
-    fontSize: 18,
-    fontWeight: "bold",
+  greeting: {
+    fontSize: 20,
+    color: "#fff",
+    fontFamily: "Montserrat-SemiBold",
   },
-  TextExemplo: {
+  section: {
+    marginBottom: 40,
+  },
+  sectionTitle: {
     color: "#fff",
     fontSize: 16,
-    marginTop: 20,
-    boxShadow: "0px 4px 6px rgba(242, 18, 18, 1)"
+    fontFamily: "AkiraExpanded-Superbold",
+    marginBottom: 10,
+    textAlign: "center",
+  },
+  artistListContainer: {
+    gap: 10,
+    width: "130%",
+    justifyContent: "center",
+  },
+  eventsContainer: {
+    gap: 10,
   },
 });

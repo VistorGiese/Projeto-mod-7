@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   containerTag: {
+    width: "100%",
     flexDirection: "row",
     flexWrap: "wrap",
     gap: 5,
