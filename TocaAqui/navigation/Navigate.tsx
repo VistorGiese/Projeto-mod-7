@@ -1,23 +1,23 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
 
-import Initial from "../screens/Initial";
-import Login from "../screens/Login";
-import RegisterLocationName from "../screens/RegisterLocationName";
-import RegisterLocationAndress from "../screens/RegisterLocationAndress";
-import RegisterPassword from "../screens/RegisterPassword";
-import InformationPersonResponsible from "../screens/InformationPersonResponsible";
-import Schedulling from "../screens/Schedulling";
+import { Booking } from "@/http/bookingService";
 import AdditionalInformation from "../screens/AdditionalInformation";
+import ArtistProfile from "../screens/ArtistProfile";
 import ConfirmRegister from "../screens/ConfirmRegister";
 import CreateEvent from "../screens/CreateEvent";
+import EventDetail from "../screens/EventDetail";
 import ForgotPassword from "../screens/ForgotPassword";
 import HomePage from "../screens/HomePage";
 import InfoEvent from "../screens/InfoEvent";
+import InformationPersonResponsible from "../screens/InformationPersonResponsible";
+import Initial from "../screens/Initial";
+import Login from "../screens/Login";
 import Profile from "../screens/Profile";
-import ArtistProfile from "../screens/ArtistProfile";
-import EventDetail from "../screens/EventDetail";
-import { Booking } from "@/http/bookingService";
+import RegisterLocationAndress from "../screens/RegisterLocationAndress";
+import RegisterLocationName from "../screens/RegisterLocationName";
+import RegisterPassword from "../screens/RegisterPassword";
+import Schedulling from "../screens/Schedulling";
 
 export type RootStackParamList = {
   Initial: undefined;
@@ -52,23 +52,11 @@ export default function Navigate() {
 
       {/* Agrupamento de telas de registro */}
       <Stack.Group>
-        <Stack.Screen
-          name="RegisterLocationName"
-          component={RegisterLocationName}
-        />
-        <Stack.Screen
-          name="RegisterLocationAndress"
-          component={RegisterLocationAndress}
-        />
+        <Stack.Screen name="RegisterLocationName" component={RegisterLocationName} />
+        <Stack.Screen name="RegisterLocationAndress" component={RegisterLocationAndress} />
         <Stack.Screen name="RegisterPassword" component={RegisterPassword} />
-        <Stack.Screen
-          name="InformationPersonResponsible"
-          component={InformationPersonResponsible}
-        />
-        <Stack.Screen
-          name="AdditionalInformation"
-          component={AdditionalInformation}
-        />
+        <Stack.Screen name="InformationPersonResponsible" component={InformationPersonResponsible} />
+        <Stack.Screen name="AdditionalInformation" component={AdditionalInformation} />
         <Stack.Screen name="ConfirmRegister" component={ConfirmRegister} />
       </Stack.Group>
 

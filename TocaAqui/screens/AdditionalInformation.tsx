@@ -146,7 +146,7 @@ export default function AdditionalInformation() {
       <Fund />
       <ToBack />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>QUASE LÁ...</Text>
+        <Text style={styles.title}>QUASE LA...</Text>
         <Text style={styles.subtitle}>
           {showFullText
             ? "Defina as preferências do seu estabelecimento. Essas informações ajudam as bandas a entender melhor o seu estilo e personalizar a apresentação de acordo com o que você e seus clientes preferem."
@@ -283,21 +283,23 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
+    marginHorizontal: 20,
     paddingBottom: 120,
   },
   title: {
     fontSize: 35,
     fontFamily: "AkiraExpanded-Superbold",
     color: "#fff",
-    marginBottom: 20,
+    marginBottom: 60,
+    marginTop: -250,
     textAlign: "left",
     alignSelf: "flex-start",
     width: "100%",
   },
   subtitle: {
-    fontSize: 23,
+    fontSize: 18,
     color: "#ccc",
-    marginBottom: 25,
+    marginBottom: 45,
     textAlign: "left",
     width: "100%",
     fontFamily: "Montserrat-Regular",
@@ -321,7 +323,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    bottom: 40,
+    bottom: 150,
     alignSelf: "center",
   },
   buttonError: {

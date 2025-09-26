@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useContext, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { StyleSheet, Text, TextInput, View, ScrollView } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
 
 import Button from "../components/Allcomponents/Button";
 import Fund from "../components/Allcomponents/Fund";
@@ -63,7 +63,12 @@ export default function InformationPersonResponsible() {
       <Fund />
       <ToBack />
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <Text style={styles.title}>INFORMAÇÕES</Text>
+        <Image
+          style={styles.image}
+          source={require('../assets/images/All/infoPersol.png')}
+        />
+
+
         <Text style={styles.subtitle}>
           {showFullText
             ? "Preencha as informações do proprietário do estabelecimento para facilitar o contato das bandas, caso haja necessidade de mais detalhes ou ajustes sobre a contratação."
@@ -170,21 +175,20 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 120,
+    paddingBottom: 100,
   },
-  title: {
-    fontSize: 35,
-    fontFamily: "AkiraExpanded-Superbold",
-    color: "#fff",
-    marginBottom: 20,
-    textAlign: "left",
-    alignSelf: "flex-start",
-    width: "100%",
+  image: {
+    width: '50%',
+    height: 200,
+    resizeMode: 'contain',
+    marginTop: -300,
+    marginLeft: -200,
   },
   subtitle: {
-    fontSize: 23,
+    fontSize: 18,
     color: "#ccc",
     marginBottom: 25,
+    marginLeft: 25,
     textAlign: "left",
     width: "100%",
     fontFamily: 'Montserrat-Regular'
@@ -199,9 +203,9 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: "center",
     alignItems: "center",
-    position: "absolute",
-    bottom: 40,
     alignSelf: 'center',
+    position: "absolute",
+    marginTop: 1000,
   },
   buttonText: {
     color: colors.purpleDark,

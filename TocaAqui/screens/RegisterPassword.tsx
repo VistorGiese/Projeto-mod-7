@@ -5,11 +5,10 @@ import React, { useContext, useRef } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
     Dimensions,
-    Image,
     StyleSheet,
     Text,
     TextInput,
-    View,
+    View
 } from "react-native";
 
 import Button from "../components/Allcomponents/Button";
@@ -55,10 +54,7 @@ export default function RegisterPassword() {
         <View style={styles.container}>
             <Fund />
             <ToBack />
-            <Image
-                source={require("../assets/images/Register/CreateAccount.png")}
-                style={styles.image}
-            />
+
             <Text style={styles.title}>Crie sua Senha</Text>
             <Text style={styles.subtitle}>
                 Escolha uma senha segura. Ela será usada para proteger sua conta.
@@ -145,7 +141,8 @@ const styles = StyleSheet.create({
         fontFamily: "Montserrat-Bold",
         color: "#fff",
         textAlign: "left",
-        marginBottom: 10,
+        marginBottom: 50,
+        marginLeft: 15,
         alignSelf: "flex-start",
         width: "95%",
     },
@@ -159,7 +156,7 @@ const styles = StyleSheet.create({
     },
     button: {
         width: "95%",
-        marginTop: 20,
+        marginTop: 200,
         height: 60,
     },
     buttonText: {

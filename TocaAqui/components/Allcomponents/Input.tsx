@@ -1,3 +1,4 @@
+import { colors } from "@/utils/colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import {
@@ -9,7 +10,6 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import { colors } from "@/utils/colors";
 
 interface InputProps extends TextInputProps {
   label: string;

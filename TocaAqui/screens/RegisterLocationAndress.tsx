@@ -88,13 +88,10 @@ export default function RegisterLocationAndress() {
         showsVerticalScrollIndicator={false}
       >
         <Image
-          source={require("../assets/images/Register/CreateAccount.png")}
           style={styles.image}
-        />
-        <Text style={styles.title}>Endereço do Estabelecimento</Text>
-        <Text style={styles.subtitle}>
-          Insira o endereço completo do seu estabelecimento.
-        </Text>
+          source={require("../assets/images/All/endereco.png")}
+        />        <Text style={styles.subtitle}>
+          Forneça o endereço completo do estabelecimento. Esse campo é importante para que os clientes encontrem facilmente o seu local.        </Text>
 
         <Controller
           control={control}
@@ -263,32 +260,27 @@ const styles = StyleSheet.create({
   scrollContainer: {
     alignItems: "center",
     paddingHorizontal: 20,
-    paddingTop: 20,
-    paddingBottom: 100,
+    paddingVertical: 30,
   },
   image: {
-    width: width * 0.5,
+    width: width * 0.4,
     height: height * 0.2,
     resizeMode: "contain",
-    marginBottom: 15,
-  },
-  title: {
-    fontSize: 25,
-    fontFamily: "Montserrat-Bold",
-    color: "#fff",
-    marginBottom: 10,
-    width: "100%",
+    marginTop: 80,
+    marginLeft: -250,
+    marginBottom: -50,
   },
   subtitle: {
     fontSize: 18,
     fontFamily: "Montserrat-Regular",
     color: "#ccc",
     marginBottom: 25,
+    textAlign: 'center',
     width: "100%",
   },
   button: {
-    width: "100%",
-    marginTop: 20,
+    width: "95%",
+    marginTop: 60,
     height: 60,
   },
   buttonText: {
@@ -297,4 +289,3 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Bold",
   },
 });
-

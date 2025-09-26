@@ -4,23 +4,15 @@ import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import {
-  ActivityIndicator,
-  Dimensions,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { ActivityIndicator, Dimensions, Image, StyleSheet, Text, TextInput, View, } from "react-native";
 
 import Button from "../components/Allcomponents/Button";
 import Fund from "../components/Allcomponents/Fund";
 import Input from "../components/Allcomponents/Input";
 import ToBack from "../components/Allcomponents/ToBack";
 import { AccountProps } from "../contexts/AccountFromContexto";
-import { RootStackParamList } from "../navigation/Navigate";
 import { loginEstabelecimento } from "../http/RegisterService";
+import { RootStackParamList } from "../navigation/Navigate";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -237,9 +229,9 @@ const styles = StyleSheet.create({
   },
   forgotPasswordContainer: {
     width: "95%",
-    alignItems: "flex-end",
-    marginBottom: 20,
-    marginTop: -10,
+    alignItems: "center",
+    marginBottom: 30,
+    marginTop: 220,
   },
   forgotPassword: {
     color: "#ffffffff",

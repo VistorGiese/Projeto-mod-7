@@ -79,7 +79,7 @@ export default function RegisterLocationName() {
             inputRef={ref}
             label="Nome do Estabelecimento"
             iconName="store"
-            placeholder="Nome do estabelecimento"
+            placeholder="Ex: Bar do João"
             onBlur={onBlur}
             onChangeText={onChange}
             value={value}
@@ -112,16 +112,15 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   title: {
-    fontSize: 25,
+    fontSize: 22,
     fontFamily: "Montserrat-Bold",
     color: "#fff",
     textAlign: "left",
     marginBottom: 10,
-    alignSelf: "flex-start",
     width: "95%",
   },
   subtitle: {
-    fontSize: 18,
+    fontSize: 16,
     color: "#ccc",
     marginBottom: 25,
     textAlign: "left",
@@ -136,8 +135,8 @@ const styles = StyleSheet.create({
   },
   button: {
     width: "95%",
-    position: "absolute",
-    bottom: 40,
+    marginTop: 400,
+    bottom: 50,
     height: 60,
   },
   buttonText: {

@@ -1,6 +1,6 @@
-import React from "react";
-import { TouchableOpacity, Image, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import { Image, StyleSheet, TouchableOpacity } from "react-native";
 
 export default function BackButton() {
   const navigation = useNavigation<any>();
@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
   container: {
     position: "absolute",
     top: 110,
-    left: 40,
+    left: 30,
     zIndex: 2,
     flexDirection: "row",
     alignItems: "center",
