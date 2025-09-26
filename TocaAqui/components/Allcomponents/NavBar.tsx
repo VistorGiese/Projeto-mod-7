@@ -15,12 +15,12 @@ export default function NavBar() {
     route.name === "HomePage"
       ? "home"
       : route.name === "Schedulling"
-      ? "calendar"
-      : route.name === "CreateEvent"
-      ? "favorites"
-      : route.name === "ArtistProfile"
-      ? "profile"
-      : "";
+        ? "calendar"
+        : route.name === "CreateEvent"
+          ? "favorites"
+          : route.name === "ArtistProfile"
+            ? "profile"
+            : "";
 
   const handlePress = (id: string) => {
     switch (id) {
@@ -34,7 +34,7 @@ export default function NavBar() {
         navigation.navigate("CreateEvent");
         break;
       case "profile":
-        navigation.navigate("ArtistProfile");
+        navigation.navigate("Profile");
         break;
     }
   };

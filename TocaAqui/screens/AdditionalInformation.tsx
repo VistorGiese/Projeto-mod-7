@@ -4,6 +4,8 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import React, { useContext, useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import {
+  ActivityIndicator,
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -19,6 +21,11 @@ import {
   AccontFormContext,
   AccountProps,
 } from "../contexts/AccountFromContexto";
+import {
+  createEndereco,
+  createEstabelecimento,
+  deleteEndereco,
+} from "../http/RegisterService";
 import { RootStackParamList } from "../navigation/Navigate";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -34,9 +41,10 @@ const formatTime = (value: string) => {
 
 export default function AdditionalInformation() {
   const navigation = useNavigation<NavigationProp>();
-  const { accountFormData: formData, updateFormData } =
-    useContext(AccontFormContext);
+  const { accountFormData, updateFormData } = useContext(AccontFormContext);
   const [showFullText, setShowFullText] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
 
   const {
     control,
@@ -44,9 +52,10 @@ export default function AdditionalInformation() {
     formState: { errors },
   } = useForm<AccountProps>({
     defaultValues: {
-      generos_musicais: formData.generos_musicais || "",
-      horario_funcionamento_inicio: formData.horario_funcionamento_inicio || "",
-      horario_funcionamento_fim: formData.horario_funcionamento_fim || "",
+      generos_musicais: accountFormData.generos_musicais || "",
+      horario_funcionamento_inicio:
+        accountFormData.horario_funcionamento_inicio || "",
+      horario_funcionamento_fim: accountFormData.horario_funcionamento_fim || "",
     },
     mode: "onTouched",
   });
@@ -55,11 +64,82 @@ export default function AdditionalInformation() {
   const endTimeRef = useRef<TextInput>(null);
   const handleToggleText = () => setShowFullText((prev) => !prev);
 
-  function handleRegister(data: AccountProps) {
+  const handleFinalSubmit = async (data: AccountProps) => {
+    setIsSubmitting(true);
+    setSubmissionError(null);
     updateFormData(data);
-    console.log("Dados salvos no contexto:", { ...formData, ...data });
-    navigation.navigate("ConfirmRegister");
-  }
+
+    const finalData = { ...accountFormData, ...data };
+    let createdEnderecoId: number | null = null;
+
+    try {
+      const enderecoPayload = {
+        rua: finalData.rua,
+        numero: finalData.numero,
+        bairro: finalData.bairro,
+        cidade: finalData.cidade,
+        estado: finalData.estado,
+        cep: finalData.cep,
+      };
+
+      const enderecoCriado = await createEndereco(enderecoPayload);
+      createdEnderecoId = enderecoCriado.id;
+
+      if (!createdEnderecoId) {
+        throw new Error("O ID do endereço não foi retornado pelo backend.");
+      }
+
+      const estabelecimentoPayload = {
+        nome_estabelecimento: finalData.nome_estabelecimento,
+        nome_dono: finalData.nome_dono,
+        email_responsavel: finalData.email_responsavel,
+        celular_responsavel: finalData.celular_responsavel,
+        generos_musicais: finalData.generos_musicais,
+        horario_funcionamento_inicio: `${finalData.horario_funcionamento_inicio}:00`,
+        horario_funcionamento_fim: `${finalData.horario_funcionamento_fim}:00`,
+        senha: finalData.password,
+        endereco_id: createdEnderecoId,
+      };
+
+      await createEstabelecimento(estabelecimentoPayload);
+
+      Alert.alert("Sucesso!", "Sua conta foi criada com sucesso.", [
+        { text: "OK", onPress: () => navigation.navigate("Login") },
+      ]);
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "Não foi possível criar sua conta. Verifique os dados.";
+      setSubmissionError(errorMessage);
+
+      if (createdEnderecoId) {
+        try {
+          await deleteEndereco(createdEnderecoId);
+          console.log(
+            `Rollback: Endereço com ID ${createdEnderecoId} deletado com sucesso.`
+          );
+        } catch (deleteError) {
+          console.error(
+            "Erro Crítico: Falha ao deletar endereço após erro no cadastro.",
+            deleteError
+          );
+        }
+      }
+
+      Alert.alert(
+        "Erro no Cadastro",
+        `${errorMessage} Você será redirecionado para corrigir suas informações.`,
+        [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("RegisterLocationName"),
+          },
+        ]
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -83,9 +163,7 @@ export default function AdditionalInformation() {
         <Controller
           control={control}
           name="generos_musicais"
-          rules={{
-            required: "Pelo menos um gênero musical é obrigatório",
-          }}
+          rules={{ required: "Pelo menos um gênero musical é obrigatório" }}
           render={({ field: { onChange, onBlur, value, ref } }) => (
             <Input
               containerStyle={{ width: "100%" }}
@@ -165,7 +243,7 @@ export default function AdditionalInformation() {
                   keyboardType="numeric"
                   maxLength={5}
                   returnKeyType="done"
-                  onSubmitEditing={handleSubmit(handleRegister)}
+                  onSubmitEditing={handleSubmit(handleFinalSubmit)}
                 />
               )}
             />
@@ -173,11 +251,23 @@ export default function AdditionalInformation() {
         </View>
       </ScrollView>
 
+      {submissionError && (
+        <Text style={styles.submissionErrorText}>{submissionError}</Text>
+      )}
+
       <Button
-        style={styles.button}
-        onPress={handleSubmit(handleRegister)}
+        style={{
+          ...styles.button,
+          ...(!!submissionError && styles.buttonError),
+        }}
+        onPress={handleSubmit(handleFinalSubmit)}
+        disabled={isSubmitting}
       >
-        <Text style={styles.buttonText}>Continuar</Text>
+        {isSubmitting ? (
+          <ActivityIndicator color={colors.purpleDark} />
+        ) : (
+          <Text style={styles.buttonText}>Cadastrar</Text>
+        )}
       </Button>
     </View>
   );
@@ -234,10 +324,24 @@ const styles = StyleSheet.create({
     bottom: 40,
     alignSelf: "center",
   },
+  buttonError: {
+    borderColor: "#e53e3e",
+    borderWidth: 2,
+  },
   buttonText: {
     color: colors.purpleDark,
     fontSize: 22,
     fontFamily: "Montserrat-Bold",
+  },
+  submissionErrorText: {
+    color: "#e53e3e",
+    textAlign: "center",
+    fontSize: 16,
+    position: "absolute",
+    bottom: 110,
+    width: "100%",
+    alignSelf: "center",
+    fontFamily: "Montserrat-Regular",
   },
 });
 
