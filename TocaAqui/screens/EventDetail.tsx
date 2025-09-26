@@ -12,11 +12,13 @@ import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/Navigate";
 import { colors } from "@/utils/colors";
-import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome5 } from "@expo/vector-icons";
 import CardArtist from "@/components/Allcomponents/CardArtist";
 import { bookingService, Booking } from "../http/bookingService";
 import Modal from "react-native-modal";
 import UpdateEvent from "./UpdateEvent";
+import { formatDisplayDate } from "@/components/EventDetail/dateUtils";
+import OptionsMenu from "@/components/EventDetail/OptionsMenu";
 
 type EventDetailRouteProp = RouteProp<RootStackParamList, "EventDetail">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -24,25 +26,15 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function EventDetail() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<EventDetailRouteProp>();
-
   const [event, setEvent] = useState<Booking>(route.params.event);
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
 
-  const imageSource = require("../assets/images/All/BG.png");
-
-  const displayDate = useMemo(() => {
-    if (!event.data_show) return "";
-    const utcDate = new Date(event.data_show);
-    const localDate = new Date(
-      utcDate.valueOf() + utcDate.getTimezoneOffset() * 60000
-    );
-    return localDate.toLocaleDateString("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  }, [event.data_show]);
+  const imageSource = require("../assets/images/All/imagem_bar.webp");
+  const displayDate = useMemo(
+    () => formatDisplayDate(event.data_show),
+    [event.data_show]
+  );
 
   const handleEditEvent = () => {
     setShowOptionsMenu(false);
@@ -58,16 +50,16 @@ export default function EventDetail() {
         { text: "Cancelar", style: "cancel" },
         {
           text: "Excluir",
+          style: "destructive",
           onPress: async () => {
             try {
               await bookingService.deleteBooking(event.id);
               Alert.alert("Sucesso!", "O evento foi excluído.");
               navigation.goBack();
-            } catch (error) {
+            } catch {
               Alert.alert("Erro", "Não foi possível excluir o evento.");
             }
           },
-          style: "destructive",
         },
       ]
     );
@@ -75,9 +67,7 @@ export default function EventDetail() {
 
   const handleFinishUpdate = (updatedEvent?: Booking) => {
     setEditModalVisible(false);
-    if (updatedEvent) {
-      setEvent(updatedEvent);
-    }
+    if (updatedEvent) setEvent(updatedEvent);
   };
 
   return (
@@ -100,32 +90,19 @@ export default function EventDetail() {
                 onPress={() => setShowOptionsMenu(!showOptionsMenu)}
                 style={styles.moreButton}
               >
-                <MaterialIcons name="more-vert" size={28} color="#fff" />
+                <FontAwesome5 name="ellipsis-v" size={20} color="#fff" />
               </TouchableOpacity>
               {showOptionsMenu && (
-                <View style={styles.optionsMenu}>
-                  <TouchableOpacity
-                    onPress={handleEditEvent}
-                    style={styles.optionItem}
-                  >
-                    <MaterialIcons name="edit" size={24} color="#fff" />
-                    <Text style={styles.optionText}>Editar</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={handleDeleteEvent}
-                    style={styles.optionItem}
-                  >
-                    <MaterialIcons name="delete" size={24} color={"red"} />
-                    <Text style={[styles.optionText, { color: "red" }]}>
-                      Excluir
-                    </Text>
-                  </TouchableOpacity>
-                </View>
+                <OptionsMenu
+                  onEdit={handleEditEvent}
+                  onDelete={handleDeleteEvent}
+                />
               )}
             </View>
           </View>
 
           <Text style={styles.description}>{event.descricao_evento}</Text>
+
           <View style={styles.infoSection}>
             <View style={styles.infoRow}>
               <FontAwesome5
@@ -144,7 +121,6 @@ export default function EventDetail() {
           </View>
 
           <Text style={styles.sectionTitle}>ARTISTAS INTERESSADOS</Text>
-
           {event.banda ? (
             <View style={styles.centeredCardWrapper}>
               <CardArtist
@@ -168,7 +144,7 @@ export default function EventDetail() {
       <Modal
         isVisible={isEditModalVisible}
         onBackdropPress={handleFinishUpdate}
-        onSwipeComplete={handleFinishUpdate}
+        onSwipeComplete={() => handleFinishUpdate()}
         swipeDirection="down"
         style={styles.bottomModal}
       >
@@ -241,32 +217,7 @@ const styles = StyleSheet.create({
   },
   optionsWrapper: { position: "relative" },
   moreButton: { padding: 5 },
-  optionsMenu: {
-    position: "absolute",
-    top: 40,
-    right: 0,
-    backgroundColor: colors.purpleBlack2,
-    borderRadius: 8,
-    elevation: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    width: 150,
-    zIndex: 100,
-  },
-  optionItem: { flexDirection: "row", alignItems: "center", padding: 12 },
-  optionText: {
-    color: "#fff",
-    marginLeft: 10,
-    fontSize: 16,
-    fontFamily: "Montserrat-Medium",
-  },
-
-  centeredCardWrapper: {
-    alignItems: "center",
-  },
-
+  centeredCardWrapper: { alignItems: "center" },
   noArtistText: {
     color: "#a9a9a9",
     textAlign: "center",
@@ -276,7 +227,6 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Medium",
     fontStyle: "italic",
   },
-
   bottomModal: { justifyContent: "flex-end", margin: 0 },
   modalContent: {
     backgroundColor: colors.purpleBlack2,
