@@ -26,12 +26,10 @@ export const createBooking = async (req: Request, res: Response) => {
       },
     });
     if (conflito) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "Já existe evento para este estabelecimento neste horário e dia.",
-        });
+      return res.status(400).json({
+        error:
+          "Já existe evento para este estabelecimento neste horário e dia.",
+      });
     }
     const booking = await BookingModel.create({
       titulo_evento,
@@ -75,13 +73,12 @@ export const applyBandToBooking = async (req: Request, res: Response) => {
 
 export const getBookings = async (_req: Request, res: Response) => {
   try {
-    // 2. Use 'include' para juntar os dados da banda
     const bookings = await BookingModel.findAll({
       include: [
         {
           model: BandModel,
-          as: "banda", // 'as' deve corresponder ao alias na sua associação
-          attributes: ["nome_banda"], // Pega apenas o nome da banda
+          as: "banda",
+          attributes: ["nome_banda", "imagem"],
         },
       ],
     });
@@ -95,7 +92,6 @@ export const getBookings = async (_req: Request, res: Response) => {
 
 export const getBookingById = async (req: Request, res: Response) => {
   try {
-    // 3. Adicione o 'include' aqui também
     const booking = await BookingModel.findByPk(req.params.id, {
       include: [
         {
@@ -127,12 +123,10 @@ export const updateBooking = async (req: Request, res: Response) => {
       where: { evento_id: booking.id },
     });
     if (candidaturas > 0) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "Não é possível editar: já existem candidaturas para este evento.",
-        });
+      return res.status(400).json({
+        error:
+          "Não é possível editar: já existem candidaturas para este evento.",
+      });
     }
 
     await booking.update(req.body);
