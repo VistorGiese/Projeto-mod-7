@@ -1,53 +1,49 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import {
   StyleSheet,
-  View,
   Text,
   TextInput,
-  ViewStyle,
-  TextStyle,
   TextInputProps,
+  TextStyle,
+  View,
+  ViewStyle,
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors } from "@/utils/colors";
 
-interface InputProps {
+interface InputProps extends TextInputProps {
   label: string;
   iconName?: React.ComponentProps<typeof MaterialCommunityIcons>["name"];
-  placeholder?: string;
-  value: string;
-  onChangeText: (text: string) => void;
-  secureTextEntry?: boolean;
-  autoCapitalize?: "none" | "sentences" | "words" | "characters";
-  keyboardType?: TextInputProps["keyboardType"];
-  style?: ViewStyle;
+  containerStyle?: ViewStyle; // CORREÇÃO: Renomeado de 'style' para evitar conflito
   labelStyle?: TextStyle;
   inputContainerStyle?: ViewStyle;
-  app?: boolean; // <-- nova prop
+  app?: boolean;
+  error?: string;
+  inputRef?: React.Ref<TextInput>;
 }
 
 export default function Input({
   label,
   iconName,
-  placeholder,
-  value,
-  onChangeText,
-  secureTextEntry = false,
-  autoCapitalize = "none",
-  keyboardType = "default",
+  containerStyle,
   labelStyle,
   inputContainerStyle,
   app = false,
+  error,
+  inputRef,
+  ...textInputProps
 }: InputProps) {
-  return (
-    <View style={[styles.container]}>
-      <Text style={[styles.label, labelStyle]}>{label}</Text>
+  const hasError = !!error;
 
+  return (
+    <View style={[styles.container, containerStyle]}>
+      <Text style={[styles.label, labelStyle]}>{label}</Text>
       <View
         style={[
           styles.inputContainer,
           app && styles.inputContainerApp,
           inputContainerStyle,
+          hasError && styles.inputContainerError,
         ]}
       >
         {iconName && (
@@ -58,18 +54,14 @@ export default function Input({
             style={styles.icon}
           />
         )}
-
         <TextInput
-          style={[styles.input, app && styles.inputApp]}
-          placeholder={placeholder}
+          ref={inputRef}
+          style={[styles.input, app && styles.inputApp, textInputProps.style]}
           placeholderTextColor={colors.neutral}
-          value={value}
-          onChangeText={onChangeText}
-          secureTextEntry={secureTextEntry}
-          autoCapitalize={autoCapitalize}
-          keyboardType={keyboardType}
+          {...textInputProps}
         />
       </View>
+      {hasError && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 }
@@ -91,6 +83,11 @@ const styles = StyleSheet.create({
     backgroundColor: colors.purple,
     borderRadius: 10,
     paddingHorizontal: 15,
+    height: 50,
+  },
+  inputContainerError: {
+    borderWidth: 1,
+    borderColor: "#e53e3e",
   },
   inputContainerApp: {
     backgroundColor: colors.purpleBlack2,
@@ -102,12 +99,19 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    height: 50,
+    height: "100%",
     color: "#fff",
     fontFamily: "Montserrat-Regular",
     fontSize: 16,
   },
   inputApp: {
     color: colors.neutral,
+  },
+  errorText: {
+    color: "#e53e3e",
+    fontSize: 12,
+    fontFamily: "Montserrat-Regular",
+    marginTop: 4,
+    marginLeft: 5,
   },
 });

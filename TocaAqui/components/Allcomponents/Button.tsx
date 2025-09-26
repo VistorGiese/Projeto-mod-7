@@ -1,28 +1,31 @@
+import { colors } from "@/utils/colors";
+import { useFonts } from "expo-font";
 import React from "react";
 import {
-  StyleSheet,
-  TouchableOpacity,
-  Text,
   GestureResponderEvent,
-  ViewStyle,
+  StyleSheet,
+  Text,
   TextStyle,
+  TouchableOpacity,
+  ViewStyle,
 } from "react-native";
-import { useFonts } from "expo-font";
 import { customFonts } from "../../assets/fonts/fonts";
-import { colors } from "@/utils/colors";
-import { Colors } from "react-native/Libraries/NewAppScreen";
+
 
 interface ButtonProps {
   onPress: (event: GestureResponderEvent) => void;
   style?: ViewStyle;
   textStyle?: TextStyle;
   children?: React.ReactNode;
+  disabled?: boolean;
 }
+
 export default function Button({
   onPress,
   style,
   textStyle,
   children,
+  disabled,
 }: ButtonProps) {
   const [fontsLoaded] = useFonts(customFonts);
 
@@ -30,9 +33,10 @@ export default function Button({
 
   return (
     <TouchableOpacity
-      style={[styles.button, style]}
+      style={[styles.button, style, disabled && styles.disabledButton]}
       onPress={onPress}
       activeOpacity={0.7}
+      disabled={disabled}
     >
       {children ? children : <Text style={[styles.text, textStyle]}>{""}</Text>}
     </TouchableOpacity>
@@ -48,8 +52,12 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   text: {
-    color: Colors.purpleDark,
+    color: colors.purpleDark,
     fontSize: 24,
     fontFamily: "Poppins-ExtraBold",
+  },
+  disabledButton: {
+    backgroundColor: colors.purpleDark,
+    opacity: 0.5,
   },
 });

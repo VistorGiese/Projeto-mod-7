@@ -1,36 +1,57 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Text, Image, Dimensions } from "react-native";
-import Input from "../components/Allcomponents/Input";
-import Button from "../components/Allcomponents/Button";
+import { colors } from "@/utils/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../navigation/Navigate";
+import React, { useContext, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+
+import Button from "../components/Allcomponents/Button";
 import Fund from "../components/Allcomponents/Fund";
+import Input from "../components/Allcomponents/Input";
 import ToBack from "../components/Allcomponents/ToBack";
-import { colors } from "@/utils/colors";
+import {
+  AccontFormContext,
+  AccountProps,
+} from "../contexts/AccountFromContexto";
+import { RootStackParamList } from "../navigation/Navigate";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 const { width, height } = Dimensions.get("window");
 
 export default function RegisterLocationName() {
   const navigation = useNavigation<NavigationProp>();
-  const [name, setName] = useState("");
-  const [showFullText, setShowFullText] = useState(false);
+  const { accountFormData: formData, updateFormData } =
+    useContext(AccontFormContext);
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AccountProps>({
+    defaultValues: {
+      nome_estabelecimento: formData.nome_estabelecimento || "",
+    },
+    mode: "onTouched",
+  });
+
+  const [showFullText, setShowFullText] = useState(false);
   const handleToggleText = () => setShowFullText((prev) => !prev);
+
+  function handleNext(data: AccountProps) {
+    updateFormData({ nome_estabelecimento: data.nome_estabelecimento });
+    console.log({ nome_estabelecimento: data.nome_estabelecimento });
+    navigation.navigate("RegisterLocationAndress");
+  }
 
   return (
     <View style={styles.container}>
       <Fund />
       <ToBack />
-
       <Image
         source={require("../assets/images/Register/CreateAccount.png")}
         style={styles.image}
       />
-
       <Text style={styles.title}>Nome do Estabelecimento</Text>
-
       <Text style={styles.subtitle}>
         {showFullText
           ? "Insira o nome completo do seu estabelecimento, que será exibido para os usuários."
@@ -44,19 +65,32 @@ export default function RegisterLocationName() {
         </Text>
       </Text>
 
-      <Input
-        label=""
-        iconName="account"
-        placeholder="Digite seu nome"
-        value={name}
-        onChangeText={setName}
-        autoCapitalize="words"
+      <Controller
+        control={control}
+        name="nome_estabelecimento"
+        rules={{
+          required: "O nome do estabelecimento é obrigatório",
+        }}
+        render={({
+          field: { onChange, onBlur, value, ref },
+          fieldState: { error },
+        }) => (
+          <Input
+            inputRef={ref}
+            label="Nome do Estabelecimento"
+            iconName="store"
+            placeholder="Nome do estabelecimento"
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            error={error?.message}
+            returnKeyType="done"
+            onSubmitEditing={handleSubmit(handleNext)}
+          />
+        )}
       />
 
-      <Button
-        style={styles.button}
-        onPress={() => navigation.navigate("RegisterLocationAndress")}
-      >
+      <Button style={styles.button} onPress={handleSubmit(handleNext)}>
         <Text style={styles.buttonText}>Continuar</Text>
       </Button>
     </View>
@@ -79,11 +113,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 25,
-    fontWeight: "bold",
+    fontFamily: "Montserrat-Bold",
     color: "#fff",
     textAlign: "left",
     marginBottom: 10,
-    marginLeft: 15,
     alignSelf: "flex-start",
     width: "95%",
   },
@@ -93,20 +126,23 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     textAlign: "left",
     width: "95%",
+    fontFamily: "Montserrat-Regular",
   },
   saibaMais: {
     fontSize: 16,
     textDecorationLine: "underline",
-    color: "#5000c9ff",
+    color: colors.green,
+    fontFamily: "Montserrat-SemiBold",
   },
   button: {
     width: "95%",
-    marginTop: 350,
+    position: "absolute",
+    bottom: 40,
     height: 60,
   },
   buttonText: {
     color: colors.purpleDark,
     fontSize: 22,
-    fontWeight: "bold",
+    fontFamily: "Montserrat-Bold",
   },
 });

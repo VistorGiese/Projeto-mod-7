@@ -1,33 +1,152 @@
-import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import Button from "../components/Allcomponents/Button";
-import Input from "../components/Allcomponents/Input";
-import ToBack from "../components/Allcomponents/ToBack";
-import Fund from "../components/Allcomponents/Fund";
+import { colors } from "@/utils/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, { useContext, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import {
+  ActivityIndicator,
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+
+import Button from "../components/Allcomponents/Button";
+import Fund from "../components/Allcomponents/Fund";
+import Input from "../components/Allcomponents/Input";
+import ToBack from "../components/Allcomponents/ToBack";
+import {
+  AccontFormContext,
+  AccountProps,
+} from "../contexts/AccountFromContexto";
+import {
+  createEndereco,
+  createEstabelecimento,
+  deleteEndereco,
+} from "../http/RegisterService";
 import { RootStackParamList } from "../navigation/Navigate";
-import { colors } from "@/utils/colors";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
+const formatTime = (value: string) => {
+  if (!value) return "";
+  const cleaned = value.replace(/\D/g, "").slice(0, 4);
+  if (cleaned.length > 2) {
+    return `${cleaned.slice(0, 2)}:${cleaned.slice(2)}`;
+  }
+  return cleaned;
+};
+
 export default function AdditionalInformation() {
   const navigation = useNavigation<NavigationProp>();
-
-  const [genre, setGenre] = useState("");
-  const [schedule, setSchedule] = useState("");
+  const { accountFormData, updateFormData } = useContext(AccontFormContext);
   const [showFullText, setShowFullText] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionError, setSubmissionError] = useState<string | null>(null);
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<AccountProps>({
+    defaultValues: {
+      generos_musicais: accountFormData.generos_musicais || "",
+      horario_funcionamento_inicio:
+        accountFormData.horario_funcionamento_inicio || "",
+      horario_funcionamento_fim: accountFormData.horario_funcionamento_fim || "",
+    },
+    mode: "onTouched",
+  });
+
+  const startTimeRef = useRef<TextInput>(null);
+  const endTimeRef = useRef<TextInput>(null);
   const handleToggleText = () => setShowFullText((prev) => !prev);
+
+  const handleFinalSubmit = async (data: AccountProps) => {
+    setIsSubmitting(true);
+    setSubmissionError(null);
+    updateFormData(data);
+
+    const finalData = { ...accountFormData, ...data };
+    let createdEnderecoId: number | null = null;
+
+    try {
+      const enderecoPayload = {
+        rua: finalData.rua,
+        numero: finalData.numero,
+        bairro: finalData.bairro,
+        cidade: finalData.cidade,
+        estado: finalData.estado,
+        cep: finalData.cep,
+      };
+
+      const enderecoCriado = await createEndereco(enderecoPayload);
+      createdEnderecoId = enderecoCriado.id;
+
+      if (!createdEnderecoId) {
+        throw new Error("O ID do endereço não foi retornado pelo backend.");
+      }
+
+      const estabelecimentoPayload = {
+        nome_estabelecimento: finalData.nome_estabelecimento,
+        nome_dono: finalData.nome_dono,
+        email_responsavel: finalData.email_responsavel,
+        celular_responsavel: finalData.celular_responsavel,
+        generos_musicais: finalData.generos_musicais,
+        horario_funcionamento_inicio: `${finalData.horario_funcionamento_inicio}:00`,
+        horario_funcionamento_fim: `${finalData.horario_funcionamento_fim}:00`,
+        senha: finalData.password,
+        endereco_id: createdEnderecoId,
+      };
+
+      await createEstabelecimento(estabelecimentoPayload);
+
+      Alert.alert("Sucesso!", "Sua conta foi criada com sucesso.", [
+        { text: "OK", onPress: () => navigation.navigate("Login") },
+      ]);
+    } catch (error: any) {
+      const errorMessage =
+        error.response?.data?.message ||
+        "Não foi possível criar sua conta. Verifique os dados.";
+      setSubmissionError(errorMessage);
+
+      if (createdEnderecoId) {
+        try {
+          await deleteEndereco(createdEnderecoId);
+          console.log(
+            `Rollback: Endereço com ID ${createdEnderecoId} deletado com sucesso.`
+          );
+        } catch (deleteError) {
+          console.error(
+            "Erro Crítico: Falha ao deletar endereço após erro no cadastro.",
+            deleteError
+          );
+        }
+      }
+
+      Alert.alert(
+        "Erro no Cadastro",
+        `${errorMessage} Você será redirecionado para corrigir suas informações.`,
+        [
+          {
+            text: "OK",
+            onPress: () => navigation.navigate("RegisterLocationName"),
+          },
+        ]
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <View style={styles.container}>
       <Fund />
       <ToBack />
-
-      <View style={styles.content}>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
         <Text style={styles.title}>QUASE LÁ...</Text>
-
         <Text style={styles.subtitle}>
           {showFullText
             ? "Defina as preferências do seu estabelecimento. Essas informações ajudam as bandas a entender melhor o seu estilo e personalizar a apresentação de acordo com o que você e seus clientes preferem."
@@ -37,36 +156,118 @@ export default function AdditionalInformation() {
             onPress={handleToggleText}
             accessibilityRole="button"
           >
-            {showFullText ? " Saiba menos" : " Saiba mais"}
+            {showFullText ? " Ver menos" : " Saiba mais"}
           </Text>
         </Text>
 
-        <View style={styles.inputWrapper}>
-          <Input
-            label="Gêneros Musicais"
-            iconName="music"
-            placeholder="Ex: Rock, Sertanejo, MPB"
-            value={genre}
-            onChangeText={setGenre}
-          />
-        </View>
+        <Controller
+          control={control}
+          name="generos_musicais"
+          rules={{ required: "Pelo menos um gênero musical é obrigatório" }}
+          render={({ field: { onChange, onBlur, value, ref } }) => (
+            <Input
+              containerStyle={{ width: "100%" }}
+              inputRef={ref}
+              label="Gêneros Musicais"
+              iconName="music-note"
+              placeholder="Ex: Rock, Sertanejo, MPB"
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              error={errors.generos_musicais?.message}
+              returnKeyType="next"
+              onSubmitEditing={() => startTimeRef.current?.focus()}
+            />
+          )}
+        />
 
-        <View style={styles.inputWrapper}>
-          <Input
-            label="Horário de Atendimento"
-            iconName="clock"
-            placeholder="Ex: 18h às 23h"
-            value={schedule}
-            onChangeText={setSchedule}
-          />
+        <View style={styles.timeInputsContainer}>
+          <View style={styles.timeInputWrapper}>
+            <Controller
+              control={control}
+              name="horario_funcionamento_inicio"
+              rules={{
+                required: "O horário de início é obrigatório",
+                pattern: {
+                  value: /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/,
+                  message: "Formato inválido (HH:MM)",
+                },
+              }}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <Input
+                  containerStyle={{ width: "100%" }}
+                  inputRef={(e) => {
+                    ref(e);
+                    startTimeRef.current = e;
+                  }}
+                  label="Início do Atendimento"
+                  iconName="clock-start"
+                  placeholder="Ex: 18:00"
+                  onBlur={onBlur}
+                  onChangeText={(text) => onChange(formatTime(text))}
+                  value={value}
+                  error={errors.horario_funcionamento_inicio?.message}
+                  keyboardType="numeric"
+                  maxLength={5}
+                  returnKeyType="next"
+                  onSubmitEditing={() => endTimeRef.current?.focus()}
+                />
+              )}
+            />
+          </View>
+          <View style={styles.timeInputWrapper}>
+            <Controller
+              control={control}
+              name="horario_funcionamento_fim"
+              rules={{
+                required: "O horário de término é obrigatório",
+                pattern: {
+                  value: /^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$/,
+                  message: "Formato inválido (HH:MM)",
+                },
+              }}
+              render={({ field: { onChange, onBlur, value, ref } }) => (
+                <Input
+                  containerStyle={{ width: "100%" }}
+                  inputRef={(e) => {
+                    ref(e);
+                    endTimeRef.current = e;
+                  }}
+                  label="Fim do Atendimento"
+                  iconName="clock-end"
+                  placeholder="Ex: 23:00"
+                  onBlur={onBlur}
+                  onChangeText={(text) => onChange(formatTime(text))}
+                  value={value}
+                  error={errors.horario_funcionamento_fim?.message}
+                  keyboardType="numeric"
+                  maxLength={5}
+                  returnKeyType="done"
+                  onSubmitEditing={handleSubmit(handleFinalSubmit)}
+                />
+              )}
+            />
+          </View>
         </View>
-      </View>
+      </ScrollView>
+
+      {submissionError && (
+        <Text style={styles.submissionErrorText}>{submissionError}</Text>
+      )}
 
       <Button
-        style={styles.button}
-        onPress={() => navigation.navigate("Login")}
+        style={{
+          ...styles.button,
+          ...(!!submissionError && styles.buttonError),
+        }}
+        onPress={handleSubmit(handleFinalSubmit)}
+        disabled={isSubmitting}
       >
-        <Text style={styles.buttonText}>Cadastrar</Text>
+        {isSubmitting ? (
+          <ActivityIndicator color={colors.purpleDark} />
+        ) : (
+          <Text style={styles.buttonText}>Cadastrar</Text>
+        )}
       </Button>
     </View>
   );
@@ -76,17 +277,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#1c0a37",
-    justifyContent: "center",
-    alignItems: "center",
     paddingHorizontal: 20,
   },
-  content: {
-    flex: 1,
-    width: "100%",
-    marginTop: 200,
-    paddingHorizontal: 15,
-    alignItems: "flex-start",
-    marginLeft: 15,
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingBottom: 120,
   },
   title: {
     fontSize: 35,
@@ -95,34 +292,56 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: "left",
     alignSelf: "flex-start",
+    width: "100%",
   },
   subtitle: {
     fontSize: 23,
     color: "#ccc",
     marginBottom: 25,
     textAlign: "left",
-    width: "98%",
+    width: "100%",
+    fontFamily: "Montserrat-Regular",
   },
   saibaMais: {
     fontSize: 16,
     textDecorationLine: "underline",
     color: "#5000c9ff",
   },
-  inputWrapper: {
+  timeInputsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     width: "100%",
-    marginBottom: 20,
+  },
+  timeInputWrapper: {
+    width: "48%",
   },
   button: {
-    width: "95%",
+    width: "100%",
     height: 60,
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    marginTop: 900,
+    bottom: 40,
+    alignSelf: "center",
+  },
+  buttonError: {
+    borderColor: "#e53e3e",
+    borderWidth: 2,
   },
   buttonText: {
     color: colors.purpleDark,
     fontSize: 22,
-    fontWeight: "bold",
+    fontFamily: "Montserrat-Bold",
+  },
+  submissionErrorText: {
+    color: "#e53e3e",
+    textAlign: "center",
+    fontSize: 16,
+    position: "absolute",
+    bottom: 110,
+    width: "100%",
+    alignSelf: "center",
+    fontFamily: "Montserrat-Regular",
   },
 });
+

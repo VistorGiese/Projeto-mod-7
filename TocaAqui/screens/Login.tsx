@@ -1,13 +1,26 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Text, Image, Dimensions } from "react-native";
-import ToBack from "../components/Allcomponents/ToBack";
-import Fund from "../components/Allcomponents/Fund";
-import Input from "../components/Allcomponents/Input";
-import Button from "../components/Allcomponents/Button";
+import { colors } from "@/utils/colors";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, { useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import {
+  ActivityIndicator,
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+
+import Button from "../components/Allcomponents/Button";
+import Fund from "../components/Allcomponents/Fund";
+import Input from "../components/Allcomponents/Input";
+import ToBack from "../components/Allcomponents/ToBack";
+import { AccountProps } from "../contexts/AccountFromContexto";
 import { RootStackParamList } from "../navigation/Navigate";
-import { colors } from "@/utils/colors";
+import { loginEstabelecimento } from "../http/RegisterService";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
@@ -15,20 +28,81 @@ const { width, height } = Dimensions.get("window");
 
 export default function Login() {
   const navigation = useNavigation<NavigationProp>();
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<AccountProps>({
+    mode: "onTouched",
+  });
+
+  const passwordRef = useRef<TextInput>(null);
+
+  async function onSubmit(data: AccountProps) {
+    setIsSubmitting(true);
+    try {
+      const response = await loginEstabelecimento({
+        email_responsavel: data.email_responsavel,
+        senha: data.password,
+      });
+
+      if (response && response.token) {
+        const { token } = response;
+        const payloadBase64 = token.split(".")[1];
+        const decodedPayload = atob(payloadBase64);
+        const payloadJson = JSON.parse(decodedPayload);
+        const estabelecimentoId = payloadJson.id;
+
+        if (!estabelecimentoId) {
+          throw new Error("ID do estabelecimento não encontrado no token.");
+        }
+
+        console.log("LOGIN BEM-SUCEDIDO! Token:", token);
+        console.log("ID do Estabelecimento extraído do Token:", estabelecimentoId);
+
+        await AsyncStorage.setItem("token", token);
+        await AsyncStorage.setItem("estabelecimentoId", String(estabelecimentoId));
+        console.log("Token e ID salvos no AsyncStorage com sucesso.");
+
+        navigation.navigate("HomePage");
+      } else {
+        throw new Error("Token não recebido do servidor.");
+      }
+    } catch (error: any) {
+      console.error("Erro ao fazer login:", error);
+      let errorMessage = "E-mail ou senha inválidos.";
+
+      if (error.response && error.response.data) {
+        console.error("Detalhes do erro:", error.response.data);
+        errorMessage = error.response.data.message || errorMessage;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+
+      setError("email_responsavel", {
+        type: "manual",
+        message: errorMessage,
+      });
+      setError("password", {
+        type: "manual",
+        message: " ",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <View style={styles.container}>
       <Fund />
-
       <ToBack />
-
       <Image
         source={require("../assets/images/Login/AccessYourAccount.png")}
         style={styles.centerImage}
       />
-
       <View style={styles.registerContainer}>
         <Text style={styles.registerText}>Não tem uma conta? </Text>
         <Text
@@ -39,31 +113,71 @@ export default function Login() {
         </Text>
       </View>
 
-      <Input
-        label="Nome do Responsável"
-        iconName="account"
-        placeholder="Digite seu nome"
-        value={name}
-        onChangeText={setName}
-        autoCapitalize="words"
-        labelStyle={{
-          fontFamily: "Montserrat-Regular",
+      <Controller
+        control={control}
+        name="email_responsavel"
+        rules={{
+          required: "E-mail é obrigatório",
+          pattern: {
+            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+            message: "E-mail inválido",
+          },
         }}
+        render={({
+          field: { onChange, onBlur, value, ref },
+          fieldState: { error },
+        }) => (
+          <Input
+            inputRef={ref}
+            label="Email"
+            iconName="email-outline"
+            placeholder="Seu e-mail"
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            error={error?.message}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            returnKeyType="next"
+            onSubmitEditing={() => passwordRef.current?.focus()}
+          />
+        )}
       />
 
-      <Input
-        label="Senha"
-        iconName="lock"
-        placeholder="Digite sua senha"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        labelStyle={{
-          fontFamily: "Montserrat-Regular",
+      <Controller
+        control={control}
+        name="password"
+        rules={{
+          required: "Senha é obrigatória",
+          minLength: {
+            value: 8,
+            message: "A senha deve ter no mínimo 8 caracteres",
+          },
         }}
+        render={({
+          field: { onChange, onBlur, value, ref },
+          fieldState: { error },
+        }) => (
+          <Input
+            inputRef={(element) => {
+              ref(element);
+              passwordRef.current = element;
+            }}
+            label="Senha"
+            iconName="lock-outline"
+            placeholder="Sua senha"
+            onBlur={onBlur}
+            onChangeText={onChange}
+            value={value}
+            error={error?.message}
+            secureTextEntry
+            returnKeyType="done"
+            onSubmitEditing={handleSubmit(onSubmit)}
+          />
+        )}
       />
 
-      <View style={styles.registerContainer}>
+      <View style={styles.forgotPasswordContainer}>
         <Text
           style={styles.forgotPassword}
           onPress={() => navigation.navigate("ForgotPassword")}
@@ -74,9 +188,14 @@ export default function Login() {
 
       <Button
         style={styles.buttonPosition}
-        onPress={() => navigation.navigate("HomePage")}
+        onPress={handleSubmit(onSubmit)}
+        disabled={isSubmitting}
       >
-        <Text style={styles.textButton}>Entrar</Text>
+        {isSubmitting ? (
+          <ActivityIndicator color={colors.purpleDark} />
+        ) : (
+          <Text style={styles.textButton}>Entrar</Text>
+        )}
       </Button>
     </View>
   );
@@ -97,10 +216,11 @@ const styles = StyleSheet.create({
     height: 350,
     resizeMode: "contain",
     alignSelf: "center",
+    marginTop: -50,
   },
   registerContainer: {
     flexDirection: "row",
-    marginBottom: 25,
+    marginBottom: 20,
     alignItems: "center",
     zIndex: 10,
   },
@@ -115,15 +235,20 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     fontSize: 16,
   },
+  forgotPasswordContainer: {
+    width: "95%",
+    alignItems: "flex-end",
+    marginBottom: 20,
+    marginTop: -10,
+  },
   forgotPassword: {
     color: "#ffffffff",
-    marginTop: 250,
     fontSize: 16,
     textDecorationLine: "underline",
-    fontFamily: "Montserrat",
+    fontFamily: "Montserrat-Regular",
   },
   buttonPosition: {
-    width: 420,
+    width: "95%",
     height: 60,
   },
   textButton: {
@@ -132,3 +257,4 @@ const styles = StyleSheet.create({
     color: colors.purpleDark,
   },
 });
+
