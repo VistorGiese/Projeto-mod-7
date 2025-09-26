@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -6,15 +6,17 @@ import {
   ImageBackground,
   TouchableOpacity,
   ScrollView,
-  Alert, // 1. Importe o Alert
+  Alert,
 } from "react-native";
 import { useNavigation, useRoute, RouteProp } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/Navigate";
 import { colors } from "@/utils/colors";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import CardArtist from "@/components/Allcomponents/CardArtist";
-import { bookingService } from "../http/bookingService";
+import { bookingService, Booking } from "../http/bookingService";
+import Modal from "react-native-modal";
+import UpdateEvent from "./UpdateEvent";
 
 type EventDetailRouteProp = RouteProp<RootStackParamList, "EventDetail">;
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -22,52 +24,60 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function EventDetail() {
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<EventDetailRouteProp>();
-  const { event } = route.params;
 
+  const [event, setEvent] = useState<Booking>(route.params.event);
+  const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
 
-  const imageSource =
-    event.banda && event.banda.imagem
-      ? { uri: event.banda.imagem }
-      : require("../assets/images/All/BG.png");
+  const imageSource = require("../assets/images/All/BG.png");
+
+  const displayDate = useMemo(() => {
+    if (!event.data_show) return "";
+    const utcDate = new Date(event.data_show);
+    const localDate = new Date(
+      utcDate.valueOf() + utcDate.getTimezoneOffset() * 60000
+    );
+    return localDate.toLocaleDateString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+  }, [event.data_show]);
 
   const handleEditEvent = () => {
     setShowOptionsMenu(false);
-    console.log("Editar Evento:", event.id);
+    setEditModalVisible(true);
   };
 
   const handleDeleteEvent = () => {
     setShowOptionsMenu(false);
-
     Alert.alert(
       "Confirmar Exclusão",
-      `Você tem certeza que deseja excluir o evento "${event.titulo_evento}"? Esta ação não pode ser desfeita.`,
+      `Você tem certeza que deseja excluir o evento "${event.titulo_evento}"?`,
       [
-        {
-          text: "Cancelar",
-          onPress: () => console.log("Exclusão cancelada"),
-          style: "cancel",
-        },
+        { text: "Cancelar", style: "cancel" },
         {
           text: "Excluir",
           onPress: async () => {
             try {
               await bookingService.deleteBooking(event.id);
-
               Alert.alert("Sucesso!", "O evento foi excluído.");
               navigation.goBack();
             } catch (error) {
-              console.error("Erro ao excluir evento:", error);
-              Alert.alert(
-                "Erro",
-                "Não foi possível excluir o evento. Tente novamente."
-              );
+              Alert.alert("Erro", "Não foi possível excluir o evento.");
             }
           },
           style: "destructive",
         },
       ]
     );
+  };
+
+  const handleFinishUpdate = (updatedEvent?: Booking) => {
+    setEditModalVisible(false);
+    if (updatedEvent) {
+      setEvent(updatedEvent);
+    }
   };
 
   return (
@@ -78,12 +88,12 @@ export default function EventDetail() {
             style={styles.backButton}
             onPress={() => navigation.goBack()}
           >
-            <FontAwesome name="arrow-left" size={20} color="#fff" />
+            <FontAwesome5 name="arrow-left" size={20} color="#fff" />
           </TouchableOpacity>
         </ImageBackground>
 
         <View style={styles.contentContainer}>
-          <View style={styles.header}>
+          <View style={styles.headerRow}>
             <Text style={styles.eventName}>{event.titulo_evento}</Text>
             <View style={styles.optionsWrapper}>
               <TouchableOpacity
@@ -92,7 +102,6 @@ export default function EventDetail() {
               >
                 <MaterialIcons name="more-vert" size={28} color="#fff" />
               </TouchableOpacity>
-
               {showOptionsMenu && (
                 <View style={styles.optionsMenu}>
                   <TouchableOpacity
@@ -115,11 +124,28 @@ export default function EventDetail() {
               )}
             </View>
           </View>
-          {event.descricao_evento && (
-            <Text style={styles.description}>{event.descricao_evento}</Text>
-          )}
 
-          {event.banda && (
+          <Text style={styles.description}>{event.descricao_evento}</Text>
+          <View style={styles.infoSection}>
+            <View style={styles.infoRow}>
+              <FontAwesome5
+                name="calendar-alt"
+                size={16}
+                color={colors.purple}
+              />
+              <Text style={styles.infoText}>{displayDate}</Text>
+            </View>
+            <View style={styles.infoRow}>
+              <FontAwesome5 name="clock" size={16} color={colors.purple} />
+              <Text style={styles.infoText}>
+                {event.horario_inicio} - {event.horario_fim}
+              </Text>
+            </View>
+          </View>
+
+          <Text style={styles.sectionTitle}>ARTISTAS INTERESSADOS</Text>
+
+          {event.banda ? (
             <View style={styles.centeredCardWrapper}>
               <CardArtist
                 artist={{
@@ -131,49 +157,54 @@ export default function EventDetail() {
                 }}
               />
             </View>
-          )}
-
-          {!event.banda && (
-            <Text style={styles.noBandText}>
-              Este evento ainda não possui uma banda confirmada.
+          ) : (
+            <Text style={styles.noArtistText}>
+              Ainda não há artistas confirmados para este evento.
             </Text>
           )}
         </View>
       </ScrollView>
+
+      <Modal
+        isVisible={isEditModalVisible}
+        onBackdropPress={handleFinishUpdate}
+        onSwipeComplete={handleFinishUpdate}
+        swipeDirection="down"
+        style={styles.bottomModal}
+      >
+        <View style={styles.modalContent}>
+          <UpdateEvent event={event} onFinish={handleFinishUpdate} />
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.purpleBlack,
-  },
-  imageBackground: {
-    width: "100%",
-    height: 300,
-    justifyContent: "flex-start",
-  },
+  container: { flex: 1, backgroundColor: colors.purpleBlack },
+  imageBackground: { width: "100%", height: 250 },
   backButton: {
     padding: 15,
     marginTop: 40,
-    alignSelf: "flex-start",
+    position: "absolute",
+    left: 5,
+    top: 5,
+    backgroundColor: "rgba(0,0,0,0.3)",
+    borderRadius: 50,
   },
   contentContainer: {
-    paddingTop: 20,
     backgroundColor: colors.purpleBlack,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     marginTop: -20,
+    padding: 20,
     paddingBottom: 40,
   },
-  header: {
+  headerRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 10,
-    paddingHorizontal: 20,
-    zIndex: 10,
+    marginBottom: 15,
   },
   eventName: {
     fontSize: 26,
@@ -182,12 +213,34 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10,
   },
-  optionsWrapper: {
-    position: "relative",
+  description: {
+    color: "#ccc",
+    fontSize: 15,
+    lineHeight: 24,
+    marginBottom: 20,
+    fontFamily: "Montserrat-Medium",
   },
-  moreButton: {
-    padding: 5,
+  infoSection: {
+    marginBottom: 30,
+    borderLeftWidth: 3,
+    borderLeftColor: colors.purple,
+    paddingLeft: 15,
   },
+  infoRow: { flexDirection: "row", alignItems: "center", marginBottom: 10 },
+  infoText: {
+    color: colors.neutral,
+    fontSize: 16,
+    fontFamily: "Montserrat-Regular",
+    marginLeft: 10,
+  },
+  sectionTitle: {
+    color: "#fff",
+    fontSize: 18,
+    fontFamily: "AkiraExpanded-Superbold",
+    marginBottom: 20,
+  },
+  optionsWrapper: { position: "relative" },
+  moreButton: { padding: 5 },
   optionsMenu: {
     position: "absolute",
     top: 40,
@@ -200,37 +253,36 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     width: 150,
+    zIndex: 100,
   },
-  optionItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 12,
-  },
+  optionItem: { flexDirection: "row", alignItems: "center", padding: 12 },
   optionText: {
     color: "#fff",
     marginLeft: 10,
     fontSize: 16,
     fontFamily: "Montserrat-Medium",
   },
-  description: {
-    color: "#ccc",
-    fontSize: 16,
-    lineHeight: 24,
-    marginBottom: 20,
-    paddingHorizontal: 20,
-    fontFamily: "Montserrat-Medium",
-  },
+
   centeredCardWrapper: {
-    width: "100%",
     alignItems: "center",
-    marginTop: 20,
   },
-  noBandText: {
-    color: "#fff",
+
+  noArtistText: {
+    color: "#a9a9a9",
     textAlign: "center",
     paddingHorizontal: 20,
-    marginTop: 30,
-    fontSize: 16,
+    marginTop: 10,
+    fontSize: 15,
     fontFamily: "Montserrat-Medium",
+    fontStyle: "italic",
+  },
+
+  bottomModal: { justifyContent: "flex-end", margin: 0 },
+  modalContent: {
+    backgroundColor: colors.purpleBlack2,
+    height: "90%",
+    padding: 22,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
 });
