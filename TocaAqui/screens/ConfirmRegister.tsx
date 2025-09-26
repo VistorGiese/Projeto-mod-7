@@ -4,7 +4,7 @@ import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, View } from "re
 import Button from "../components/Allcomponents/Button";
 import ToBack from "../components/Allcomponents/ToBack";
 import { AccontFormContext } from "../contexts/AccountFromContexto";
-import { createEndereco, createEstabelecimento } from "../services/api";
+import { createEndereco, createEstabelecimento } from "../http/RegisterService";
 
 export default function ConfirmRegister() {
     const { accountFormData } = useContext(AccontFormContext);
