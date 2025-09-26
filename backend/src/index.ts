@@ -9,6 +9,11 @@ import EstablishmentRoutes from "./routes/EstablishmentRoutes";
 import BandApplicationRoutes from "./routes/BandApplicationRoutes";
 import AuthEstablishmentRoutes from "./routes/AuthEstablishmentRoutes";
 
+import sequelize from "./config/database";
+import BookingModel from "./models/BookingModel";
+import BandModel from "./models/BandModel";
+import EstablishmentModel from "./models/EstablishmentModel";
+
 dotenv.config();
 
 const app = express();
@@ -24,7 +29,25 @@ app.use("/agendamentos", BookingRoutes);
 app.use("/aplicacoes_banda_evento", BandApplicationRoutes);
 app.use("/auth", AuthEstablishmentRoutes);
 
-import sequelize from "./config/database";
+BookingModel.belongsTo(BandModel, {
+  foreignKey: "banda_id",
+  as: "banda",
+});
+
+BandModel.hasMany(BookingModel, {
+  foreignKey: "banda_id",
+  as: "agendamentos",
+});
+
+BookingModel.belongsTo(EstablishmentModel, {
+  foreignKey: "estabelecimento_id",
+  as: "estabelecimento",
+});
+
+EstablishmentModel.hasMany(BookingModel, {
+  foreignKey: "estabelecimento_id",
+  as: "agendamentos",
+});
 
 sequelize
   .authenticate()

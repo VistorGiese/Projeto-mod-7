@@ -1,13 +1,12 @@
-
-import { DataTypes, Model } from 'sequelize';
-import sequelize from '../config/database';
+import { DataTypes, Model } from "sequelize";
+import sequelize from "../config/database";
 
 export enum BookingStatus {
-  PENDENTE = 'pendente',
-  ACEITO = 'aceito',
-  REJEITADO = 'rejeitado',
-  CANCELADO = 'cancelado',
-  REALIZADO = 'realizado'
+  PENDENTE = "pendente",
+  ACEITO = "aceito",
+  REJEITADO = "rejeitado",
+  CANCELADO = "cancelado",
+  REALIZADO = "realizado",
 }
 
 class BookingModel extends Model {
@@ -33,8 +32,8 @@ BookingModel.init(
       type: DataTypes.INTEGER,
       allowNull: true,
       references: {
-        model: 'bandas',
-        key: 'id',
+        model: "bandas",
+        key: "id",
       },
     },
     titulo_evento: {
@@ -53,8 +52,8 @@ BookingModel.init(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'estabelecimentos',
-        key: 'id',
+        model: "estabelecimentos",
+        key: "id",
       },
     },
     horario_inicio: {
@@ -73,12 +72,10 @@ BookingModel.init(
   },
   {
     sequelize,
-    modelName: 'Booking',
-    tableName: 'agendamentos',
+    modelName: "Booking",
+    tableName: "agendamentos",
     timestamps: false,
   }
 );
 
-
 export default BookingModel;
-
