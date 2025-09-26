@@ -1,6 +1,5 @@
-
-import { DataTypes, Model } from 'sequelize';
-import sequelize from '../config/database';
+import { DataTypes, Model } from "sequelize";
+import sequelize from "../config/database";
 
 class BandModel extends Model {
   id!: number;
@@ -36,8 +35,8 @@ BandModel.init(
   },
   {
     sequelize,
-    modelName: 'Band',
-    tableName: 'bandas',
+    modelName: "Band",
+    tableName: "bandas",
     timestamps: false,
   }
 );

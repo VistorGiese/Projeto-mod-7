@@ -16,6 +16,9 @@ import ForgotPassword from "../screens/ForgotPassword";
 import HomePage from "../screens/HomePage";
 import InfoEvent from "../screens/InfoEvent";
 import Profile from "../screens/Profile";
+import ArtistProfile from "../screens/ArtistProfile";
+import EventDetail from "../screens/EventDetail";
+import { Booking } from "@/http/bookingService";
 
 export type RootStackParamList = {
   Initial: undefined;
@@ -33,6 +36,7 @@ export type RootStackParamList = {
   ArtistProfile: undefined;
   ConfirmRegister: undefined;
   Profile: undefined;
+  EventDetail: { event: Booking };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -65,6 +69,7 @@ export default function Navigate() {
       <Stack.Screen name="InfoEvent" component={InfoEvent} />
       <Stack.Screen name="ArtistProfile" component={ArtistProfile} />
       <Stack.Screen name="Profile" component={Profile} />
+      <Stack.Screen name="EventDetail" component={EventDetail} />
 
       {/* Telas secundárias do app */}
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} />

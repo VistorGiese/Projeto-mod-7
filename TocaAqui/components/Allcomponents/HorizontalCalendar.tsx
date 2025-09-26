@@ -9,11 +9,16 @@ interface HorizontalCalendarProps {
 }
 
 const formatDate = (date: Date): string => {
-  const d = new Date(date);
-  // Garante que a data não mude por conta do fuso horário
-  const offset = d.getTimezoneOffset() * 60 * 1000;
-  const correctedDate = new Date(d.getTime() - offset);
-  return correctedDate.toISOString().split("T")[0];
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
+const getNormalizedDate = (dateToNormalize: Date): Date => {
+  const date = new Date(dateToNormalize);
+  date.setHours(12, 0, 0, 0);
+  return date;
 };
 
 const weekDays: string[] = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
@@ -31,21 +36,23 @@ const monthNames: string[] = [
   "Novembro",
   "Dezembro",
 ];
+
 export default function HorizontalCalendar({
   selectedDate,
   onDateSelect,
 }: HorizontalCalendarProps) {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(getNormalizedDate(new Date()));
 
   const displayedDays = useMemo<Date[]>(() => {
     const days: Date[] = [];
-    const startDate = new Date(currentDate);
+
+    const startDate = getNormalizedDate(currentDate);
     startDate.setDate(startDate.getDate() - 2);
 
     for (let i = 0; i < 5; i++) {
       const day = new Date(startDate);
       day.setDate(day.getDate() + i);
-      days.push(day);
+      days.push(getNormalizedDate(day));
     }
     return days;
   }, [currentDate]);
@@ -85,7 +92,10 @@ export default function HorizontalCalendar({
               <TouchableOpacity
                 key={index}
                 style={[styles.day, isSelected && styles.selectedDay]}
-                onPress={() => onDateSelect(dayString)}
+                onPress={() => {
+                  const dayString = formatDate(day);
+                  onDateSelect(dayString);
+                }}
               >
                 <Text
                   style={[styles.dayName, isSelected && styles.selectedText]}
@@ -111,9 +121,7 @@ export default function HorizontalCalendar({
 }
 
 const styles = StyleSheet.create({
-  calendarContainer: {
-    marginBottom: 30,
-  },
+  calendarContainer: { marginBottom: 30 },
   titleTop: {
     fontSize: 18,
     fontFamily: "Montserrat-SemiBold",
@@ -141,21 +149,13 @@ const styles = StyleSheet.create({
     borderColor: colors.purpleDark,
     marginHorizontal: 5,
   },
-  selectedDay: {
-    backgroundColor: colors.purpleDark,
-  },
-  dayName: {
-    fontSize: 12,
-    color: "#fff",
-    fontFamily: "Montserrat-Regular",
-  },
+  selectedDay: { backgroundColor: colors.purpleDark },
+  dayName: { fontSize: 12, color: "#fff", fontFamily: "Montserrat-Regular" },
   dayNumber: {
     fontSize: 16,
     color: "#fff",
     fontFamily: "Montserrat-Bold",
     marginTop: 4,
   },
-  selectedText: {
-    color: "#fff",
-  },
+  selectedText: { color: "#fff" },
 });
