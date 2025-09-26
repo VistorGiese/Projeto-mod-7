@@ -27,27 +27,35 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 export default function Schedulling() {
   const navigation = useNavigation<NavigationProp>();
   const [isModalVisible, setModalVisible] = useState(false);
-
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        setLoading(true);
-        const data = await bookingService.getBookings();
-        setBookings(data);
-      } catch (error) {
-        console.error("Erro ao buscar eventos:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchEvents();
-  }, []);
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchEvents();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      const data = await bookingService.getBookings();
+      setBookings(data);
+    } catch (error) {
+      console.error("Erro ao buscar eventos:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleEventPress = (eventData: Booking) => {
     navigation.navigate("EventDetail", { event: eventData });
+  };
+
+  const handleCloseModal = () => {
+    setModalVisible(false);
+    fetchEvents();
   };
 
   const renderContent = () => {
@@ -67,9 +75,12 @@ export default function Schedulling() {
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.listContent}
         renderItem={({ item }) => {
-          const dataObj = new Date(item.data_show);
-          const dia = format(dataObj, "dd");
-          const mesAbreviado = format(dataObj, "MM", {
+          const utcDate = new Date(item.data_show);
+          const timezoneOffset = utcDate.getTimezoneOffset() * 60000;
+          const localDate = new Date(utcDate.getTime() + timezoneOffset);
+
+          const dia = format(localDate, "dd");
+          const mesAbreviado = format(localDate, "MM", {
             locale: ptBR,
           }).toUpperCase();
 
@@ -99,7 +110,6 @@ export default function Schedulling() {
       <View style={styles.header}>
         <Text style={styles.title}>Agendamento</Text>
       </View>
-
       <View style={styles.containerContent}>
         <View style={styles.buttonsContainer}>
           <Button style={styles.button} onPress={() => setModalVisible(true)}>
@@ -107,21 +117,18 @@ export default function Schedulling() {
             <FontAwesome5 name="plus" size={18} color={colors.purpleBlack} />
           </Button>
         </View>
-
         <View style={styles.listContainer}>{renderContent()}</View>
       </View>
-
       <NavBar />
-
       <Modal
         isVisible={isModalVisible}
-        onBackdropPress={() => setModalVisible(false)}
-        onSwipeComplete={() => setModalVisible(false)}
+        onBackdropPress={handleCloseModal}
+        onSwipeComplete={handleCloseModal}
         swipeDirection="down"
         style={styles.bottomModal}
       >
         <View style={styles.modalContent}>
-          <CreateEvent onClose={() => setModalVisible(false)} />
+          <CreateEvent onClose={handleCloseModal} />
         </View>
       </Modal>
     </ImageBackground>
