@@ -56,7 +56,17 @@ export default function Input({
         )}
         <TextInput
           ref={inputRef}
-          style={[styles.input, app && styles.inputApp, textInputProps.style]}
+          style={[
+            styles.input,
+            app && styles.inputApp,
+            textInputProps.style,
+            {
+              color:
+                textInputProps.value && textInputProps.value.length > 0
+                  ? "#fff"
+                  : colors.neutral,
+            },
+          ]}
           placeholderTextColor={colors.neutral}
           {...textInputProps}
         />

@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
-  Alert,
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -38,6 +37,13 @@ export default function CreateEvent({ onClose }: { onClose: () => void }) {
     getLocalDateString(new Date())
   );
   const [isLoading, setIsLoading] = useState(false);
+
+  // Estado para erros
+  const [errors, setErrors] = useState<{
+    name?: string;
+    desc?: string;
+    timeSlots?: Record<number, { start?: string; end?: string }>;
+  }>({});
 
   const addTimeSlot = () => {
     if (timeSlots.length < 2) {
@@ -78,33 +84,57 @@ export default function CreateEvent({ onClose }: { onClose: () => void }) {
   };
 
   const handleCreateEvent = async () => {
+    let hasError = false;
+    let newErrors: typeof errors = { timeSlots: {} };
+
     if (!name.trim()) {
-      Alert.alert("Campo Obrigatório", "Por favor, preencha o nome do evento.");
-      return;
+      newErrors.name = "O nome do evento é obrigatório.";
+      hasError = true;
     }
-    for (const slot of timeSlots) {
-      if (!slot.start.trim() || !slot.end.trim()) {
-        Alert.alert(
-          "Campos Obrigatórios",
-          "Por favor, preencha o horário de início e fim."
-        );
-        return;
+
+    timeSlots.forEach((slot) => {
+      if (!slot.start.trim()) {
+        newErrors.timeSlots![slot.id] = {
+          ...(newErrors.timeSlots![slot.id] || {}),
+          start: "Informe o horário de início.",
+        };
+        hasError = true;
       }
-      if (!isValidTime(slot.start) || !isValidTime(slot.end)) {
-        Alert.alert(
-          "Formato Inválido",
-          "Por favor, use um formato de hora válido (HH:MM), por exemplo, 23:59."
-        );
-        return;
+      if (!slot.end.trim()) {
+        newErrors.timeSlots![slot.id] = {
+          ...(newErrors.timeSlots![slot.id] || {}),
+          end: "Informe o horário de fim.",
+        };
+        hasError = true;
       }
-      if (slot.start >= slot.end) {
-        Alert.alert(
-          "Horário Inválido",
-          "O horário de início deve ser anterior ao horário de fim."
-        );
-        return;
+      if (slot.start && slot.end) {
+        if (!isValidTime(slot.start)) {
+          newErrors.timeSlots![slot.id] = {
+            ...(newErrors.timeSlots![slot.id] || {}),
+            start: "Formato inválido (HH:MM).",
+          };
+          hasError = true;
+        }
+        if (!isValidTime(slot.end)) {
+          newErrors.timeSlots![slot.id] = {
+            ...(newErrors.timeSlots![slot.id] || {}),
+            end: "Formato inválido (HH:MM).",
+          };
+          hasError = true;
+        }
+        if (slot.start >= slot.end) {
+          newErrors.timeSlots![slot.id] = {
+            ...(newErrors.timeSlots![slot.id] || {}),
+            start: "O início deve ser antes do fim.",
+          };
+          hasError = true;
+        }
       }
-    }
+    });
+
+    setErrors(newErrors);
+
+    if (hasError) return; // não prossegue se houver erros
 
     setIsLoading(true);
 
@@ -122,17 +152,12 @@ export default function CreateEvent({ onClose }: { onClose: () => void }) {
       });
 
       await Promise.all(creationPromises);
-      Alert.alert("Sucesso!", "Seu(s) evento(s) foram criados com sucesso.");
       onClose();
     } catch (error: any) {
       console.error(
         "Erro ao criar evento:",
         error.response?.data || error.message
       );
-      const errorMessage =
-        error.response?.data?.error ||
-        "Não foi possível criar o evento. Verifique os dados e tente novamente.";
-      Alert.alert("Erro na Criação", errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -157,6 +182,7 @@ export default function CreateEvent({ onClose }: { onClose: () => void }) {
           placeholder="Quartou do João"
           value={name}
           onChangeText={setName}
+          error={errors.name}
         />
         <Input
           app
@@ -164,6 +190,7 @@ export default function CreateEvent({ onClose }: { onClose: () => void }) {
           placeholder="Descrição da Quartou do João"
           value={desc}
           onChangeText={setDesc}
+          error={errors.desc}
         />
         <Text style={styles.subtitle}>Horários Disponíveis</Text>
         {timeSlots.map((slot, index) => (
@@ -203,6 +230,16 @@ export default function CreateEvent({ onClose }: { onClose: () => void }) {
                 </TouchableOpacity>
               )}
             </View>
+            {errors.timeSlots?.[slot.id]?.start && (
+              <Text style={styles.errorText}>
+                {errors.timeSlots[slot.id]?.start}
+              </Text>
+            )}
+            {errors.timeSlots?.[slot.id]?.end && (
+              <Text style={styles.errorText}>
+                {errors.timeSlots[slot.id]?.end}
+              </Text>
+            )}
           </View>
         ))}
         {timeSlots.length < 2 && (
@@ -260,9 +297,6 @@ const styles = StyleSheet.create({
     color: "#fff",
     marginBottom: 15,
     marginTop: 10,
-  },
-  input: {
-    backgroundColor: colors.purpleBlack2,
   },
   smallLabel: {
     fontSize: 14,
@@ -337,5 +371,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 16,
     fontFamily: "Montserrat-SemiBold",
+  },
+  errorText: {
+    color: "#e53e3e",
+    fontSize: 12,
+    fontFamily: "Montserrat-Regular",
+    marginTop: 4,
+    marginLeft: 5,
   },
 });

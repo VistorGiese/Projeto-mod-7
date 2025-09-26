@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   ScrollView,
   TextInput,
-  Alert,
   ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
@@ -26,6 +25,14 @@ export default function UpdateEvent({ event, onFinish }: UpdateEventProps) {
   const [timeSlot, setTimeSlot] = useState({ start: "", end: "" });
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Estado de erros
+  const [errors, setErrors] = useState<{
+    name?: string;
+    desc?: string;
+    start?: string;
+    end?: string;
+  }>({});
 
   useEffect(() => {
     if (event) {
@@ -65,37 +72,47 @@ export default function UpdateEvent({ event, onFinish }: UpdateEventProps) {
     }
     setTimeSlot((prev) => ({ ...prev, [field]: formattedValue }));
   };
+
   const isValidTime = (time: string): boolean => {
     return /^([01]\d|2[0-3]):([0-5]\d)$/.test(time);
   };
+
   const handleUpdateEvent = async () => {
     const startTime = timeSlot.start.trim();
     const endTime = timeSlot.end.trim();
+    let hasError = false;
+    let newErrors: typeof errors = {};
+
+    // Validação
     if (!name.trim()) {
-      Alert.alert("Campo Obrigatório", "Por favor, preencha o nome do evento.");
-      return;
+      newErrors.name = "O nome do evento é obrigatório.";
+      hasError = true;
     }
-    if (!startTime || !endTime) {
-      Alert.alert(
-        "Campos Obrigatórios",
-        "Por favor, preencha o horário de início e fim."
-      );
-      return;
+
+    if (!startTime) {
+      newErrors.start = "Informe o horário de início.";
+      hasError = true;
+    } else if (!isValidTime(startTime)) {
+      newErrors.start = "Formato inválido (HH:MM).";
+      hasError = true;
     }
-    if (!isValidTime(startTime) || !isValidTime(endTime)) {
-      Alert.alert(
-        "Formato Inválido",
-        "Por favor, use um formato de hora válido (HH:MM), por exemplo, 23:59."
-      );
-      return;
+
+    if (!endTime) {
+      newErrors.end = "Informe o horário de fim.";
+      hasError = true;
+    } else if (!isValidTime(endTime)) {
+      newErrors.end = "Formato inválido (HH:MM).";
+      hasError = true;
     }
-    if (startTime >= endTime) {
-      Alert.alert(
-        "Horário Inválido",
-        "O horário de início deve ser anterior ao horário de fim."
-      );
-      return;
+
+    if (startTime && endTime && startTime >= endTime) {
+      newErrors.start = "O início deve ser antes do fim.";
+      hasError = true;
     }
+
+    setErrors(newErrors);
+    if (hasError) return;
+
     setIsLoading(true);
     try {
       const bookingDataToUpdate: Partial<Booking> = {
@@ -109,12 +126,11 @@ export default function UpdateEvent({ event, onFinish }: UpdateEventProps) {
         event.id,
         bookingDataToUpdate
       );
-      Alert.alert("Sucesso!", "Seu evento foi atualizado com sucesso.");
       onFinish(updatedEvent);
     } catch (error: any) {
       const errorMessage =
         error.response?.data?.error || "Não foi possível atualizar o evento.";
-      Alert.alert("Erro na Atualização", errorMessage);
+      setErrors({ ...newErrors, start: errorMessage });
     } finally {
       setIsLoading(false);
     }
@@ -133,19 +149,23 @@ export default function UpdateEvent({ event, onFinish }: UpdateEventProps) {
           selectedDate={selectedDate}
           onDateSelect={setSelectedDate}
         />
+
         <Input
           app
           label="Nome do Evento"
           placeholder="Quartou do João"
           value={name}
           onChangeText={setName}
+          error={errors.name}
         />
+
         <Input
           app
           label="Descrição do Evento"
           placeholder="Descrição da Quartou do João"
           value={desc}
           onChangeText={setDesc}
+          error={errors.desc}
         />
 
         <Text style={styles.subtitle}>Horário Disponível</Text>
@@ -175,8 +195,11 @@ export default function UpdateEvent({ event, onFinish }: UpdateEventProps) {
               />
             </View>
           </View>
+          {errors.start && <Text style={styles.errorText}>{errors.start}</Text>}
+          {errors.end && <Text style={styles.errorText}>{errors.end}</Text>}
         </View>
       </ScrollView>
+
       <View style={styles.buttonsContainer}>
         <TouchableOpacity
           style={[styles.button, styles.cancel]}
@@ -184,6 +207,7 @@ export default function UpdateEvent({ event, onFinish }: UpdateEventProps) {
         >
           <Text style={styles.buttonTextCancel}>Cancelar</Text>
         </TouchableOpacity>
+
         <TouchableOpacity
           style={[
             styles.button,
@@ -205,18 +229,7 @@ export default function UpdateEvent({ event, onFinish }: UpdateEventProps) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 0,
-    paddingTop: 0,
-    backgroundColor: "transparent",
-  },
-  timeInput: {
-    padding: 15,
-    fontSize: 14,
-    fontFamily: "Montserrat-Regular",
-    color: "#FFFFFF",
-  },
+  container: { flex: 1, backgroundColor: "transparent" },
   closeButton: { position: "absolute", top: -10, right: 0, zIndex: 10 },
   subtitle: {
     fontSize: 16,
@@ -225,7 +238,6 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     marginTop: 10,
   },
-  // Novo estilo copiado do CreateEvent para consistência
   smallLabel: {
     fontSize: 14,
     color: "#fff",
@@ -242,13 +254,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginRight: 10,
   },
-  timeInputContainer: {
-    flex: 1,
-    borderColor: colors.purple,
-    backgroundColor: colors.purpleBlack2,
-    borderWidth: 1,
-    borderRadius: 12,
-    marginRight: 10,
+  timeInput: {
+    padding: 15,
+    fontSize: 14,
+    fontFamily: "Montserrat-Regular",
+    color: "#fff",
   },
   buttonsContainer: {
     flexDirection: "row",
@@ -277,5 +287,12 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontSize: 16,
     fontFamily: "Montserrat-SemiBold",
+  },
+  errorText: {
+    color: "#e53e3e",
+    fontSize: 12,
+    fontFamily: "Montserrat-Regular",
+    marginTop: 4,
+    marginLeft: 5,
   },
 });

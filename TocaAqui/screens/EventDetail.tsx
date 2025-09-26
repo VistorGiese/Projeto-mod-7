@@ -29,7 +29,7 @@ export default function EventDetail() {
   const [isEditModalVisible, setEditModalVisible] = useState(false);
   const [showOptionsMenu, setShowOptionsMenu] = useState(false);
 
-  const imageSource = require("../assets/images/All/BG.png");
+  const imageSource = require("../assets/images/All/imagem_bar.webp");
 
   const displayDate = useMemo(() => {
     if (!event.data_show) return "";
@@ -168,7 +168,7 @@ export default function EventDetail() {
       <Modal
         isVisible={isEditModalVisible}
         onBackdropPress={handleFinishUpdate}
-        onSwipeComplete={handleFinishUpdate}
+        onSwipeComplete={() => handleFinishUpdate()}
         swipeDirection="down"
         style={styles.bottomModal}
       >
