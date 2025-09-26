@@ -1,15 +1,13 @@
-import { View, StyleSheet } from "react-native";
-import Navigate from "../navigation/Navigate";
+import 'react-native-gesture-handler';
+
 import React from "react";
+import { AccountProvider } from '../contexts/AccountFromContexto';
+import Navigate from "../navigation/Navigate";
 
 export default function App() {
   return (
-    <View style={styles.container}>
+    <AccountProvider>
       <Navigate />
-    </View>
+    </AccountProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1 },
-});

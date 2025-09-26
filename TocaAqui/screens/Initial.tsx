@@ -1,18 +1,18 @@
-import {
-  View,
-  StyleSheet,
-  Image,
-  Dimensions,
-  Text,
-  TouchableOpacity,
-} from "react-native";
-import React from "react";
-import FundInitialPage from "../components/Allcomponents/FundInitialPage";
-import Button from "../components/Allcomponents/Button";
+import { colors } from "@/utils/colors";
 import { useNavigation } from "@react-navigation/native";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React from "react";
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import Button from "../components/Allcomponents/Button";
+import FundInitialPage from "../components/Allcomponents/FundInitialPage";
 import { RootStackParamList } from "../navigation/Navigate";
-import { colors } from "@/utils/colors";
 
 const { width } = Dimensions.get("window");
 
@@ -34,21 +34,22 @@ export default function Initial() {
         resizeMode="contain"
       />
 
-      <Button
-        style={styles.buttonPosition}
-        onPress={() => navigation.navigate("Login")}
-      >
-        <Text style={styles.textButton}>Fazer Login</Text>
-      </Button>
-
-      <View style={styles.registerContainer}>
-        /<Text style={styles.registerText}>Ainda não tem conta? </Text>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("RegisterLocationName")}
-          style={{ backgroundColor: "transparent" }}
+      <View style={styles.bottomContainer}>
+        <Button
+          style={styles.buttonPosition}
+          onPress={() => navigation.navigate("Login")}
         >
-          <Text style={styles.registerLink}>Cadastre-se</Text>
-        </TouchableOpacity>
+          <Text style={styles.textButton}>Fazer Login</Text>
+        </Button>
+        <View style={styles.registerContainer}>
+          /<Text style={styles.registerText}>Ainda não tem conta? </Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("RegisterLocationName")}
+            style={{ backgroundColor: "transparent" }}
+          >
+            <Text style={styles.registerLink}>Cadastre-se</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -73,11 +74,13 @@ const styles = StyleSheet.create({
     height: "50%",
     zIndex: 2,
   },
+  bottomContainer: {
+    gap: 8,
+  },
   buttonPosition: {
-    position: "absolute",
     bottom: "10%",
     width: "55%",
-    height: "9.5%",
+    paddingVertical: "8%",
     alignSelf: "center",
     zIndex: 10,
   },
