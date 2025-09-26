@@ -9,7 +9,6 @@ import RegisterPassword from "../screens/RegisterPassword";
 import InformationPersonResponsible from "../screens/InformationPersonResponsible";
 import Schedulling from "../screens/Schedulling";
 import AdditionalInformation from "../screens/AdditionalInformation";
-import ArtistProfile from "../screens/ArtistProfile";
 import ConfirmRegister from "../screens/ConfirmRegister";
 import CreateEvent from "../screens/CreateEvent";
 import ForgotPassword from "../screens/ForgotPassword";
@@ -42,7 +41,6 @@ export type RootStackParamList = {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function Navigate() {
-
   return (
     <Stack.Navigator
       initialRouteName="Initial"
@@ -54,11 +52,23 @@ export default function Navigate() {
 
       {/* Agrupamento de telas de registro */}
       <Stack.Group>
-        <Stack.Screen name="RegisterLocationName" component={RegisterLocationName} />
-        <Stack.Screen name="RegisterLocationAndress" component={RegisterLocationAndress} />
+        <Stack.Screen
+          name="RegisterLocationName"
+          component={RegisterLocationName}
+        />
+        <Stack.Screen
+          name="RegisterLocationAndress"
+          component={RegisterLocationAndress}
+        />
         <Stack.Screen name="RegisterPassword" component={RegisterPassword} />
-        <Stack.Screen name="InformationPersonResponsible" component={InformationPersonResponsible} />
-        <Stack.Screen name="AdditionalInformation" component={AdditionalInformation} />
+        <Stack.Screen
+          name="InformationPersonResponsible"
+          component={InformationPersonResponsible}
+        />
+        <Stack.Screen
+          name="AdditionalInformation"
+          component={AdditionalInformation}
+        />
         <Stack.Screen name="ConfirmRegister" component={ConfirmRegister} />
       </Stack.Group>
 
