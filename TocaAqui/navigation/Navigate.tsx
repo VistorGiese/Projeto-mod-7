@@ -12,7 +12,8 @@ import Schedulling from "../screens/Schedulling";
 import CreateEvent from "../screens/CreateEvent";
 import InfoEvent from "../screens/InfoEvent";
 import ArtistProfile from "../screens/ArtistProfile";
-
+import EventDetail from "../screens/EventDetail";
+import { Booking } from "@/http/bookingService";
 
 export type RootStackParamList = {
   Initial: undefined;
@@ -27,6 +28,7 @@ export type RootStackParamList = {
   CreateEvent: undefined;
   InfoEvent: undefined;
   ArtistProfile: undefined;
+  EventDetail: { event: Booking };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -37,14 +39,25 @@ export default function Navigate() {
       initialRouteName="Initial"
       screenOptions={{ headerShown: false }}
     >
-
       {/* Telas principais do app Antes do Login */}
       <Stack.Screen name="Initial" component={Initial} />
       <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="RegisterLocationName" component={RegisterLocationName} />
-      <Stack.Screen name="RegisterLocationAndress" component={RegisterLocationAndress} />
-      <Stack.Screen name="InformationPersonResponsible" component={InformationPersonResponsible} />
-      <Stack.Screen name="AdditionalInformation" component={AdditionalInformation} />
+      <Stack.Screen
+        name="RegisterLocationName"
+        component={RegisterLocationName}
+      />
+      <Stack.Screen
+        name="RegisterLocationAndress"
+        component={RegisterLocationAndress}
+      />
+      <Stack.Screen
+        name="InformationPersonResponsible"
+        component={InformationPersonResponsible}
+      />
+      <Stack.Screen
+        name="AdditionalInformation"
+        component={AdditionalInformation}
+      />
 
       {/* Telas principais do app Após o Login */}
       <Stack.Screen name="HomePage" component={HomePage} />
@@ -52,11 +65,10 @@ export default function Navigate() {
       <Stack.Screen name="CreateEvent" component={CreateEvent} />
       <Stack.Screen name="InfoEvent" component={InfoEvent} />
       <Stack.Screen name="ArtistProfile" component={ArtistProfile} />
-
+      <Stack.Screen name="EventDetail" component={EventDetail} />
 
       {/* Telas secundárias do app */}
       <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
-
     </Stack.Navigator>
   );
 }
