@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, ScrollView } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  useWindowDimensions,
+} from "react-native";
 import Input from "../components/Allcomponents/Input";
 import Button from "../components/Allcomponents/Button";
 import { useNavigation } from "@react-navigation/native";
@@ -13,15 +19,13 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function RegisterLocationAndress() {
   const navigation = useNavigation<NavigationProp>();
+  const { height } = useWindowDimensions();
 
   const [cep, setCep] = useState("");
   const [estado, setEstado] = useState("");
   const [cidade, setCidade] = useState("");
   const [bairro, setBairro] = useState("");
   const [endereco, setEndereco] = useState("");
-  const [showFullText, setShowFullText] = useState(false);
-
-  const handleToggleText = () => setShowFullText((prev) => !prev);
 
   return (
     <View style={styles.container}>
@@ -31,20 +35,15 @@ export default function RegisterLocationAndress() {
       <ScrollView
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.title}>ENDEREÇO</Text>
+        <Text style={[styles.title, { marginTop: height * 0.12 }]}>
+          ENDEREÇO
+        </Text>
 
         <Text style={styles.subtitle}>
-          {showFullText
-            ? "Forneça o endereço completo do estabelecimento. Esse campo é importante para que os clientes encontrem facilmente o seu local."
-            : "Forneça o endereço completo do estabelecimento... "}
-          <Text
-            style={styles.saibaMais}
-            onPress={handleToggleText}
-            accessibilityRole="button"
-          >
-            {showFullText ? " Ver menos" : " Saiba mais"}
-          </Text>
+          Forneça o endereço completo do estabelecimento. Esse campo é
+          importante para que os clientes encontrem facilmente o seu local.
         </Text>
 
         <View style={styles.inputWrapper}>
@@ -98,7 +97,7 @@ export default function RegisterLocationAndress() {
         </View>
 
         <Button
-          style={styles.button}
+          style={[styles.button, { marginTop: height * 0.06 }]}
           onPress={() => navigation.navigate("InformationPersonResponsible")}
         >
           <Text style={styles.buttonText}>Continuar</Text>
@@ -115,7 +114,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     paddingHorizontal: 20,
-    paddingBottom: 50,
+    paddingBottom: 40,
     alignItems: "center",
     justifyContent: "flex-start",
   },
@@ -124,34 +123,30 @@ const styles = StyleSheet.create({
     fontFamily: "AkiraExpanded-Superbold",
     color: "#fff",
     alignSelf: "flex-start",
-    marginBottom: 30,
-    marginTop: 200,
+    marginBottom: 20,
     marginLeft: 15,
   },
   subtitle: {
-    fontSize: 23,
+    fontSize: 16,
     color: "#ccc",
-    marginBottom: 25,
+    marginBottom: 15,
     textAlign: "left",
     width: "98%",
     marginLeft: 25,
-  },
-  saibaMais: {
-    fontSize: 16,
-    textDecorationLine: "underline",
-    color: "#5000c9ff",
+    lineHeight: 22,
+    fontFamily: "Montserrat-Regular",
   },
   inputWrapper: {
     width: "100%",
-    marginBottom: 25,
+    marginBottom: 4,
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
   },
   button: {
     width: "95%",
-    height: 60,
-    marginTop: 120,
+    height: 55,
+    borderRadius: 12,
   },
   buttonText: {
     color: colors.purpleDark,

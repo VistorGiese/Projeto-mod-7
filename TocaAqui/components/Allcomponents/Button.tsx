@@ -6,18 +6,19 @@ import {
   GestureResponderEvent,
   ViewStyle,
   TextStyle,
+  StyleProp,
 } from "react-native";
 import { useFonts } from "expo-font";
 import { customFonts } from "../../assets/fonts/fonts";
 import { colors } from "@/utils/colors";
-import { Colors } from "react-native/Libraries/NewAppScreen";
 
 interface ButtonProps {
   onPress: (event: GestureResponderEvent) => void;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
   children?: React.ReactNode;
 }
+
 export default function Button({
   onPress,
   style,
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   },
   text: {
-    color: Colors.purpleDark,
+    color: colors.purpleDark,
     fontSize: 24,
     fontFamily: "Poppins-ExtraBold",
   },

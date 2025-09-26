@@ -1,5 +1,11 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, Image, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Image,
+  useWindowDimensions,
+} from "react-native";
 import ToBack from "../components/Allcomponents/ToBack";
 import Fund from "../components/Allcomponents/Fund";
 import Input from "../components/Allcomponents/Input";
@@ -11,12 +17,11 @@ import { colors } from "@/utils/colors";
 
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
-const { width, height } = Dimensions.get("window");
-
 export default function Login() {
   const navigation = useNavigation<NavigationProp>();
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
+  const { width, height } = useWindowDimensions();
 
   return (
     <View style={styles.container}>
@@ -26,7 +31,11 @@ export default function Login() {
 
       <Image
         source={require("../assets/images/Login/AccessYourAccount.png")}
-        style={styles.centerImage}
+        style={[
+          styles.centerImage,
+          { width: width * 0.7, height: width * 0.7 },
+        ]}
+        resizeMode="contain"
       />
 
       <View style={styles.registerContainer}>
@@ -63,7 +72,7 @@ export default function Login() {
         }}
       />
 
-      <View style={styles.registerContainer}>
+      <View style={[styles.registerContainer, { marginTop: height * 0.05 }]}>
         <Text
           style={styles.forgotPassword}
           onPress={() => navigation.navigate("ForgotPassword")}
@@ -73,7 +82,7 @@ export default function Login() {
       </View>
 
       <Button
-        style={styles.buttonPosition}
+        style={[styles.buttonPosition, { width: width * 0.9, height: 55 }]}
         onPress={() => navigation.navigate("HomePage")}
       >
         <Text style={styles.textButton}>Entrar</Text>
@@ -89,18 +98,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 20,
     backgroundColor: "#1c0a37",
-    width: width,
-    height: height,
   },
   centerImage: {
-    width: 350,
-    height: 350,
-    resizeMode: "contain",
     alignSelf: "center",
+    marginBottom: 20,
   },
   registerContainer: {
     flexDirection: "row",
-    marginBottom: 25,
+    marginBottom: 20,
     alignItems: "center",
     zIndex: 10,
   },
@@ -110,21 +115,20 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat-Regular",
   },
   registerLink: {
-    color: "#00c96fff",
+    color: "#00c96f",
     fontFamily: "Montserrat-Regular",
     textDecorationLine: "underline",
     fontSize: 16,
   },
   forgotPassword: {
-    color: "#ffffffff",
-    marginTop: 250,
+    color: "#fff",
     fontSize: 16,
     textDecorationLine: "underline",
     fontFamily: "Montserrat",
   },
   buttonPosition: {
-    width: 420,
-    height: 60,
+    marginTop: 20,
+    borderRadius: 12,
   },
   textButton: {
     fontFamily: "Montserrat-Regular",

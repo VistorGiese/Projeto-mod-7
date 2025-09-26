@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import Button from "../components/Allcomponents/Button";
 import Input from "../components/Allcomponents/Input";
 import ToBack from "../components/Allcomponents/ToBack";
@@ -13,34 +13,24 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function InformationPersonResponsible() {
   const navigation = useNavigation<NavigationProp>();
+  const { height } = useWindowDimensions();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
-
-  const [showFullText, setShowFullText] = useState(false);
-
-  const handleToggleText = () => setShowFullText((prev) => !prev);
 
   return (
     <View style={styles.container}>
       <Fund />
       <ToBack />
 
-      <View style={styles.content}>
+      <View style={[styles.content, { marginTop: height * 0.2 }]}>
         <Text style={styles.title}>INFORMAÇÕES</Text>
 
         <Text style={styles.subtitle}>
-          {showFullText
-            ? "Preencha as informações do proprietário do estabelecimento para facilitar o contato das bandas, caso haja necessidade de mais detalhes ou ajustes sobre a contratação."
-            : "Preencha as informações do proprietário... "}
-          <Text
-            style={styles.saibaMais}
-            onPress={handleToggleText}
-            accessibilityRole="button"
-          >
-            {showFullText ? " Ver menos" : " Saiba mais"}
-          </Text>
+          Preencha as informações do proprietário do estabelecimento para
+          facilitar o contato das bandas, caso haja necessidade de mais detalhes
+          ou ajustes sobre a contratação.
         </Text>
 
         <View style={styles.inputWrapper}>
@@ -77,7 +67,7 @@ export default function InformationPersonResponsible() {
       </View>
 
       <Button
-        style={styles.button}
+        style={[styles.button, { marginTop: height * 0.05 }]}
         onPress={() => navigation.navigate("AdditionalInformation")}
       >
         <Text style={styles.buttonText}>Continuar</Text>
@@ -97,13 +87,11 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     width: "100%",
-    marginTop: 200,
     paddingHorizontal: 15,
     alignItems: "flex-start",
-    marginLeft: 15,
   },
   title: {
-    fontSize: 35,
+    fontSize: 32,
     fontFamily: "AkiraExpanded-Superbold",
     color: "#fff",
     marginBottom: 20,
@@ -111,16 +99,13 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   subtitle: {
-    fontSize: 23,
+    fontSize: 16,
+    fontFamily: "Montserrat-Regular",
     color: "#ccc",
     marginBottom: 25,
     textAlign: "left",
     width: "98%",
-  },
-  saibaMais: {
-    fontSize: 16,
-    textDecorationLine: "underline",
-    color: "#5000c9ff",
+    lineHeight: 22,
   },
   inputWrapper: {
     width: "100%",
@@ -131,8 +116,7 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: "center",
     alignItems: "center",
-    position: "absolute",
-    marginTop: 900,
+    marginBottom: "10%",
   },
   buttonText: {
     color: colors.purpleDark,

@@ -5,6 +5,7 @@ import {
   Dimensions,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
 } from "react-native";
 import React from "react";
 import FundInitialPage from "../components/Allcomponents/FundInitialPage";
@@ -14,41 +15,40 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/Navigate";
 import { colors } from "@/utils/colors";
 
-const { width } = Dimensions.get("window");
-
 type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function Initial() {
   const navigation = useNavigation<NavigationProp>();
+  const { width, height } = useWindowDimensions();
 
   return (
     <View style={styles.container}>
-
-      <View style={styles.Fund}>
+      <View style={styles.content}>
         <FundInitialPage />
       </View>
 
       <Image
         source={require("../assets/images/Initial/ShadowPurple.png")}
-        style={styles.shadowImage}
+        style={[styles.shadowImage, { width: width, height: height * 0.5 }]}
         resizeMode="contain"
       />
 
-      <Button
-        style={styles.buttonPosition}
-        onPress={() => navigation.navigate("Login")}
-      >
-        <Text style={styles.textButton}>Fazer Login</Text>
-      </Button>
-
-      <View style={styles.registerContainer}>
-        /<Text style={styles.registerText}>Ainda não tem conta? </Text>
-        <TouchableOpacity
-          onPress={() => navigation.navigate("RegisterLocationName")}
-          style={{ backgroundColor: "transparent" }}
+      <View style={[styles.footerContainer, { bottom: height * 0.05 }]}>
+        <Button
+          style={styles.button}
+          onPress={() => navigation.navigate("Login")}
         >
-          <Text style={styles.registerLink}>Cadastre-se</Text>
-        </TouchableOpacity>
+          <Text style={styles.textButton}>Fazer Login</Text>
+        </Button>
+
+        <View style={styles.registerContainer}>
+          <Text style={styles.registerText}>Ainda não tem conta? </Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate("RegisterLocationName")}
+          >
+            <Text style={styles.registerLink}>Cadastre-se</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#130025",
   },
-  Fund: {
+  content: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -69,24 +69,23 @@ const styles = StyleSheet.create({
   shadowImage: {
     position: "absolute",
     bottom: 0,
-    width: width,
-    height: "50%",
     zIndex: 2,
   },
-  buttonPosition: {
+  footerContainer: {
     position: "absolute",
-    bottom: "10%",
-    width: "55%",
-    height: "9.5%",
-    alignSelf: "center",
+    width: "100%",
+    alignItems: "center",
     zIndex: 10,
+  },
+  button: {
+    width: "55%",
+    paddingVertical: 15,
+    marginBottom: 20,
   },
   registerContainer: {
     flexDirection: "row",
-    marginBottom: 85,
     justifyContent: "center",
     alignItems: "center",
-    zIndex: 10,
   },
   registerText: {
     color: "#8c93a5ff",

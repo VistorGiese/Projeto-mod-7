@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, useWindowDimensions } from "react-native";
 import Button from "../components/Allcomponents/Button";
 import Input from "../components/Allcomponents/Input";
 import ToBack from "../components/Allcomponents/ToBack";
@@ -13,32 +13,23 @@ type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
 
 export default function AdditionalInformation() {
   const navigation = useNavigation<NavigationProp>();
+  const { height } = useWindowDimensions();
 
   const [genre, setGenre] = useState("");
   const [schedule, setSchedule] = useState("");
-  const [showFullText, setShowFullText] = useState(false);
-
-  const handleToggleText = () => setShowFullText((prev) => !prev);
 
   return (
     <View style={styles.container}>
       <Fund />
       <ToBack />
 
-      <View style={styles.content}>
+      <View style={[styles.content, { marginTop: height * 0.2 }]}>
         <Text style={styles.title}>QUASE LÁ...</Text>
 
         <Text style={styles.subtitle}>
-          {showFullText
-            ? "Defina as preferências do seu estabelecimento. Essas informações ajudam as bandas a entender melhor o seu estilo e personalizar a apresentação de acordo com o que você e seus clientes preferem."
-            : "Defina as preferências do seu estabelecimento... "}
-          <Text
-            style={styles.saibaMais}
-            onPress={handleToggleText}
-            accessibilityRole="button"
-          >
-            {showFullText ? " Saiba menos" : " Saiba mais"}
-          </Text>
+          Defina as preferências do seu estabelecimento. Essas informações
+          ajudam as bandas a entender melhor o seu estilo e personalizar a
+          apresentação de acordo com o que você e seus clientes preferem.
         </Text>
 
         <View style={styles.inputWrapper}>
@@ -63,7 +54,7 @@ export default function AdditionalInformation() {
       </View>
 
       <Button
-        style={styles.button}
+        style={[styles.button, { marginTop: height * 0.05 }]}
         onPress={() => navigation.navigate("Login")}
       >
         <Text style={styles.buttonText}>Cadastrar</Text>
@@ -83,10 +74,8 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     width: "100%",
-    marginTop: 200,
     paddingHorizontal: 15,
     alignItems: "flex-start",
-    marginLeft: 15,
   },
   title: {
     fontSize: 35,
@@ -97,16 +86,13 @@ const styles = StyleSheet.create({
     alignSelf: "flex-start",
   },
   subtitle: {
-    fontSize: 23,
+    fontSize: 16,
+    fontFamily: "Montserrat-Regular",
     color: "#ccc",
     marginBottom: 25,
     textAlign: "left",
     width: "98%",
-  },
-  saibaMais: {
-    fontSize: 16,
-    textDecorationLine: "underline",
-    color: "#5000c9ff",
+    lineHeight: 22,
   },
   inputWrapper: {
     width: "100%",
@@ -117,8 +103,7 @@ const styles = StyleSheet.create({
     height: 60,
     justifyContent: "center",
     alignItems: "center",
-    position: "absolute",
-    marginTop: 900,
+    marginBottom: "10%",
   },
   buttonText: {
     color: colors.purpleDark,
